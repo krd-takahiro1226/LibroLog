@@ -39,13 +39,12 @@ public class BookSearchApiController {
   public String showSearchWindow(@RequestParam String title, @RequestParam String author, @RequestParam String publisherName,@RequestParam String isbn, Model model) throws Exception{
     SearchBooksResponseDto response = bookSearchApiClient.getBookSearch(title, author, publisherName,isbn);
     model.addAttribute("response", response);
-    System.out.println("通過しています！");
     return "searchResults";
 }
 
 @PostMapping
 // TODO 画面が対応したら引数にread_countとpriority、memoを追加
-  public void registerRecords(@RequestParam("isbn") String ISBN, @RequestParam("title") String book_name,
+  public String registerRecords(@RequestParam("isbn") String ISBN, @RequestParam("title") String book_name,
       @RequestParam("author") String author, @RequestParam("size") String genre, 
       @RequestParam("salesDate") String publication_year, @RequestParam("publisherName") String publisher,
       Model model){
@@ -59,8 +58,6 @@ public class BookSearchApiController {
     Date date = new Date(Calendar.getInstance().getTimeInMillis());
     // 出版年のフォーマット変換
     String convertPublicationYear = convertPublicetionYear(publication_year);
-    System.out.println(convertPublicationYear);
-    System.out.println("こちらも通過しております！");
     // 書籍情報の登録
     registerBoookRecords(ISBN, book_name, author, genre, convertPublicationYear, publisher);
     // 読書情報の登録
@@ -73,6 +70,8 @@ public class BookSearchApiController {
         model.addAttribute("registerStatus", "書籍情報が既に登録されています");
         break;
     }
+    // TODO 本来は検索結果画面にリダイレクトして他の本の登録とかもしたいはずだが、現状できていない
+    return "redirect:/searchBooks";
   }
 
   private void registerBoookRecords(String ISBN, String book_name, String author, String genre, String publication_year, String publisher) {
