@@ -96,9 +96,9 @@
         </select>
 
 
-        <div th:if="${registerStatus != null}">
+        <!-- <div th:if="${registerStatus != null}">
             <p th:text="${registerStatus}" class="alert alert-info"></p>
-        </div>
+        </div> -->
         <!-- テーブル -->
         <div th:if="${response.items != null}">
             <table id="dataTable" class="book-list">
@@ -132,8 +132,6 @@
                                 <input type="hidden" name="size" th:value="${item.size}" />
                                 <input type="hidden" name="publisherName" th:value="${item.publisherName}" />
                                 <input type="hidden" name="salesDate" th:value="${item.salesDate}" />
-                                <!-- <button type="submit" class="reserve-button">登録</button> -->
-                                <!-- <td><button class="reserve-button" th:onclick="|showPopup()|">登録</button></td> -->
                             </form>
                     </tr>
                 </tbody>
