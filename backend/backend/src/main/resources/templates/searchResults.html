@@ -96,11 +96,11 @@
         </select>
 
 
-
-
+        <div th:if="${registerStatus != null}">
+            <p th:text="${registerStatus}" class="alert alert-info"></p>
+        </div>
         <!-- テーブル -->
         <div th:if="${response.items != null}">
-
             <table id="dataTable" class="book-list">
                 <thead>
                     <tr>
@@ -116,7 +116,6 @@
                 </thead>
                 <tbody id="tableBody">
                     <tr th:each="item, iterStat : ${response.items}">
-                        
                         <td th:text="${iterStat.count}">1</td>
                         <td><img th:src="${item.smallImageUrl}" alt="書籍画像"></td>
                         <td th:text="${item.title}">タイトル</td>
@@ -125,6 +124,17 @@
                         <td th:text="${item.publisherName}">出版社</td>
                         <td th:text="${item.salesDate}">出版年</td>
                         <td><button class="reserve-button" th:onclick="|showPopup()|">登録</button></td>
+                            <form id="popup-form" th:action="@{/searchBooks/sruSearch}" method="post">
+                                <!-- hiddenフィールドに必要な情報を追加 -->
+                                <input type="hidden" name="isbn" th:value="${item.isbn}" />
+                                <input type="hidden" name="title" th:value="${item.title}" />
+                                <input type="hidden" name="author" th:value="${item.author}" />
+                                <input type="hidden" name="size" th:value="${item.size}" />
+                                <input type="hidden" name="publisherName" th:value="${item.publisherName}" />
+                                <input type="hidden" name="salesDate" th:value="${item.salesDate}" />
+                                <!-- <button type="submit" class="reserve-button">登録</button> -->
+                                <!-- <td><button class="reserve-button" th:onclick="|showPopup()|">登録</button></td> -->
+                            </form>
                     </tr>
                 </tbody>
             </table>
@@ -213,6 +223,8 @@
         if (selectedOption) {
             alert(selectedOption + "を選択しました。");
             closePopup();
+            const form = document.getElementById("popup-form");
+            form.submit();
         } else {
             alert("選択肢を選んでください。");
         }
@@ -259,7 +271,3 @@
 
 
 </script>
-
-
-
-
