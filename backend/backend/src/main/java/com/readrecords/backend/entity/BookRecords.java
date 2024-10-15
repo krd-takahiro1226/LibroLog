@@ -16,7 +16,7 @@ public class BookRecords {
   private String book_name;
   private String author;
   private String genre;
-  private Date publication_year;
+  private String publication_year;
   private String publisher;
 
 }
