@@ -123,16 +123,12 @@
                         <td th:text="${item.size}">ジャンル</td>
                         <td th:text="${item.publisherName}">出版社</td>
                         <td th:text="${item.salesDate}">出版年</td>
-                        <td><button class="reserve-button" th:onclick="|showPopup()|">登録</button></td>
-                            <form id="popup-form" th:action="@{/searchBooks/sruSearch}" method="post">
-                                <!-- hiddenフィールドに必要な情報を追加 -->
-                                <input type="hidden" name="isbn" th:value="${item.isbn}" />
-                                <input type="hidden" name="title" th:value="${item.title}" />
-                                <input type="hidden" name="author" th:value="${item.author}" />
-                                <input type="hidden" name="size" th:value="${item.size}" />
-                                <input type="hidden" name="publisherName" th:value="${item.publisherName}" />
-                                <input type="hidden" name="salesDate" th:value="${item.salesDate}" />
-                            </form>
+                        <td>
+                            <button class="reserve-button" th:attr="data-book-data=${item}" 
+                                    th:onclick="showPopup([[${item.isbn}]], [[${item.title}]], [[${item.author}]], [[${item.size}]], [[${item.publisherName}]], [[${item.salesDate}]])">
+                                登録
+                            </button>
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -150,38 +146,43 @@
     </div>
 
 
-    <!-- ポップアップのHTML -->
-    <div id="popup" class="popup">
-        <div class="popup-content">
-            <span class="close">&times;</span>
-            <h3>リストに新規登録します</h3>
-            <br>
-            <p>以下から選択してください。</p>
+<!-- ポップアップのHTML -->
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <span class="close">&times;</span>
+        <h3>リストに新規登録します</h3>
+        <br>
+        <p>以下から選択してください。</p>
+        
+        <form id="registration-form" th:action="@{/searchBooks/sruSearch}" method="post">
+            <input type="hidden" id="isbn" name="isbn">
+            <input type="hidden" id="title" name="title">
+            <input type="hidden" id="author" name="author">
+            <input type="hidden" id="size" name="size">
+            <input type="hidden" id="publisherName" name="publisherName">
+            <input type="hidden" id="salesDate" name="salesDate">
             
-
-            <form id="popup-form">
-                <div class="radio-group">
-                    <label class="radio-label">
-                        <input type="radio" name="option" value="1">
-                        すぐに読みたい本として登録する
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="option" value="2">
-                        今後読みたい本として登録する
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="option" value="3">
-                        すでに読んだことのある本として登録する
-                    </label>
-                </div>
-                <div class="buttons">
-                    <button type="button" onclick="submitChoice()">決定</button>
-                    <button type="button" class="cancel-button" onclick="closePopup()">キャンセル</button>
-                </div>
-                
-            </form>
-        </div>
+            <div class="radio-group">
+                <label class="radio-label">
+                    <input type="radio" name="option" value="1">
+                    すぐに読みたい本として登録する
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="option" value="2">
+                    今後読みたい本として登録する
+                </label>
+                <label class="radio-label">
+                    <input type="radio" name="option" value="3">
+                    すでに読んだことのある本として登録する
+                </label>
+            </div>
+            <div class="buttons">
+                <button type="button" onclick="submitChoice()">決定</button>
+                <button type="button" class="cancel-button" onclick="closePopup()">キャンセル</button>
+            </div>
+        </form>
     </div>
+</div>
 
     <script src="script.js"></script>
 
@@ -193,40 +194,47 @@
 </html>
 
 <script>
-    // ポップアップウィンドウを表示する関数
-    function showPopup() {
-        const popup = document.getElementById("popup");
-        popup.style.display = "block";
-    }
+// ポップアップウィンドウを表示する関数
+function showPopup(isbn, title, author, size, publisherName, salesDate) {
+    const popup = document.getElementById("popup");
+    
+    // フォームに値をセット
+    document.getElementById("isbn").value = isbn;
+    document.getElementById("title").value = title;
+    document.getElementById("author").value = author;
+    document.getElementById("size").value = size;
+    document.getElementById("publisherName").value = publisherName;
+    document.getElementById("salesDate").value = salesDate;
+    
+    popup.style.display = "block";
+}
 
-    // ポップアップウィンドウを閉じる関数
-    function closePopup() {
-        const popup = document.getElementById("popup");
-        popup.style.display = "none";
-        document.getElementById("popup-form").reset(); // フォームのリセット
-    }
+// ポップアップウィンドウを閉じる関数
+function closePopup() {
+    const popup = document.getElementById("popup");
+    popup.style.display = "none";
+    document.getElementById("registration-form").reset();
+}
 
-    // 選択肢を処理する関数
-    function submitChoice() {
-        const options = document.getElementsByName("option");
-        let selectedOption = null;
+// 選択肢を処理する関数
+function submitChoice() {
+    const options = document.getElementsByName("option");
+    let selectedOption = null;
 
-        for (const option of options) {
-            if (option.checked) {
-                selectedOption = option.value;
-                break;
-            }
+    for (const option of options) {
+        if (option.checked) {
+            selectedOption = option.value;
+            break;
         }
-
-        if (selectedOption) {
-            alert(selectedOption + "を選択しました。");
-            closePopup();
-            const form = document.getElementById("popup-form");
-            form.submit();
-        } else {
-            alert("選択肢を選んでください。");
-        }
     }
+
+    if (selectedOption) {
+        const form = document.getElementById("registration-form");
+        form.submit();
+    } else {
+        alert("選択肢を選んでください。");
+    }
+}
 
     // 閉じるボタンのイベントリスナー
     document.querySelector(".close").addEventListener("click", closePopup);
