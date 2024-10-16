@@ -103,8 +103,10 @@ public class BookSearchApiController {
   private String convertPublicetionYear(String publication_year) {
     publication_year = publication_year.replace("年", "-");
     publication_year = publication_year.replace("月", "-");
-    // 末尾2文字を削除する
-    publication_year = publication_year.substring(0, publication_year.length() - 2);
+    if (publication_year.contains("日頃")) {
+      // 末尾2文字を削除する
+      publication_year = publication_year.substring(0, publication_year.length() - 2);
+    }
     return publication_year;
 }
 
