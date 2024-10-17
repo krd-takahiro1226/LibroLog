@@ -107,6 +107,10 @@ public class BookSearchApiController {
       // 末尾2文字を削除する
       publication_year = publication_year.substring(0, publication_year.length() - 2);
     }
+    else if (publication_year.contains("日")) {
+      // 末尾1文字を削除する
+      publication_year = publication_year.substring(0, publication_year.length() - 1);
+    }
     return publication_year;
 }
 
