@@ -161,6 +161,7 @@
             <input type="hidden" id="size" name="size">
             <input type="hidden" id="publisherName" name="publisherName">
             <input type="hidden" id="salesDate" name="salesDate">
+            <input type="hidden" id="selectedOption" name="selectedOption">
             
             <div class="radio-group">
                 <label class="radio-label">
@@ -229,6 +230,7 @@ function submitChoice() {
     }
 
     if (selectedOption) {
+        document.getElementById("selectedOption").value = selectedOption;
         const form = document.getElementById("registration-form");
         form.submit();
     } else {
