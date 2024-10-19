@@ -111,6 +111,10 @@ public class BookSearchApiController {
       // 末尾1文字を削除する
       publication_year = publication_year.substring(0, publication_year.length() - 1);
     }
+    else{
+      // 日付が存在しない時、仮で日付を設定する
+      publication_year = publication_year += "-01";
+    }
     return publication_year;
 }
 
