@@ -33,7 +33,7 @@
 				<!-- <th>読んだ回数</th> -->
 				<th>優先度</th>
 				<!-- <th>メモ</th> -->
-				<th>編集</th>
+				<!-- <th>編集</th> -->
 			</tr>
 			<tr th:each="obj : ${readRecords}" align="center">
 				<td><input type="checkbox"></td> 
@@ -50,11 +50,11 @@
 				</td>
 				<!-- <td th:text="${obj.memo}"></td> -->
 				<!-- 編集ボタン -->
-				<td>
+				<!-- <td>
 					<form method="get" th:action="@{sample/{id}(id=${obj.ISBN})}">
 						<input type="submit" value="編集">
 					</form>
-				</td>
+				</td> -->
 			</tr>
 		</table>
 
