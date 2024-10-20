@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(to bottom, #76b852, #8DC26F);
+            color: white;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+        }
+
+        .text-section {
+            margin-right: 20px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin: 0;
+        }
+
+        p {
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+
+        .icon {
+            width: 600px;
+            height: 300px;
+        }
+
+        .button-section {
+            margin-top: 20px;
+        }
+
+        .button {
+            background-color: white;
+            color: #8DC26F;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .button:hover {
+            background-color: #76b852;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="text-section">
+            <h1>404 - Error</h1>
+            <p>Page Not Found</p>
+            <p>申し訳ございませんが、何かしらの問題が発生しました。</p>
+            <p>再度お試しください。</p>
+            <div class="button-section">
+                <button class="button" onclick="location.href='/menu'">Go Back to Menu</button>
+            </div>
+        </div>
+        <!-- アイコンも載せようとしたが、変になったのでやめた -->
+        <!-- <img src="/images/errorIcon.png" alt="Error Icon" class="icon"> -->
+    </div>
+</body>
+</html>
