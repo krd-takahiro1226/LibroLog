@@ -1,10 +1,7 @@
 # アプリ概要
-- 読んだ本について名前、著者、読んだ回数を管理
-  - 本の検索は何かしらの外部API叩いて取得
-    - そこから登録ボタン押下(+必要な情報)で登録可能
-- 読んだことがない本で読みたい本についても管理
-  - 一覧でほしくて優先度みたいなものもつけれる
-    - 画面から優先度登録が行える
+- 読んだ本について名前、著者、読んだ回数、優先度を管理
+  - 本の検索は楽天の書籍検索APIを叩いて取得
+    - そこから登録ボタン押下(+必要な情報)で登録処理を行う
 
 # 動作確認環境
 - MySQL 8.0.37
@@ -15,11 +12,16 @@
   - Apache Maven 3.9.6
 
 # アプリの動かし方
-- まずpullする
-- application.properties で、自環境のSQLパスワードに合わせる
-- MySqlでクエリ（create、insert）を実行する
-  - SQL文は、sqlフォルダにある
-- $ mvn clean install
-  - 実行するパスは　Reading_Records/backend/backend
-- BackendApplication.java でRunする
-- ローカル環境でのURLは、localhost:8080/login
+- git pull main
+- application.propertiesで、自環境のSQLパスワードに合わせる
+- 必要なDBおよびテーブルの作成を行う
+  - クエリは、sqlフォルダにある
+- Reading_Records/backend/backend配下で```mvn clean install```を実行
+- BackendApplication.java でRunし、アプリケーションを起動する
+- ```localhost:8080/login```に接続する
+  - すでにユーザ作成済みの場合は、作成したユーザでログインする
+  - 初めて利用する場合はユーザ作成から行う
+ 
+# デモ動画
+https://github.com/user-attachments/assets/cddb4efd-1875-4a3f-aa36-76c147832b13
+
