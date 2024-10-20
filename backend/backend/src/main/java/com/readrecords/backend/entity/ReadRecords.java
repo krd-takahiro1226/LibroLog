@@ -1,6 +1,6 @@
 package com.readrecords.backend.entity;
 
-import java.util.Date;
+import java.sql.Date;
 
 import com.readrecords.backend.dto.UserReadRecordsDto;
 

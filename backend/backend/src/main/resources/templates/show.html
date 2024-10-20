@@ -24,36 +24,43 @@
 		<h1>読んだ本一覧</h1>
 		<table border="1" th:unless="${#lists.isEmpty(readRecords)}" class="book-list" ><!--style="table-layout: fixed;"-->
 			<tr>
+				<th> </th>
 				<th>ISBN</th>
 				<th>書籍名</th>
 				<th>著者</th>
 				<th>読み始めた日</th>
 				<th>読了日</th>
-				<th>読んだ回数</th>
+				<!-- <th>読んだ回数</th> -->
 				<th>優先度</th>
-				<th>メモ</th>
-				<th>編集</th>
+				<!-- <th>メモ</th> -->
+				<!-- <th>編集</th> -->
 			</tr>
 			<tr th:each="obj : ${readRecords}" align="center">
-				<td th:text="${obj.ISBN}"></td>
-				<td th:text="${obj.book_name}"></td>
-				<td th:text="${obj.author}"></td>
-				<td th:text="${obj.start_date}"></td>
-				<td th:text="${obj.end_date}"></td>
-				<td th:text="${obj.read_count}"></td>
-				<td th:text="${obj.priority}"></td>
-				<td th:text="${obj.memo}"></td>
+				<td><input type="checkbox"></td> 
+				<td th:text = "${obj.ISBN}"></td>
+				<td th:text = "${obj.book_name}"></td>
+				<td th:text = "${obj.author}"></td>
+				<td th:text = "${obj.start_date}"></td>
+				<td th:text = "${obj.end_date}"></td>
+				<!-- <td th:text = "${obj.read_count}"></td> -->
+				<td th:switch="${obj.priority}">
+					<span th:case = "1">すぐ読みたい本</span>
+					<span th:case = "2">今後読みたい本</span>
+					<span th:case = "3">読んだことのある本</span>
+				</td>
+				<!-- <td th:text="${obj.memo}"></td> -->
 				<!-- 編集ボタン -->
-				<td>
+				<!-- <td>
 					<form method="get" th:action="@{sample/{id}(id=${obj.ISBN})}">
 						<input type="submit" value="編集">
 					</form>
-				</td>
+				</td> -->
 			</tr>
 		</table>
 
 		<div class="buttons">
-            <button class="button" onclick="location.href='/menu'">メニューに戻る</button>
-        </div>
+				<button class="button" onclick="location.href='/menu'">メニューに戻る</button>
+				<button class="button">編集</button>
+	</div>
 	</div>
 </body>

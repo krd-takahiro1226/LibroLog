@@ -18,8 +18,8 @@ public interface ReadRecordsRepository extends CrudRepository<ReadRecords, Integ
   @Query(name = "UserReadRecordsDto.getReadRecordsByUserId", nativeQuery = true)
   List<UserReadRecordsDto> getReadRecordsByUserId(@Param("user_id") String user_id);
 
-  @Query(value = "select * from " + "read_records where ISBN = :ISBN", nativeQuery = true)
-  List<ReadRecords> getReadRecordsByISBN(@Param("ISBN") String ISBN);
+  @Query(value = "select * from " + "read_records where ISBN = :ISBN" + " and user_id = :user_id", nativeQuery = true)
+  List<ReadRecords> getReadRecordsByISBNandUserId(@Param("ISBN") String ISBN, @Param("user_id") String user_id);
   
   @Modifying
   @Transactional

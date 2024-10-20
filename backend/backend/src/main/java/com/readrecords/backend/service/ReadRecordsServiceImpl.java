@@ -33,7 +33,7 @@ public class ReadRecordsServiceImpl implements ReadRecordsService{
   @Override
   public String registerReadRecords(String ISBN, String user_id, String start_date, String end_date, int read_count, int priority, String memo) {
     String message;
-    List<ReadRecords> readRecords = readRecordsRepository.getReadRecordsByISBN(ISBN);
+    List<ReadRecords> readRecords = readRecordsRepository.getReadRecordsByISBNandUserId(ISBN, user_id);
     if(readRecords.isEmpty()){
       // 読書情報を登録
       readRecordsRepository.insertReadRecords(ISBN, user_id, start_date, end_date, read_count, priority, memo);

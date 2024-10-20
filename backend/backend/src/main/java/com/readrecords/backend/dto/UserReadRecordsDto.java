@@ -1,6 +1,6 @@
 package com.readrecords.backend.dto;
 
-import java.util.Date;
+import java.sql.Date;
 
 import lombok.Data;
 

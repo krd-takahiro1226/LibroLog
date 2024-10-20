@@ -47,7 +47,7 @@ public class BookSearchApiController {
   public String registerRecords(@RequestParam("isbn") String ISBN, @RequestParam("title") String book_name,
       @RequestParam("author") String author, @RequestParam("size") String genre, 
       @RequestParam("salesDate") String publication_year, @RequestParam("publisherName") String publisher,
-      Model model){
+      @RequestParam("selectedOption") int priority, Model model){
     // 登録成功可否
     String registerStatus;
     // ユーザIDの取得
@@ -61,7 +61,7 @@ public class BookSearchApiController {
     // 書籍情報の登録
     registerBoookRecords(ISBN, book_name, author, genre, convertPublicationYear, publisher);
     // 読書情報の登録
-    registerStatus = registerReadRecords(userId, ISBN, date, date, 1, 1, "memo");
+    registerStatus = registerReadRecords(userId, ISBN, date, date, 1, priority, null);
     switch (registerStatus) {
       case REGISTER_SUCCESS_MESSAGE:
         model.addAttribute("registerStatus", "書籍情報が正常に登録されました");
@@ -110,6 +110,10 @@ public class BookSearchApiController {
     else if (publication_year.contains("日")) {
       // 末尾1文字を削除する
       publication_year = publication_year.substring(0, publication_year.length() - 1);
+    }
+    else{
+      // 日付が存在しない時、仮で日付を設定する
+      publication_year = publication_year += "-01";
     }
     return publication_year;
 }
