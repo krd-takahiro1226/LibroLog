@@ -36,9 +36,12 @@ public class BookSearchApiController {
   BookRecordsService bookRecordsService;
 
   @GetMapping
-  public String showSearchWindow(@RequestParam String title, @RequestParam String author, @RequestParam String publisherName,@RequestParam String isbn, Model model) throws Exception{
-    SearchBooksResponseDto response = bookSearchApiClient.getBookSearch(title, author, publisherName,isbn);
+  public String showSearchWindow(@RequestParam String title, @RequestParam String author, @RequestParam String publisherName, @RequestParam String isbn,
+  @RequestParam(value = "page", defaultValue = "1") Integer page, Model model) throws Exception{
+    SearchBooksResponseDto response = bookSearchApiClient.getBookSearch(title, author, publisherName, isbn, page);
     model.addAttribute("response", response);
+    model.addAttribute("currentPage", response.getPage());
+    model.addAttribute("totalPages", response.getPageCount());
     return "searchResults";
 }
 
@@ -61,7 +64,7 @@ public class BookSearchApiController {
     // 書籍情報の登録
     registerBoookRecords(ISBN, book_name, author, genre, convertPublicationYear, publisher);
     // 読書情報の登録
-    registerStatus = registerReadRecords(userId, ISBN, date, date, 1, priority, null);
+    registerStatus = registerReadRecords(userId, ISBN, date, null, 1, priority, null);
     switch (registerStatus) {
       case REGISTER_SUCCESS_MESSAGE:
         model.addAttribute("registerStatus", "書籍情報が正常に登録されました");
