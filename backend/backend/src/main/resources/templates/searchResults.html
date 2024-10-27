@@ -86,14 +86,24 @@
     <div class="container">
         <h1>検索結果</h1>
 
-
+        <!-- 現在のページ番号と総ページ数を表示 -->
+        <p>ページ: <span th:text="${currentPage}"></span> / <span th:text="${totalPages}"></span></p>
+        <!-- ページネーションリンク -->
+        <div>
+            <!-- 前のページへのリンク -->
+            <a th:if="${currentPage > 1}"
+            th:href="@{/searchBooks/sruSearch(title=${title}, author=${author}, publisherName=${publisherName}, isbn=${isbn}, page=${currentPage - 1})}">前のページ</a>
+            <!-- 次のページへのリンク -->
+            <a th:if="${currentPage < totalPages}"
+            th:href="@{/searchBooks/sruSearch(title=${title}, author=${author}, publisherName=${publisherName}, isbn=${isbn}, page=${currentPage + 1})}">次のページ</a>
+        </div>
         <!-- ページ内表示件数指定プルダウン -->
-        <label for="itemsPerPage">表示件数:</label>
+        <!-- <label for="itemsPerPage">表示件数:</label>
         <select id="itemsPerPage">
             <option value="10">10</option>
             <option value="20">20</option>
             <option value="30">30</option>
-        </select>
+        </select> -->
 
 
         <!-- <div th:if="${registerStatus != null}">
@@ -141,6 +151,18 @@
         <div class="buttons">
             <button class="button" onclick="location.href='/searchBooks'">再検索</button>
             <button class="button" onclick="location.href='/menu'">メニューに戻る</button>
+        </div>
+
+        <!-- 現在のページ番号と総ページ数を表示 -->
+        <p>ページ: <span th:text="${currentPage}"></span> / <span th:text="${totalPages}"></span></p>
+        <!-- ページネーションリンク -->
+        <div>
+            <!-- 前のページへのリンク -->
+            <a th:if="${currentPage > 1}"
+            th:href="@{/searchBooks/sruSearch(title=${title}, author=${author}, publisherName=${publisherName}, isbn=${isbn}, page=${currentPage - 1})}">前のページ</a>
+            <!-- 次のページへのリンク -->
+            <a th:if="${currentPage < totalPages}"
+            th:href="@{/searchBooks/sruSearch(title=${title}, author=${author}, publisherName=${publisherName}, isbn=${isbn}, page=${currentPage + 1})}">次のページ</a>
         </div>
         
     </div>
@@ -253,29 +275,29 @@ function submitChoice() {
 
 
 
-    const initialItemsPerPage = 10;
+    // const initialItemsPerPage = 10;
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const itemsPerPageSelect = document.getElementById('itemsPerPage');
-            itemsPerPageSelect.addEventListener('change', function() {
-                const selectedValue = parseInt(this.value, 10);
-                updateTable(selectedValue);
-            });
+    //     document.addEventListener('DOMContentLoaded', function() {
+    //         const itemsPerPageSelect = document.getElementById('itemsPerPage');
+    //         itemsPerPageSelect.addEventListener('change', function() {
+    //             const selectedValue = parseInt(this.value, 10);
+    //             updateTable(selectedValue);
+    //         });
 
-            // 初期表示
-            updateTable(initialItemsPerPage);
-        });
+    //         // 初期表示
+    //         updateTable(initialItemsPerPage);
+    //     });
 
-        function updateTable(itemsPerPage) {
-            const rows = document.querySelectorAll('#tableBody tr');
-            rows.forEach((row, index) => {
-                if (index < itemsPerPage) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
+    //     function updateTable(itemsPerPage) {
+    //         const rows = document.querySelectorAll('#tableBody tr');
+    //         rows.forEach((row, index) => {
+    //             if (index < itemsPerPage) {
+    //                 row.style.display = '';
+    //             } else {
+    //                 row.style.display = 'none';
+    //             }
+    //         });
+    //     }
 
 
 </script>
