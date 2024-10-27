@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.ExampleMatcher.NullHandler;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -64,7 +65,7 @@ public class BookSearchApiController {
     // 書籍情報の登録
     registerBoookRecords(ISBN, book_name, author, genre, convertPublicationYear, publisher);
     // 読書情報の登録
-    registerStatus = registerReadRecords(userId, ISBN, date, null, 1, priority, null);
+    registerStatus = registerReadRecords(userId, ISBN, date, date, 1, priority, null);
     switch (registerStatus) {
       case REGISTER_SUCCESS_MESSAGE:
         model.addAttribute("registerStatus", "書籍情報が正常に登録されました");

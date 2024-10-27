@@ -36,7 +36,7 @@ public class ReadRecordsServiceImpl implements ReadRecordsService{
     List<ReadRecords> readRecords = readRecordsRepository.getReadRecordsByISBNandUserId(ISBN, user_id);
     if(readRecords.isEmpty()){
       // 読書情報を登録
-      readRecordsRepository.insertReadRecords(ISBN, user_id, start_date, end_date, read_count, priority, memo);
+      readRecordsRepository.insertReadRecords(ISBN, user_id, start_date, null, read_count, priority, memo);
       message = REGISTER_SUCCESS_MESSAGE;
     }
     else{
