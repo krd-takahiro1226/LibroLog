@@ -17,8 +17,18 @@ import com.readrecords.backend.service.XmlParser;
 @Service
 public class BookSearchApiClientImpl implements BookSearchApiClient {
   @Autowired XmlParser xmlParser;
+
+  private static final String TITLEHEADER = "&title=";
+
+  private static final String AUTHORHEADER = "&author=";
+
+  private static final String PUBLISHERNAMEHEADER = "&publisherName=";
+
+  private static final String ISBNHEADER = "&isbn=";
+
+  private static final String PAGEHEADER = "&page=";
   @Override
-  public SearchBooksResponseDto getBookSearch(String title, String author, String publisherName, String isbn) throws Exception {
+  public SearchBooksResponseDto getBookSearch(String title, String author, String publisherName, String isbn, Integer page) throws Exception {
     // ベースとなるリクエストURLの作成
     String requestPath = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?";
     String applicationId = "1002321977022357484";
@@ -33,10 +43,11 @@ public class BookSearchApiClientImpl implements BookSearchApiClient {
     String authorEncoding = URLEncoder.encode(author, "UTF-8");
     String publisherNameEncoding = URLEncoder.encode(publisherName, "UTF-8");
     String isbnEncoding = URLEncoder.encode(isbn, "UTF-8");
-    String titlequery = "&title=" + titleEncoding;
-    String authorquery = "&author=" + authorEncoding;
-    String publisherquery = "&publisherName=" + publisherNameEncoding;
-    String isbnquery = "&isbn=" + isbnEncoding;
+    String titlequery = TITLEHEADER + titleEncoding;
+    String authorquery = AUTHORHEADER + authorEncoding;
+    String publisherquery = PUBLISHERNAMEHEADER + publisherNameEncoding;
+    String isbnquery = ISBNHEADER + isbnEncoding;
+    String pagequery = PAGEHEADER + page;
     String query = "";
     if (title != null && !title.isEmpty()) {
         query += titlequery;
@@ -50,6 +61,7 @@ public class BookSearchApiClientImpl implements BookSearchApiClient {
     if (isbn != null && !isbn.isEmpty()) {
         query += isbnquery;
     } 
+    query += pagequery;
     if (query == null || query.isEmpty()) {
         throw new Exception("検索条件を入力してください");
     }
