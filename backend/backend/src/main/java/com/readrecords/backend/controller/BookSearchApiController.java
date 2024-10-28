@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.Calendar;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.ExampleMatcher.NullHandler;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -36,9 +37,12 @@ public class BookSearchApiController {
   BookRecordsService bookRecordsService;
 
   @GetMapping
-  public String showSearchWindow(@RequestParam String title, @RequestParam String author, @RequestParam String publisherName,@RequestParam String isbn, Model model) throws Exception{
-    SearchBooksResponseDto response = bookSearchApiClient.getBookSearch(title, author, publisherName,isbn);
+  public String showSearchWindow(@RequestParam String title, @RequestParam String author, @RequestParam String publisherName, @RequestParam String isbn,
+  @RequestParam(value = "page", defaultValue = "1") Integer page, Model model) throws Exception{
+    SearchBooksResponseDto response = bookSearchApiClient.getBookSearch(title, author, publisherName, isbn, page);
     model.addAttribute("response", response);
+    model.addAttribute("currentPage", response.getPage());
+    model.addAttribute("totalPages", response.getPageCount());
     return "searchResults";
 }
 
