@@ -1,4 +1,8 @@
 /* styles.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   font-family: Arial, sans-serif;
   background-color: #f0f0f0;
@@ -136,8 +140,6 @@ table.book-list tbody tr:hover {
 }
 
 
-
-
 /* ラジオボタンのスタイル */
 .radio-group {
   display: flex;
@@ -174,4 +176,61 @@ table.book-list tbody tr:hover {
 
 .radio-group input[type="radio"] {
   margin-right: 10px;
+}
+
+/* ポップアップウィンドウの全体背景 */
+.popup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 50;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 薄暗い背景で画面全体を覆う */
+}
+
+/* ポップアップの内容 */
+.popup-content {
+  background-color: #ffffff; /* ポップアップ自体の背景色 */
+  padding: 40px 30px;
+  width: 400px;
+  max-width: 80%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* シャドウを追加 */
+  text-align: center;
+}
+
+/* 閉じるボタン */
+.close {
+  color: #333;
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #f44336; /* 閉じるボタンがホバー時に赤色 */
+  text-decoration: none;
+}
+
+/* OKボタンのスタイル */
+.popup-ok-button {
+  background-color: #2d3436; /* ボタンの背景色 */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  margin-top: 30px;
+}
+
+.popup-ok-button:hover {
+  background-color: #1e2527; /* ホバー時のボタン色 */
 }
