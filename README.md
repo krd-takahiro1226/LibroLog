@@ -12,6 +12,7 @@
   - Apache Maven 3.9.6
 
 # アプリの動かし方
+## React移行前
 - git pull main
 - application.propertiesで、自環境のSQLパスワードに合わせる
 - 必要なDBおよびテーブルの作成を行う
@@ -21,7 +22,20 @@
 - ```localhost:8080/login```に接続する
   - すでにユーザ作成済みの場合は、作成したユーザでログインする
   - 初めて利用する場合はユーザ作成から行う
+## React移行後
+- git pull main
+- application.propertiesで、自環境のSQLパスワードに合わせる
+- 必要なDBおよびテーブルの作成を行う
+  - クエリは、sqlフォルダにある
+- Reading_Records/project-root/backend配下で```mvn clean install```を実行
+- Reading_Records/project-root/frontend配下で```npm install```を実行
+- BackendApplication.java でRunし、バックエンドアプリケーションを起動
+- frontend配下で```npm start```を実行
+- ```localhost:3030/login```に接続する
+  - すでにユーザ作成済みの場合は、作成したユーザでログインする
+  - 初めて利用する場合はユーザ作成から行う
  
 # デモ動画
+## React移行前
 https://github.com/user-attachments/assets/cddb4efd-1875-4a3f-aa36-76c147832b13
 
