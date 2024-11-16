@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+import React, {useEffect } from 'react';
 import axios from 'axios';
 import '../assets/styles/styles.css'; 
 
@@ -21,7 +21,6 @@ const handleSubmit = async (event) => {
     try {
       const response = await axios.post('http://localhost:8080/login', {username, password},
       {withCredentials: true});
-    const loginSuccessful = false; // デモ用、実際にはバックエンドからの応答を確認
     if (response.status === 200) {
       window.location.href = '/menu';
     }
@@ -101,9 +100,7 @@ const closePopup = () => {
                     <span className="close" onClick={closePopup}>&times;</span>
                     <h3>ログインエラー</h3>
                     <p>ユーザー名またはパスワードが違います。</p>
-                    {/* <div className="buttons"> */}
                     <button type="button" className="popup-ok-button" onClick={closePopup}>OK</button>
-                    {/* </div> */}
                 </div>
             </div>
           )

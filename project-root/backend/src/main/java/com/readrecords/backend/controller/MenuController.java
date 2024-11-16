@@ -3,36 +3,32 @@ package com.readrecords.backend.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.readrecords.backend.dto.UserReadRecordsDto;
 import com.readrecords.backend.security.UserLoginDetails;
 import com.readrecords.backend.service.ReadRecordsService;
 
 // 初期メニューから各種機能へ遷移させるためのController
-@Controller
+@RestController
 public class MenuController {
   @Autowired
   ReadRecordsService readRecordsService;
-  @RequestMapping("/showRecords")
-  @GetMapping
-  public String showAUserReadRecords(Model model) {
+  @GetMapping("/showRecords")
+  public List<UserReadRecordsDto> showUserReadRecords(Model model) {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     UserLoginDetails userDetails = (UserLoginDetails) authentication.getPrincipal();
     String userId = userDetails.getUserId();
-    List<UserReadRecordsDto> readRecords = readRecordsService.getReadRecordsByUserId(userId);
-    model.addAttribute("readRecords", readRecords);
-    return "show";
+    return readRecordsService.getReadRecordsByUserId(userId);
   }
 
-  @RequestMapping("/searchBooks")
-  @GetMapping
-  public String showSearchWindow(){
-  return "search";
+  @GetMapping("/searchBooks")
+  public ResponseEntity<String> showSearchWindow(){
+  return ResponseEntity.ok("searchBooks endpoint");
   }
 }
