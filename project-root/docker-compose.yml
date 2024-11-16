@@ -35,9 +35,12 @@ services:
       - "3306:3306"
     networks:
       - app-network
-
-
+    volumes:
+      - db_data:/var/lib/mysql
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  db_data:
