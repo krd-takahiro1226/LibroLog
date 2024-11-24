@@ -12,7 +12,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.readrecords.backend.security.JwtAuthorizationFilter;
 import com.readrecords.backend.service.UserLoginDetailsService;
 
 @Configuration
@@ -28,11 +33,14 @@ public class SecurityConfig {
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
       .csrf(AbstractHttpConfigurer::disable)
-      .cors(withDefaults -> {} )
+      .cors(cors -> cors.configurationSource(corsConfigurationSource()))
       .authorizeHttpRequests(authorize -> authorize
         .requestMatchers("/login", "/userRegistration").permitAll()
         .anyRequest().authenticated()
       )
+      // .addFilterBefore(new JwtAuthorizationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
+      // UsernamePasswordAuthenticationFilter.class)
+      .addFilterBefore(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
       .sessionManagement(session -> session
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
       )
@@ -42,8 +50,7 @@ public class SecurityConfig {
         .invalidateHttpSession(true) // セッションの無効化
         .deleteCookies("JSESSIONID") // クッキーの削除
       )
-      .authenticationProvider(authenticationProvider())
-      .httpBasic(withDefaults -> {}); // 必要に応じて削除可能
+      .authenticationProvider(authenticationProvider());
 
     return http.build();
   }
@@ -70,4 +77,17 @@ public class SecurityConfig {
   public UserDetailsService userDetailsService() {
     return userLoginDetailsService;
   }
+
+@Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration configuration = new CorsConfiguration();
+    configuration.addAllowedOrigin("http://localhost:3000"); // ReactアプリのURL
+    configuration.addAllowedMethod("*"); // 全てのHTTPメソッドを許可
+    configuration.addAllowedHeader("*"); // 全てのヘッダーを許可
+    configuration.setAllowCredentials(true); // 認証情報を含むリクエストを許可
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/**", configuration);
+    return source;
+}
+
 }
