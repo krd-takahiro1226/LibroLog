@@ -1,5 +1,7 @@
 package com.readrecords.backend.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.readrecords.backend.entity.UserLogin;
+import com.readrecords.backend.security.JwtUtils;
 
 @RestController
 public class UserLoginController {
@@ -20,20 +23,27 @@ public class UserLoginController {
   @Autowired
   private AuthenticationManager authenticationManager;
 
-  @PostMapping("/login")
-  public ResponseEntity<String> authenticateUser(@RequestBody UserLogin userlogin) {
-    try {
-      Authentication authentication = authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(userlogin.getUsername(), userlogin.getPassword())
-      );
+  @Autowired
+  private JwtUtils jwtUtils;
 
-      SecurityContextHolder.getContext().setAuthentication(authentication);
+    @PostMapping("/login")
+    public ResponseEntity<?> authenticateUser(@RequestBody UserLogin userLogin) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(userLogin.getUsername(), userLogin.getPassword())
+            );
 
-      // 認証成功のレスポンスを返却
-      return ResponseEntity.ok("Authentication successful");
-    } catch (AuthenticationException e) {
-      // 認証失敗時のエラーレスポンス
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // トークンを生成
+            // String token = jwtUtils.generateToken(userLogin.getUsername());
+            String token = jwtUtils.generateToken(authentication);
+
+            // トークンを返却
+            return ResponseEntity.ok(Map.of("token", token));
+        } catch (AuthenticationException e) {
+            // 認証失敗時のエラーレスポンス
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        }
     }
-  }
 }
