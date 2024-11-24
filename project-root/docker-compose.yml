@@ -26,6 +26,7 @@ services:
       - REACT_APP_BACKEND_URL=http://backend:8080
 
   db:
+    build: ./mysql-config
     image: mysql:8.0
     container_name: mysql
     environment:
@@ -37,6 +38,7 @@ services:
       - app-network
     volumes:
       - db_data:/var/lib/mysql
+      # - ./mysql-config/custom.cnf:/etc/mysql/conf.d/custom.cnf
 
 networks:
   app-network:
