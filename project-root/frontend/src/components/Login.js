@@ -12,27 +12,49 @@ function Login() {
   useEffect(() => {
     const errorParam = new URLSearchParams(window.location.search).get("error");
     if (errorParam) {
-        setShowPopup(true);
+      setShowPopup(true);
     }
   }, []);
 
-const handleSubmit = async (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    try {
-      const response = await axios.post('http://localhost:8080/login', {username, password},
-      {withCredentials: true});
-    if (response.status === 200) {
-      window.location.href = '/menu';
-    }
-  }
-    catch(error){
-      setShowPopup(true);
-    }
-};
 
-const closePopup = () => {
+    try {
+      // サーバーへログインリクエスト
+      const response = await axios.post(
+        "http://localhost:8080/login",
+        { username, password },
+        { withCredentials: true } // 必要に応じてクッキーを有効化
+      );
+
+      console.log("サーバーレスポンス:", response.data);
+
+      // トークンがレスポンスに含まれているか確認
+      if (response.data?.token) {
+        // ローカルストレージにトークンを保存
+        localStorage.setItem("token", response.data.token);
+
+        // メインページにリダイレクト
+        window.location.href = "/menu";
+      } else {
+        // トークンがない場合はエラーを表示
+        setShowPopup(true);
+      }
+    } catch (error) {
+      console.error("ログインエラー:", error.response || error);
+
+      // 401エラーなど特定のステータスコードをチェック
+      if (error.response?.status === 401) {
+        setShowPopup(true);
+      } else {
+        alert("サーバーエラーが発生しました。後ほどお試しください。");
+      }
+    }
+  };
+
+  const closePopup = () => {
     setShowPopup(false);
-};
+  };
 
   return (
     <div className="h-screen w-screen flex items-center justify-center bg-[#f4f1ee]">
@@ -93,22 +115,35 @@ const closePopup = () => {
             </button>
           </form>
 
-        {/* ポップアップエラー表示 */}
+          {/* ポップアップエラー表示 */}
           {showPopup && (
             <div className="popup" onClick={closePopup}>
-                <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-                    <span className="close" onClick={closePopup}>&times;</span>
-                    <h3>ログインエラー</h3>
-                    <p>ユーザー名またはパスワードが違います。</p>
-                    <button type="button" className="popup-ok-button" onClick={closePopup}>OK</button>
-                </div>
+              <div
+                className="popup-content"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <span className="close" onClick={closePopup}>
+                  &times;
+                </span>
+                <h3>ログインエラー</h3>
+                <p>ユーザー名またはパスワードが違います。</p>
+                <button
+                  type="button"
+                  className="popup-ok-button"
+                  onClick={closePopup}
+                >
+                  OK
+                </button>
+              </div>
             </div>
-          )
-        }
+          )}
 
           <p className="mt-6 text-center text-sm text-[#505e61] font-noto-sans">
             アカウントをお持ちでない方は
-            <a href="/userRegistration" className="text-[#2d3436] hover:underline">
+            <a
+              href="/userRegistration"
+              className="text-[#2d3436] hover:underline"
+            >
               新規登録
             </a>
           </p>
