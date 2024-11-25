@@ -100,11 +100,25 @@ function ShowRecords() {
                     />
                   </td>
                   <td className="border p-3">{book.isbn}</td>
-                  <td className="border p-3">{book.title}</td>
+                  <td className="border p-3">{book.book_name}</td>
                   <td className="border p-3">{book.author}</td>
-                  <td className="border p-3">{book.startDate}</td>
-                  <td className="border p-3">{book.endDate || "-"}</td>
-                  <td className="border p-3">{book.priority}</td>
+                  <td className="border p-3">{book.start_date}</td>
+                  <td className="border p-3">{book.end_date}</td>
+                  {/* <td className="border p-3">{book.priority}</td> */}
+                  <td className="border p-3">
+                    {(() => {
+                      switch (book.priority) {
+                        case 1:
+                          return "すぐ読みたい本";
+                        case 2:
+                          return "今後読みたい本";
+                        case 3:
+                          return "読んだことのある本";
+                        default:
+                          return "未分類";
+                      }
+                    })()}
+                  </td>
                 </tr>
               ))
             ) : (
