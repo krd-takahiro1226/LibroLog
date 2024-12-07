@@ -4,6 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -18,22 +19,10 @@ import io.jsonwebtoken.security.Keys;
 public class JwtUtils {
 
   private static final long EXPIRATION_TIME = 15 * 60 * 1000; // 15分
+  @Value("${key.security}")
   private static final String SECRET_KEY = "your-very-long-and-secure-random-key-here-your-very-long-and-secure-random-key-here-64-bytes-long";
 
   private static Key getSigningKey() {
-      // // String secret = System.getenv("JWT_SECRET_KEY"); // 環境変数から取得
-      // // if (secret == null || secret.isEmpty()) {
-      // //     throw new IllegalStateException("JWT_SECRET_KEY is not configured");
-      // // }
-      // String secret = "secretKey";
-      // String base64Key = Base64.getEncoder().encodeToString(secret.getBytes());
-
-      // byte[] keyBytes = Base64.getDecoder().decode(base64Key); // Base64でデコード
-      // return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS512.getJcaName()); // Keyオブジェクトを作成
-
-      // byte[] keyBytes = Keys.secretKeyFor(SignatureAlgorithm.HS512).getEncoded(); // 安全なキーを生成
-      // return new SecretKeySpec(keyBytes, SignatureAlgorithm.HS512.getJcaName());
-
       byte[] keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
       return Keys.hmacShaKeyFor(keyBytes);
   }
