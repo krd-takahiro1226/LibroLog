@@ -16,11 +16,33 @@
 - application.propertiesで、自環境のSQLパスワードに合わせる
 - 必要なDBおよびテーブルの作成を行う
   - クエリは、sqlフォルダにある
-- Reading_Records/backend/backend配下で```mvn clean install```を実行
+- Reading_Records/backend/backend/配下で```mvn clean install```を実行
 - BackendApplication.java でRunし、アプリケーションを起動する
 - ```localhost:8080/login```に接続する
   - すでにユーザ作成済みの場合は、作成したユーザでログインする
   - 初めて利用する場合はユーザ作成から行う
+
+# Docker移行後のアプリの動かし方
+- LibroLog/project-root/配下で、```docker-compose up --build```を実行
+- コンテナイメージのビルドおよびコンテナの作成が行われ、作成されたコンテナが起動するのを確認する
+  - ```docker ps```またはGUIで確認
+  - コンテナは、project-root-backend、mysql、project-root-frontend の3つ作成される
+- フロントは3000番ポートで立ち上がるので、ブラウザにて⁠```localhost:3000/login```に接続する
+
+# フロントエンドのみ簡易的に動かす方法
+- LibroLog/project-root/frontend/配下で、```npm start .```を実行
+- ブラウザが立ち上がるので、⁠```localhost:3000/login```に接続する
+
+# mysqlコンテナの入り方
+- MySQLコンテナの名前を確認する
+  - ```docker ps```
+  - CONTAINER ID ,  IMAGE , … が表形式で出てくるので、NAMESを確認する
+- ```docker exec -it mysql-container mysql -u root -p```コマンドを実行し、mysqlコンテナに入る
+  - ```mysql-container```: MySQLコンテナの名前に置き換える
+  - ```-u root```: root ユーザーで接続
+  - ```-p```: パスワードの入力が求められる
+- パスワードを聞かれるので、rootユーザーのパスワードを入力
+- 必要なクエリを実行（```SHOW DATABASES;``` など）
  
 # デモ動画
 https://github.com/user-attachments/assets/cddb4efd-1875-4a3f-aa36-76c147832b13
