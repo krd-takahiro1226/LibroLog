@@ -37,8 +37,8 @@
 - MySQLコンテナの名前を確認する
   - ```docker ps```
   - CONTAINER ID ,  IMAGE , … が表形式で出てくるので、NAMESを確認する
-- ```docker exec -it mysql-container mysql -u root -p```コマンドを実行し、mysqlコンテナに入る
-  - ```mysql-container```: MySQLコンテナの名前に置き換える
+- ```docker exec -it <container-name> mysql -u root -p```コマンドを実行し、mysqlコンテナに入る
+  - ```<container-name>```: MySQLコンテナの名前に置き換える
   - ```-u root```: root ユーザーで接続
   - ```-p```: パスワードの入力が求められる
 - パスワードを聞かれるので、rootユーザーのパスワードを入力
