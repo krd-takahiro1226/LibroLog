@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.readrecords.backend.dto.SearchBooksResponseDto;
@@ -27,11 +28,13 @@ public class BookSearchApiClientImpl implements BookSearchApiClient {
   private static final String ISBNHEADER = "&isbn=";
 
   private static final String PAGEHEADER = "&page=";
+
+  @Value("${key.api}")
+  private String applicationId;
   @Override
   public SearchBooksResponseDto getBookSearch(String title, String author, String publisherName, String isbn, Integer page) throws Exception {
     // ベースとなるリクエストURLの作成
     String requestPath = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?";
-    String applicationId = "1002321977022357484";
     String format = "xml";
     requestPath += "applicationId=" + applicationId;
     requestPath += "&format=" + format;
