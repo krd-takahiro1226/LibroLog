@@ -1,0 +1,45 @@
+name: Static Analysis for Java, JavaScript, and CSS
+
+on:
+  push:
+    branches:
+      - main
+      - transferToReact
+  pull_request:
+    branches:
+      - main
+      - transferToReact
+
+jobs:
+  static-analysis:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+
+      - name: Install dependencies
+        run: |
+          ./mvnw install -DskipTests
+          npm install
+
+      - name: Run Checkstyle (Java)
+        run: |
+          ./mvnw checkstyle:check
+
+      - name: Run SpotBugs (Java)
+        run: |
+          ./mvnw spotbugs:check
+
+      - name: Run ESLint (JavaScript)
+        run: |
+          npx eslint . --ext .js,.jsx
+
+      - name: Run Stylelint (CSS)
+        run: |
+          npx stylelint '**/*.css'
