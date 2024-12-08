@@ -42,10 +42,11 @@ public class BookSearchApiClientImpl implements BookSearchApiClient {
     // リクエストパラメータを追加したURLの作成
     try {
     // UTF-8エンコード処理
-    String titleEncoding = URLEncoder.encode(title, "UTF-8");
-    String authorEncoding = URLEncoder.encode(author, "UTF-8");
-    String publisherNameEncoding = URLEncoder.encode(publisherName, "UTF-8");
-    String isbnEncoding = URLEncoder.encode(isbn, "UTF-8");
+    String titleEncoding = URLEncoder.encode(title != null ? title : "", "UTF-8");
+    String authorEncoding = URLEncoder.encode(author != null ? author : "", "UTF-8");
+    String publisherNameEncoding = URLEncoder.encode(publisherName != null ? publisherName : "", "UTF-8");
+    String isbnEncoding = URLEncoder.encode(isbn != null ? isbn : "", "UTF-8");
+
     String titlequery = TITLEHEADER + titleEncoding;
     String authorquery = AUTHORHEADER + authorEncoding;
     String publisherquery = PUBLISHERNAMEHEADER + publisherNameEncoding;
