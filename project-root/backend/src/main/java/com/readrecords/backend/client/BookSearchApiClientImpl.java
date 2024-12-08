@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.readrecords.backend.dto.SearchBooksResponseDto;
@@ -27,11 +28,13 @@ public class BookSearchApiClientImpl implements BookSearchApiClient {
   private static final String ISBNHEADER = "&isbn=";
 
   private static final String PAGEHEADER = "&page=";
+
+  @Value("${key.api}")
+  private String applicationId;
   @Override
   public SearchBooksResponseDto getBookSearch(String title, String author, String publisherName, String isbn, Integer page) throws Exception {
     // ベースとなるリクエストURLの作成
     String requestPath = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?";
-    String applicationId = "1002321977022357484";
     String format = "xml";
     requestPath += "applicationId=" + applicationId;
     requestPath += "&format=" + format;
@@ -39,10 +42,11 @@ public class BookSearchApiClientImpl implements BookSearchApiClient {
     // リクエストパラメータを追加したURLの作成
     try {
     // UTF-8エンコード処理
-    String titleEncoding = URLEncoder.encode(title, "UTF-8");
-    String authorEncoding = URLEncoder.encode(author, "UTF-8");
-    String publisherNameEncoding = URLEncoder.encode(publisherName, "UTF-8");
-    String isbnEncoding = URLEncoder.encode(isbn, "UTF-8");
+    String titleEncoding = URLEncoder.encode(title != null ? title : "", "UTF-8");
+    String authorEncoding = URLEncoder.encode(author != null ? author : "", "UTF-8");
+    String publisherNameEncoding = URLEncoder.encode(publisherName != null ? publisherName : "", "UTF-8");
+    String isbnEncoding = URLEncoder.encode(isbn != null ? isbn : "", "UTF-8");
+
     String titlequery = TITLEHEADER + titleEncoding;
     String authorquery = AUTHORHEADER + authorEncoding;
     String publisherquery = PUBLISHERNAMEHEADER + publisherNameEncoding;

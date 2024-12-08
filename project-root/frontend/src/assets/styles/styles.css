@@ -9,7 +9,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  /* height: 100vh; */
+  height: 100%;
+  overflow: auto;
   margin: 0;
 }
 
@@ -233,4 +235,9 @@ table.book-list tbody tr:hover {
 
 .popup-ok-button:hover {
   background-color: #1e2527; /* ホバー時のボタン色 */
+
+  .container {
+    max-height: 100vh; /* 画面の高さに収める */
+    overflow-y: auto; /* 縦方向のスクロールを有効化 */
+  }
 }
