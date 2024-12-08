@@ -5,6 +5,7 @@ import Login from './components/Login';
 import Menu from './components/Menu';
 import Search from './components/Search';
 import ShowRecords from './components/ShowRecords';
+import NewUserRegister from './components/NewUserRegister';
 import './assets/styles/styles.css';
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
                 <Route path="/menu" element={<Menu />} />
                 <Route path="/searchBooks" element={<Search />} />
                 <Route path="/showRecords" element={<ShowRecords />} />
+                <Route path="/userRegistration" element={<NewUserRegister />} />
             </Routes>
         </Router>
     );
