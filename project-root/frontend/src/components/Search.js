@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
 import '../assets/styles/styles.css'; 
 
 function Search() {
@@ -10,6 +11,7 @@ function Search() {
     publisher: "",
     isbn: "",
   });
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -21,6 +23,7 @@ function Search() {
 
   const handleSearch = (e) => {
     e.preventDefault();
+    navigate("/searchBooksResult", { state: searchForm }); 
   };
 
   const handleClear = () => {
@@ -80,8 +83,8 @@ function Search() {
               </label>
               <input
                 type="text"
-                name="publisher"
-                value={searchForm.publisher}
+                name="publisherName"
+                value={searchForm.publisherName}
                 onChange={handleChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 shadow-sm p-2 focus:ring-2 focus:ring-blue-500"
               />
