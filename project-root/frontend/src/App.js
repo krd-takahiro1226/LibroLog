@@ -7,6 +7,7 @@ import Search from './components/Search';
 import ShowRecords from './components/ShowRecords';
 import NewUserRegister from './components/NewUserRegister';
 import './assets/styles/styles.css';
+import SearchResult from './components/SearchResult';
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/menu" element={<Menu />} />
                 <Route path="/searchBooks" element={<Search />} />
+                <Route path = "/searchBooksResult" element={<SearchResult/>}></Route>
                 <Route path="/showRecords" element={<ShowRecords />} />
                 <Route path="/userRegistration" element={<NewUserRegister />} />
             </Routes>
