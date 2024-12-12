@@ -31,7 +31,7 @@ jobs:
           cd project-root/backend
           ./mvnw install -DskipTests
           cd project-root/frontend
-          ./npm install
+          npm install
 
       - name: Run Checkstyle (Java)
         run: |
