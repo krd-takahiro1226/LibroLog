@@ -28,6 +28,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          cd project-root/backend
           ./mvnw install -DskipTests
           npm install
 
