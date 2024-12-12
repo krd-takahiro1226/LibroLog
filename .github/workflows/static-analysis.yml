@@ -33,10 +33,10 @@ jobs:
           cd ../../project-root/frontend
           npm install
 
-      #- name: Run Checkstyle (Java)
-      #  run: |
-      #    cd project-root/backend
-      #    ./mvnw checkstyle:check
+      - name: Run Checkstyle (Java)
+        run: |
+          cd project-root/backend
+          ./mvnw checkstyle:check
 
       - name: Run SpotBugs (Java)
         run: |
