@@ -28,8 +28,10 @@ jobs:
 
       - name: Install dependencies
         run: |
-          project-root/backend/mvnw install -DskipTests
-          project-root/frontend/npm install
+          cd project-root/backend
+          ./mvnw install -DskipTests
+          cd ../../project-root/frontend
+          npm install
 
       - name: Run Checkstyle (Java)
         run: |
