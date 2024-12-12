@@ -5,12 +5,12 @@ on:
     branches:
       # - main
       # - transferToReact
-      - issues/#175-add-workflow
+      - issues/#175-add-workflow-test
   pull_request:
     branches:
       # - main
       # - transferToReact
-      - issues/#175-add-workflow
+      - issues/#175-add-workflow-test
 
 jobs:
   static-analysis:
