@@ -35,7 +35,7 @@ jobs:
 
       - name: Run Checkstyle (Java)
         run: |
-          cd ../backend
+          cd ../../backend
           ./mvnw checkstyle:check
 
       - name: Run SpotBugs (Java)
