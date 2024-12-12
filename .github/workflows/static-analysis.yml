@@ -35,12 +35,12 @@ jobs:
 
       - name: Run Checkstyle (Java)
         run: |
-          cd .project-root/backend
+          cd project-root/backend
           ./mvnw checkstyle:check
 
       - name: Run SpotBugs (Java)
         run: |
-          cd .project-root/backend
+          cd project-root/backend
           ./mvnw spotbugs:check
 
       - name: Run ESLint (JavaScript)
