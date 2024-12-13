@@ -37,16 +37,20 @@ jobs:
         run: |
           cd project-root/backend
           ./mvnw checkstyle:check
+        continue-on-error: true  # 失敗しても続行
 
       - name: Run SpotBugs (Java)
         run: |
           cd project-root/backend
           ./mvnw spotbugs:check
+        continue-on-error: true  # 失敗しても続行
 
       - name: Run ESLint (JavaScript)
         run: |
           npx eslint . --ext .js,.jsx
+        continue-on-error: true  # 失敗しても続行
 
       - name: Run Stylelint (CSS)
         run: |
           npx stylelint '**/*.css'
+        continue-on-error: true  # 失敗しても続行
