@@ -3,14 +3,12 @@ name: Static Analysis for Java, JavaScript, and CSS
 on:
   push:
     branches:
-      # - main
-      # - transferToReact
-      - issues/#175-add-workflow-test
+      - main
+      - transferToReact
   pull_request:
     branches:
-      # - main
-      # - transferToReact
-      - issues/#175-add-workflow-test
+      - main
+      - transferToReact
 
 jobs:
   static-analysis:
