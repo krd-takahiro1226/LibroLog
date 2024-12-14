@@ -12,12 +12,12 @@ import com.readrecords.backend.security.UserLoginDetails;
 @Controller
 @RequestMapping("/menu")
 public class ShowMenuController {
-  @GetMapping
-  public String showMenu(Model model) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserLoginDetails userDetails = (UserLoginDetails) authentication.getPrincipal();
-    String userId = userDetails.getUserId();
-    model.addAttribute("userId", userId);
-    return "menu";
-  }
+    @GetMapping
+    public String showMenu(Model model) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserLoginDetails userDetails = (UserLoginDetails) authentication.getPrincipal();
+        String userId = userDetails.getUserId();
+        model.addAttribute("userId", userId);
+        return "menu";
+    }
 }

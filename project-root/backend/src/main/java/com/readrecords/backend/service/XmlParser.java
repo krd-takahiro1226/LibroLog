@@ -12,10 +12,10 @@ import com.readrecords.backend.dto.SearchBooksResponseDto;
 
 @Service
 public class XmlParser {
-  public SearchBooksResponseDto parse(String xml) throws JAXBException{
-    JAXBContext jaxbContext = JAXBContext.newInstance(SearchBooksResponseDto.class);
-    Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-    StringReader reader = new StringReader(xml);
-    return (SearchBooksResponseDto) unmarshaller.unmarshal(reader);
-  }
+    public SearchBooksResponseDto parse(String xml) throws JAXBException {
+        JAXBContext jaxbContext = JAXBContext.newInstance(SearchBooksResponseDto.class);
+        Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+        StringReader reader = new StringReader(xml);
+        return (SearchBooksResponseDto) unmarshaller.unmarshal(reader);
+    }
 }

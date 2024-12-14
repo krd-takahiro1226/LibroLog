@@ -17,10 +17,11 @@ import com.readrecords.backend.service.ReadRecordsService;
 // 初期メニューから各種機能へ遷移させるためのController
 @RestController
 public class MenuController {
-  private static final Logger logger = LoggerFactory.getLogger(MenuController.class);
-  @Autowired
-  ReadRecordsService readRecordsService;
-  @GetMapping("/showRecords")
+    private static final Logger logger = LoggerFactory.getLogger(MenuController.class);
+    @Autowired
+    ReadRecordsService readRecordsService;
+
+    @GetMapping("/showRecords")
     public ResponseEntity<?> showUserReadRecords(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
             logger.warn("Unauthorized access attempt");
@@ -42,8 +43,8 @@ public class MenuController {
         }
     }
 
-  @GetMapping("/searchBooks")
-  public ResponseEntity<String> showSearchWindow(){
-  return ResponseEntity.ok("searchBooks endpoint");
-  }
+    @GetMapping("/searchBooks")
+    public ResponseEntity<String> showSearchWindow() {
+        return ResponseEntity.ok("searchBooks endpoint");
+    }
 }

@@ -11,9 +11,9 @@ import com.readrecords.backend.entity.UserLogin;
 
 @Repository
 public interface UserLoginRepostoty extends JpaRepository<UserLogin, String> {
-  @Query(value = "select * from users " + "where username = :username", nativeQuery = true)
-  Optional<UserLogin> findByUsername(@Param("username") String username);
+    @Query(value = "select * from users " + "where username = :username", nativeQuery = true)
+    Optional<UserLogin> findByUsername(@Param("username") String username);
 
-  @Query(value = "select username, password, role from users " + "where username = :username", nativeQuery = true)
-  String findPasswordByUsername(@Param("username") String username);
+    @Query(value = "select username, password, role from users " + "where username = :username", nativeQuery = true)
+    String findPasswordByUsername(@Param("username") String username);
 }
