@@ -8,14 +8,14 @@ import lombok.Data;
 
 @Data
 public class BookRecordsForm {
-  @NotNull
-  @Size(max = 13)
-  private String ISBN;
-  @NotNull
-  private String book_name;
-  @NotNull
-  private String author;
-  private String genre;
-  private Date publication_year;
-  private String publisher;
+    @NotNull
+    @Size(max = 13)
+    private String ISBN;
+    @NotNull
+    private String book_name;
+    @NotNull
+    private String author;
+    private String genre;
+    private Date publication_year;
+    private String publisher;
 }

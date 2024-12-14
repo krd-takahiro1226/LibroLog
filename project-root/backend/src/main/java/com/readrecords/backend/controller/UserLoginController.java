@@ -20,18 +20,17 @@ import com.readrecords.backend.security.JwtUtils;
 @RestController
 public class UserLoginController {
 
-  @Autowired
-  private AuthenticationManager authenticationManager;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
-  @Autowired
-  private JwtUtils jwtUtils;
+    @Autowired
+    private JwtUtils jwtUtils;
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody UserLogin userLogin) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(userLogin.getUsername(), userLogin.getPassword())
-            );
+                    new UsernamePasswordAuthenticationToken(userLogin.getUsername(), userLogin.getPassword()));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
