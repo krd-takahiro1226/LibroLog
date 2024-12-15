@@ -14,21 +14,21 @@ import lombok.Data;
 @XmlAccessorType(XmlAccessType.FIELD)
 @Data
 public class SearchBooksResponseDto {
-  @XmlElementWrapper(name = "Items")
-  @XmlElement(name = "Item")
-  private List<SearchBooksItemDto> items;
-  @XmlElement(name = "carrier")
-  private int carrier;
-  @XmlElement(name = "count")
-  private int count;
-  @XmlElement(name = "first")
-  private int first;
-  @XmlElement(name = "hits")
-  private int hits;
-  @XmlElement(name = "last")
-  private int last;
-  @XmlElement(name = "page")
-  private int page;
-  @XmlElement(name = "pageCount")
-  private int pageCount;
+    @XmlElementWrapper(name = "Items")
+    @XmlElement(name = "Item")
+    private List<SearchBooksItemDto> items;
+    @XmlElement(name = "carrier")
+    private int carrier;
+    @XmlElement(name = "count")
+    private int count;
+    @XmlElement(name = "first")
+    private int first;
+    @XmlElement(name = "hits")
+    private int hits;
+    @XmlElement(name = "last")
+    private int last;
+    @XmlElement(name = "page")
+    private int page;
+    @XmlElement(name = "pageCount")
+    private int pageCount;
 }

@@ -13,22 +13,25 @@ import jakarta.transaction.Transactional;
 @Service
 @Transactional
 public class UserRegistrationServiceImpl implements UserRegistrationService {
-  @Autowired
-  PasswordEncoder passwordEncoder;
-  @Autowired UserRegistrationRepository userRegistrationRepository;
-  @Override
-  public void userRegistration(String username, String email, String password, String confirmPassword) {
-    String hashPassword = passwordEncoder.encode(password);
-    String userId = UUID.randomUUID().toString();
-    userRegistrationRepository.insertUserRecords(userId, username, email, hashPassword);
-  }
-  @Override
-  public boolean checkPassword(String password, String confirmPassword) {
-    if (!password.equals(confirmPassword)) {
-      // エラーハンドリングしたいが追いついていない
-      // throw new IllegalArgumentException("パスワードが一致しません。");
-      return false;
+    @Autowired
+    PasswordEncoder passwordEncoder;
+    @Autowired
+    UserRegistrationRepository userRegistrationRepository;
+
+    @Override
+    public void userRegistration(String username, String email, String password, String confirmPassword) {
+        String hashPassword = passwordEncoder.encode(password);
+        String userId = UUID.randomUUID().toString();
+        userRegistrationRepository.insertUserRecords(userId, username, email, hashPassword);
     }
-    return true;
-  }
+
+    @Override
+    public boolean checkPassword(String password, String confirmPassword) {
+        if (!password.equals(confirmPassword)) {
+            // エラーハンドリングしたいが追いついていない
+            // throw new IllegalArgumentException("パスワードが一致しません。");
+            return false;
+        }
+        return true;
+    }
 }
