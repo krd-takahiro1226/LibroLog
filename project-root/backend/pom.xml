@@ -108,11 +108,6 @@
         <artifactId>jjwt-jackson</artifactId>
         <version>0.11.5</version>
     </dependency>
-		<dependency>
-				<groupId>net.revelc.code.formatter</groupId>
-				<artifactId>formatter-maven-plugin</artifactId>
-				<version>2.24.1</version>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -140,17 +135,24 @@
 				<version>4.7.3.0</version>
 			</plugin> 
 			<plugin>
-        <groupId>net.revelc.code.formatter</groupId>
-        <artifactId>formatter-maven-plugin</artifactId>
-        <version>2.24.1</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>format</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+            <groupId>com.diffplug.spotless</groupId>
+            <artifactId>spotless-maven-plugin</artifactId>
+            <version>2.37.0</version>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>apply</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <java>
+                    <googleJavaFormat>
+                        <version>1.17.0</version> <!-- 最新バージョンを指定 -->
+                    </googleJavaFormat>
+                </java>
+            </configuration>
+        </plugin>
 		</plugins>
 	</build>
 </project>
