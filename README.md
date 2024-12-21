@@ -24,6 +24,12 @@
   - 初めて利用する場合はユーザ作成から行う
 
 # Docker移行後のアプリの動かし方
+- git cloneした後に以下の作業をする必要がある
+  - backend配下で以下のコマンドを実行
+    - ```mvn -N io.takari:maven:wrapper```
+  - application.yamlでAPI Keyの定義
+  - wait-for-mysql.sh
+    - VS Codeで「CRLF」→「LF」にする
 - LibroLog/project-root/配下で、```docker-compose up --build```を実行
 - コンテナイメージのビルドおよびコンテナの作成が行われ、作成されたコンテナが起動するのを確認する
   - ```docker ps```またはGUIで確認
