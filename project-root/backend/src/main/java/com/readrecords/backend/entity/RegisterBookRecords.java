@@ -13,7 +13,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "read_records")
+@Table(name = "register_book_records")
 @SqlResultSetMapping(
     name = "UserReadRecordsDtoMapping",
     classes =
@@ -34,10 +34,10 @@ import lombok.Data;
     query =
         "select br.ISBN, br.book_name, br.author, rr.start_date, rr.end_date, rr.read_count, rr.priority, rr.memo "
             + "from book_records br "
-            + "inner join read_records rr on br.ISBN = rr.ISBN "
+            + "inner join register_book_records rr on br.ISBN = rr.ISBN "
             + "where rr.user_id = :user_id",
     resultSetMapping = "UserReadRecordsDtoMapping")
-public class ReadRecords {
+public class RegisterBookRecords {
   @Id private Integer record_id;
   private String ISBN;
   private String user_id;

@@ -3,7 +3,7 @@ package com.readrecords.backend.controller;
 import com.readrecords.backend.client.BookSearchApiClient;
 import com.readrecords.backend.dto.SearchBooksResponseDto;
 import com.readrecords.backend.entity.BookRecords;
-import com.readrecords.backend.entity.ReadRecords;
+import com.readrecords.backend.entity.RegisterBookRecords;
 import com.readrecords.backend.service.BookRecordsService;
 import com.readrecords.backend.service.RegisterBookRecordsService;
 import java.sql.Date;
@@ -122,7 +122,7 @@ public class BookSearchApiController {
       int read_count,
       int priority,
       String memo) {
-    ReadRecords readRecords = new ReadRecords();
+    RegisterBookRecords readRecords = new RegisterBookRecords();
     readRecords.setISBN(ISBN);
     readRecords.setUser_id(userId);
     readRecords.setStart_date(start_date);
