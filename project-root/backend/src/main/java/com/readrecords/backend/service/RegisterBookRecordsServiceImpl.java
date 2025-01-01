@@ -1,7 +1,7 @@
 package com.readrecords.backend.service;
 
 import com.readrecords.backend.dto.UserReadRecordsDto;
-import com.readrecords.backend.entity.ReadRecords;
+import com.readrecords.backend.entity.RegisterBookRecords;
 import com.readrecords.backend.repository.RegisterBookRecordsRepository;
 import jakarta.transaction.Transactional;
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class RegisterBookRecordsServiceImpl implements RegisterBookRecordsServic
       int priority,
       String memo) {
     String message;
-    List<ReadRecords> readRecords =
+    List<RegisterBookRecords> readRecords =
         registerBookRecordsRepository.getReadRecordsByISBNandUserId(ISBN, user_id);
     if (readRecords.isEmpty()) {
       // 読書情報を登録
