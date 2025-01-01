@@ -3,7 +3,7 @@ package com.readrecords.backend.service;
 import com.readrecords.backend.dto.UserReadRecordsDto;
 import java.util.List;
 
-public interface ReadRecordsService {
+public interface RegisterBookRecordsService {
   public List<UserReadRecordsDto> getReadRecordsByUserId(String user_id);
 
   public String registerReadRecords(

@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS read_records (
+CREATE TABLE IF NOT EXISTS register_book_records (
     record_id INT AUTO_INCREMENT PRIMARY KEY,
     ISBN VARCHAR(13),
     user_id VARCHAR(36),

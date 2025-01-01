@@ -1,5 +1,5 @@
 # DB設計
-## 読書管理テーブル(read_records)
+## 読書管理テーブル(register_book_records)
 - record_id
   - Int
   - Not Null
