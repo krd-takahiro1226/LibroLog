@@ -1,7 +1,7 @@
 package com.readrecords.backend.controller;
 
 import com.readrecords.backend.dto.UserReadRecordsDto;
-import com.readrecords.backend.service.ReadRecordsService;
+import com.readrecords.backend.service.RegisterBookRecordsService;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class MenuController {
   private static final Logger logger = LoggerFactory.getLogger(MenuController.class);
-  @Autowired ReadRecordsService readRecordsService;
+  @Autowired RegisterBookRecordsService readRecordsService;
 
   @GetMapping("/showRecords")
   public ResponseEntity<?> showUserReadRecords(Authentication authentication) {

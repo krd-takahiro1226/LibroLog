@@ -11,12 +11,12 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ReadRecordsRepository extends CrudRepository<ReadRecords, Integer> {
+public interface RegisterBookRecordsRepository extends CrudRepository<ReadRecords, Integer> {
   @Query(name = "UserReadRecordsDto.getReadRecordsByUserId", nativeQuery = true)
   List<UserReadRecordsDto> getReadRecordsByUserId(@Param("user_id") String user_id);
 
   @Query(
-      value = "select * from " + "read_records where ISBN = :ISBN" + " and user_id = :user_id",
+      value = "select * from " + "register_book_records where ISBN = :ISBN" + " and user_id = :user_id",
       nativeQuery = true)
   List<ReadRecords> getReadRecordsByISBNandUserId(
       @Param("ISBN") String ISBN, @Param("user_id") String user_id);
@@ -25,7 +25,7 @@ public interface ReadRecordsRepository extends CrudRepository<ReadRecords, Integ
   @Transactional
   @Query(
       value =
-          "insert into read_records "
+          "insert into register_book_records "
               + "(ISBN, user_id, start_date, end_date, read_count, priority, memo) values "
               + "(:ISBN, :user_id, :start_date, :end_date, :read_count, :priority, :memo)",
       nativeQuery = true)

@@ -5,7 +5,7 @@ import com.readrecords.backend.dto.SearchBooksResponseDto;
 import com.readrecords.backend.entity.BookRecords;
 import com.readrecords.backend.entity.ReadRecords;
 import com.readrecords.backend.service.BookRecordsService;
-import com.readrecords.backend.service.ReadRecordsService;
+import com.readrecords.backend.service.RegisterBookRecordsService;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.Map;
@@ -29,7 +29,7 @@ public class BookSearchApiController {
   final String DUPLICATE_RECORD_MESSAGE = "duplicateRecord";
   @Autowired BookSearchApiClient bookSearchApiClient;
 
-  @Autowired ReadRecordsService readRecordsService;
+  @Autowired RegisterBookRecordsService readRecordsService;
 
   @Autowired BookRecordsService bookRecordsService;
 
