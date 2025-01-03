@@ -9,6 +9,8 @@ function ShowRecords() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [selectedBooks, setSelectedBooks] = useState([]);
+  const [showPopup, setShowPopup] = useState(false); // ポップアップ表示状態
+  const [editableBooks, setEditableBooks] = useState([]); // 編集対象の書籍
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -56,6 +58,50 @@ function ShowRecords() {
     );
   };
 
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://localhost:8080/updateRecords",
+        editableBooks,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+     //バックエンドから成功レスポンスが返ってきた場合
+    if (response.status === 200) {
+        const updatedBooks = await axios.get("http://localhost:8080/showRecords", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setBooks(updatedBooks.data); // 最新データをbooksに反映
+      alert("保存しました");
+      setShowPopup(false); // ポップアップを閉じる
+    } 
+    else {
+      throw new Error(`Unexpected response status: ${response.status}`);
+    }
+  }
+   catch (error) {
+    if (error.response) {
+      // サーバーからのエラー (例: 400, 500エラー)
+      alert(
+        `エラーが発生しました: ${error.response.status} - ${error.response.data.message || "詳細は不明です"}`
+      );
+    } else if (error.request) {
+      // リクエストが送信されたがレスポンスが返ってこない
+      alert("サーバーに接続できませんでした。ネットワークを確認してください。");
+    } else {
+      // 予期しないエラー
+      alert(`エラーが発生しました: ${error.message}`);
+    }
+  }
+};
+
   return (
     <div className="min-h-screen w-screen bg-[#f5f5f5] p-8">
       <div className="mx-auto bg-white p-6 rounded-lg shadow-md w-full">
@@ -69,6 +115,13 @@ function ShowRecords() {
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
             disabled={selectedBooks.length === 0}
+            onClick={() => {
+              const selected = books.filter((book) =>
+                selectedBooks.includes(book.isbn)
+              );
+              setEditableBooks(selected);
+              setShowPopup(true);
+            }}
           >
             編集
           </button>
@@ -131,6 +184,96 @@ function ShowRecords() {
           </tbody>
         </table>
       </div>
+      {showPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-4xl">
+            <h2 className="text-xl font-bold mb-4">編集</h2>
+            <table className="w-full border-collapse">
+              <thead>
+                <tr>
+                  <th className="border p-2 text-left">ISBN</th>
+                  <th className="border p-2 text-left">書籍名</th>
+                  <th className="border p-2 text-left">著者</th>
+                  <th className="border p-2 text-left">読み始めた日</th>
+                  <th className="border p-2 text-left">読了日</th>
+                  <th className="border p-2 text-left">優先度</th>
+                </tr>
+              </thead>
+              <tbody>
+                {editableBooks.map((book, index) => (
+                  <tr key={index}>
+                    <td className="border p-2">{book.isbn}</td>
+                    <td className="border p-2">{book.book_name}</td>
+                    <td className="border p-2">{book.author}</td>
+                    <td className="border p-2">
+                      <input
+                        type="date"
+                        value={book.start_date}
+                        onChange={(e) =>
+                          setEditableBooks((prev) =>
+                            prev.map((b, i) =>
+                              i === index ? { ...b, start_date: e.target.value } : b
+                            )
+                          )
+                        }
+                        className="w-full border rounded p-1"
+                      />
+                    </td>
+                    <td className="border p-2">
+                      <input
+                        type="date"
+                        value={book.end_date}
+                        onChange={(e) =>
+                          setEditableBooks((prev) =>
+                            prev.map((b, i) =>
+                              i === index ? { ...b, end_date: e.target.value } : b
+                            )
+                          )
+                        }
+                        className="w-full border rounded p-1"
+                      />
+                    </td>
+                    <td className="border p-2">
+                      <select
+                        value={book.priority}
+                        onChange={(e) =>
+                          setEditableBooks((prev) =>
+                            prev.map((b, i) =>
+                              i === index ? { ...b, priority: parseInt(e.target.value) } : b
+                            )
+                          )
+                        }
+                        className="w-full border rounded p-1"
+                      >
+                        <option value={1}>すぐ読みたい本</option>
+                        <option value={2}>今後読みたい本</option>
+                        <option value={3}>読んだことのある本</option>
+                        <option value={0}>未分類</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="flex justify-end gap-4 mt-4">
+              <button
+                onClick={() => {
+                  setShowPopup(false);
+                }}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                戻る
+              </button>
+              <button
+                onClick={() => handleSave()}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                保存
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
