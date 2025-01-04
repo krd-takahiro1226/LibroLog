@@ -12,7 +12,7 @@ import com.readrecords.backend.entity.ReadRecords;
 import jakarta.transaction.Transactional;
 
 @Repository
-public interface ReadRecordUpdateRepository extends JpaRepository<ReadRecords, Integer> {
+public interface ReadRecordsUpdateRepository extends JpaRepository<ReadRecords, Integer> {
     // record_idを取得するクエリ
     @Query(
         value=
@@ -23,7 +23,7 @@ public interface ReadRecordUpdateRepository extends JpaRepository<ReadRecords, I
 
     @Transactional
     @Modifying
-    @Query("UPDATE ReadRecords SET start_date = :startDate, end_date = :endDate, priority = :priority WHERE record_id = :recordId")
+    @Query("UPDATE read_records SET start_date = :startDate, end_date = :endDate, priority = :priority WHERE record_id = :recordId")
     void updateReadRecord(
         @Param("recordId") Integer recordId,
         @Param("startDate") Date startDate,
