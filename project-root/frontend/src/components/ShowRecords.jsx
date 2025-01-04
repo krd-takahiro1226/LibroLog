@@ -11,6 +11,7 @@ function ShowRecords() {
   const [selectedBooks, setSelectedBooks] = useState([]);
   const [showPopup, setShowPopup] = useState(false); 
   const [editableBooks, setEditableBooks] = useState([]); 
+  const [showDeletePopup, setShowDeletePopup] = useState(false); // 登録解除ポップアップ
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -89,9 +90,38 @@ function ShowRecords() {
   }
    catch (error) {
     if (error.response) {
-      alert(
-        `エラーが発生しました: ${error.response.status} - ${error.response.data.message || "詳細は不明です"}`
-      );
+      alert(`エラーが発生しました: ${error.response.status} - ${error.response.data.message || "詳細は不明です"}`);
+    } else if (error.request) {
+      alert("サーバーに接続できませんでした。ネットワークを確認してください。");
+    } else {
+      alert(`エラーが発生しました: ${error.message}`);
+    }
+  }
+};
+
+// レコードの物理削除
+const handleDelete = async () => {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.post(
+      "http://localhost:8080/deleteRecords",
+      { isbns: selectedBooks },
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    if (response.status === 200) {
+      alert("登録解除しました");
+      setShowDeletePopup(false);
+      const updatedBooks = await axios.get("http://localhost:8080/showRecords", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setBooks(updatedBooks.data);
+      setSelectedBooks([]); // 選択をリセット
+    }
+  } catch (error) {
+    if (error.response) {
+      alert(`登録解除エラーが発生しました: ${error.response.status} - ${error.response.data.message || "詳細は不明です"}`);
     } else if (error.request) {
       alert("サーバーに接続できませんでした。ネットワークを確認してください。");
     } else {
@@ -103,13 +133,14 @@ function ShowRecords() {
   return (
     <div className="min-h-screen w-screen bg-[#f5f5f5] p-8">
       <div className="mx-auto bg-white p-6 rounded-lg shadow-md w-full">
-        <div className="flex justify-between items-center w-full">
+        <div className="flex justify-between items-center w-full space-x-4">
           <button
             onClick={() => navigate("/menu")}
             className="text-3xl font-noto-sans hover:text-gray-600 transition-colors"
           >
             📚 Libro Log
           </button>
+        <div className="flex space-x-4">
           <button
             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
             disabled={selectedBooks.length === 0}
@@ -123,6 +154,14 @@ function ShowRecords() {
           >
             編集
           </button>
+          <button
+          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-300"
+          disabled={selectedBooks.length === 0}
+          onClick={() => setShowDeletePopup(true)}
+          >
+            登録解除
+          </button>
+        </div>
         </div>
       </div>
       <div className="overflow-x-auto">
@@ -267,6 +306,49 @@ function ShowRecords() {
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
                 保存
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showDeletePopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-4xl">
+            <h2 className="text-xl font-bold mb-4">登録解除確認</h2>
+            <table className="w-full border-collapse mb-4">
+              <thead>
+                <tr>
+                  <th className="border p-2 text-left">ISBN</th>
+                  <th className="border p-2 text-left">書籍名</th>
+                  <th className="border p-2 text-left">著者</th>
+                </tr>
+              </thead>
+              <tbody>
+                {selectedBooks.map((isbn) => {
+                  const book = books.find((b) => b.isbn === isbn);
+                  return (
+                    <tr key={isbn}>
+                      <td className="border p-2">{book?.isbn}</td>
+                      <td className="border p-2">{book?.book_name}</td>
+                      <td className="border p-2">{book?.author}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+            <p>本当に以上の{selectedBooks.length}件の書籍を登録解除してよろしいですか？</p>
+            <div className="flex justify-end gap-4 mt-4">
+              <button
+                onClick={() => setShowDeletePopup(false)}
+                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
+              >
+                戻る
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              >
+                登録解除
               </button>
             </div>
           </div>
