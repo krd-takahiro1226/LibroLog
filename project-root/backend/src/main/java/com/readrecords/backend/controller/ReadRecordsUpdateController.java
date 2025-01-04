@@ -16,11 +16,11 @@ import com.readrecords.backend.dto.UserReadRecordsDto;
 import com.readrecords.backend.service.ReadRecordsUpdateService;
 
 @RestController
-public class ReadRecordUpdateController {
+public class ReadRecordsUpdateController {
     private final ReadRecordsUpdateService readRecordsUpdateService;
-    private static final Logger logger = LoggerFactory.getLogger(ReadRecordUpdateController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ReadRecordsUpdateController.class);
 
-    public ReadRecordUpdateController(ReadRecordsUpdateService readRecordsUpdateService){
+    public ReadRecordsUpdateController(ReadRecordsUpdateService readRecordsUpdateService){
         this.readRecordsUpdateService = readRecordsUpdateService;
     }
 
