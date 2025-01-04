@@ -24,7 +24,7 @@ public interface ReadRecordsUpdateRepository extends JpaRepository<ReadRecords, 
     @Transactional
     @Modifying
     @Query("UPDATE read_records SET start_date = :startDate, end_date = :endDate, priority = :priority WHERE record_id = :recordId")
-    void updateReadRecord(
+    void updateReadRecords(
         @Param("recordId") Integer recordId,
         @Param("startDate") Date startDate,
         @Param("endDate") Date endDate,

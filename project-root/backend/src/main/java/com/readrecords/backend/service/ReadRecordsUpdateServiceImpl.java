@@ -12,10 +12,10 @@ import jakarta.transaction.Transactional;
 @Service
 public class ReadRecordsUpdateServiceImpl implements ReadRecordsUpdateService {    
     // コンストラクタの依存性注入 (DI)
-    private final ReadRecordsUpdateRepository readRecordUpdateRepository;
+    private final ReadRecordsUpdateRepository readRecordsUpdateRepository;
     
-    public ReadRecordsUpdateServiceImpl(ReadRecordsUpdateRepository readRecordUpdateRepository){
-        this.readRecordUpdateRepository = readRecordUpdateRepository;
+    public ReadRecordsUpdateServiceImpl(ReadRecordsUpdateRepository readRecordsUpdateRepository){
+        this.readRecordsUpdateRepository = readRecordsUpdateRepository;
     }
 
     @Override
@@ -23,10 +23,10 @@ public class ReadRecordsUpdateServiceImpl implements ReadRecordsUpdateService {
     public void updateReadRecords (List<UserReadRecordsDto> updateRequestDtos, String userId){
         for(UserReadRecordsDto request : updateRequestDtos){
             // Todo UserReadRecordsDtoの表現より、スネークケースとキャメルケースが混在
-            Optional<Integer> optionalRecordId= readRecordUpdateRepository.findRecordIdByIsbnAndUserId(request.getISBN(), userId);
+            Optional<Integer> optionalRecordId= readRecordsUpdateRepository.findRecordIdByIsbnAndUserId(request.getISBN(), userId);
             if(optionalRecordId.isPresent()){
                 Integer recordId = optionalRecordId.get();
-                readRecordUpdateRepository.updateReadRecord(
+                readRecordsUpdateRepository.updateReadRecords(
                     recordId,
                     request.getStart_date(),
                     request.getEnd_date(),
