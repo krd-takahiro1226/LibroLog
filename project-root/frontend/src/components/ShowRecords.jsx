@@ -9,8 +9,8 @@ function ShowRecords() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [selectedBooks, setSelectedBooks] = useState([]);
-  const [showPopup, setShowPopup] = useState(false); // ポップアップ表示状態
-  const [editableBooks, setEditableBooks] = useState([]); // 編集対象の書籍
+  const [showPopup, setShowPopup] = useState(false); 
+  const [editableBooks, setEditableBooks] = useState([]); 
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -52,13 +52,15 @@ function ShowRecords() {
   if (loading) return <div>読み込み中...</div>;
   if (error) return <div>{error}</div>;
 
+  // チェックボックスの有効化
   const handleCheckboxChange = (isbn) => {
     setSelectedBooks((prev) =>
       prev.includes(isbn) ? prev.filter((id) => id !== isbn) : [...prev, isbn]
     );
   };
 
-  const handleSave = async () => {
+  // レコードの編集・保存
+  const handleEdit = async () => {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
@@ -70,7 +72,6 @@ function ShowRecords() {
           },
         }
       );
-     //バックエンドから成功レスポンスが返ってきた場合
     if (response.status === 200) {
         const updatedBooks = await axios.get("http://localhost:8080/showRecords", {
           headers: {
@@ -78,9 +79,9 @@ function ShowRecords() {
           },
         }
       );
-      setBooks(updatedBooks.data); // 最新データをbooksに反映
+      setBooks(updatedBooks.data); 
       alert("保存しました");
-      setShowPopup(false); // ポップアップを閉じる
+      setShowPopup(false); 
     } 
     else {
       throw new Error(`Unexpected response status: ${response.status}`);
@@ -88,15 +89,12 @@ function ShowRecords() {
   }
    catch (error) {
     if (error.response) {
-      // サーバーからのエラー (例: 400, 500エラー)
       alert(
         `エラーが発生しました: ${error.response.status} - ${error.response.data.message || "詳細は不明です"}`
       );
     } else if (error.request) {
-      // リクエストが送信されたがレスポンスが返ってこない
       alert("サーバーに接続できませんでした。ネットワークを確認してください。");
     } else {
-      // 予期しないエラー
       alert(`エラーが発生しました: ${error.message}`);
     }
   }
@@ -265,7 +263,7 @@ function ShowRecords() {
                 戻る
               </button>
               <button
-                onClick={() => handleSave()}
+                onClick={() => handleEdit()}
                 className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
               >
                 保存
