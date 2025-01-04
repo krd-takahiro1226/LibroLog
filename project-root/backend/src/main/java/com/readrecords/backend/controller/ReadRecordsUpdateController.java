@@ -28,9 +28,7 @@ public class ReadRecordsUpdateController {
         public ResponseEntity<?> updateRecords(
             @RequestBody List<UserReadRecordsDto> requestData,
             Authentication authentication) {
-                // userid取得の方法に関しては、MunuControllerが役に立ちそう
                 if (authentication == null || !authentication.isAuthenticated()) {
-                   // logger.warn("Unauthorized access attempt");
                     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
                 }
                 try{
