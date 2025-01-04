@@ -5,16 +5,16 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import com.readrecords.backend.dto.UserReadRecordsDto;
-import com.readrecords.backend.repository.ReadRecordUpdateRepository;
+import com.readrecords.backend.repository.ReadRecordsUpdateRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
 public class ReadRecordsUpdateServiceImpl implements ReadRecordsUpdateService {    
     // コンストラクタの依存性注入 (DI)
-    private final ReadRecordUpdateRepository readRecordUpdateRepository;
+    private final ReadRecordsUpdateRepository readRecordUpdateRepository;
     
-    public ReadRecordsUpdateServiceImpl(ReadRecordUpdateRepository readRecordUpdateRepository){
+    public ReadRecordsUpdateServiceImpl(ReadRecordsUpdateRepository readRecordUpdateRepository){
         this.readRecordUpdateRepository = readRecordUpdateRepository;
     }
 
