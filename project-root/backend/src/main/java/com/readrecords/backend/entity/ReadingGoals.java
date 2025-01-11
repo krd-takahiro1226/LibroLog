@@ -10,10 +10,10 @@ import lombok.Data;
 /** 読書目標情報 */
 @Data
 @Entity
-@Table(name = "register_book_records")
+@Table(name = "reading_goals")
 public class ReadingGoals {
-  /** 管理ID(PK) */
-  @Id private String goalId;
+  /** 目標管理ID(PK) */
+  @Id private Integer goalId;
   /** 目標読書数 */
   private Integer goalReadNumber;
   /** ユーザID */
