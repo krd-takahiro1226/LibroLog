@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class ReadingAchievementsDto {
   /** 読書冊数 */
-  private int totalBooks;
+  private int yearlyTotalBooks;
   /** 年間目標冊数 */
   private int yearlyGoal;
   /** 年間目標達成率 */
