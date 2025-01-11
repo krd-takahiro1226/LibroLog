@@ -8,6 +8,7 @@ import ShowRecords from './components/ShowRecords';
 import NewUserRegister from './components/NewUserRegister';
 import './assets/styles/styles.css';
 import SearchResult from './components/SearchResult';
+import ReadingAchievements from './components/ReadingAchievements';
 
 function App() {
     return (
@@ -19,6 +20,7 @@ function App() {
                 <Route path = "/searchBooksResult" element={<SearchResult/>}></Route>
                 <Route path="/showRecords" element={<ShowRecords />} />
                 <Route path="/userRegistration" element={<NewUserRegister />} />
+                <Route path="/achievements" element={<ReadingAchievements />} />
             </Routes>
         </Router>
     );
