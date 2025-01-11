@@ -12,8 +12,10 @@ import lombok.Data;
 @Entity
 @Table(name = "reading_records")
 public class ReadingRecords {
-  /** 管理ID(PK) */
-  @Id private String goalId;
+  /** 読書実績管理ID(PK) */
+  @Id private Integer recordId;
+  /** 目標管理ID(PK) */
+  private Integer goalId;
   /** ISBN */
   private String ISBN;
   /** ユーザーID */
