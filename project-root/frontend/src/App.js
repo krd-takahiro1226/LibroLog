@@ -9,6 +9,8 @@ import NewUserRegister from './components/NewUserRegister';
 import './assets/styles/styles.css';
 import SearchResult from './components/SearchResult';
 import ReadingAchievements from './components/ReadingAchievements';
+import MyPage from './components/MyPage';
+import UserPassChange from './components/UserPassChange';
 
 function App() {
     return (
@@ -21,6 +23,8 @@ function App() {
                 <Route path="/showRecords" element={<ShowRecords />} />
                 <Route path="/userRegistration" element={<NewUserRegister />} />
                 <Route path="/achievements" element={<ReadingAchievements />} />
+                <Route path="/myPage" element={<MyPage />} />
+                <Route path="/userPassChange" element={<UserPassChange />} />
             </Routes>
         </Router>
     );
