@@ -1,19 +1,19 @@
 package com.readrecords.backend.service;
 
-import com.readrecords.backend.repository.ReadRecordsDeleteRepository;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.readrecords.backend.repository.ReadRecordsDeleteRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class ReadRecordsDeleteServiceImp implements ReadRecordsDeleteService {
-  // コンストラクタの依存性注入（DI）
-  private final ReadRecordsDeleteRepository readRecordsDeleteRepository;
-
-  public ReadRecordsDeleteServiceImp(ReadRecordsDeleteRepository readRecordsDeleteRepository) {
-    this.readRecordsDeleteRepository = readRecordsDeleteRepository;
-  }
+  @Autowired
+  ReadRecordsDeleteRepository readRecordsDeleteRepository;
 
   @Override
   @Transactional
