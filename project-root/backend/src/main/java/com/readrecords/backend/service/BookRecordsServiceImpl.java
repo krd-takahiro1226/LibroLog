@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 public class BookRecordsServiceImpl implements BookRecordsService {
-  @Autowired BookRecordsRepository bookRecordsRepository;
+  @Autowired
+  BookRecordsRepository bookRecordsRepository;
 
   @Override
   public void registerBookRecords(
@@ -20,7 +21,8 @@ public class BookRecordsServiceImpl implements BookRecordsService {
       String genre,
       String publication_year,
       String publisher) {
-    List<BookRecords> bookRecords = bookRecordsRepository.getBookRecordsByISBN(ISBN);
+    List<BookRecords> bookRecords = bookRecordsRepository
+        .getBookRecordsByISBN(ISBN);
     if (bookRecords.isEmpty()) {
       // 登録されていなければ、書籍情報を登録、登録されていれば何もしない
       bookRecordsRepository.insertBookRecords(

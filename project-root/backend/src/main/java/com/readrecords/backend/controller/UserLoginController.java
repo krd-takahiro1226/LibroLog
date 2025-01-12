@@ -18,17 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserLoginController {
 
-  @Autowired private AuthenticationManager authenticationManager;
+  @Autowired
+  private AuthenticationManager authenticationManager;
 
-  @Autowired private JwtUtils jwtUtils;
+  @Autowired
+  private JwtUtils jwtUtils;
 
   @PostMapping("/login")
   public ResponseEntity<?> authenticateUser(@RequestBody UserLogin userLogin) {
     try {
-      Authentication authentication =
-          authenticationManager.authenticate(
-              new UsernamePasswordAuthenticationToken(
-                  userLogin.getUsername(), userLogin.getPassword()));
+      Authentication authentication = authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(
+              userLogin.getUsername(), userLogin.getPassword()));
 
       SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -40,7 +41,8 @@ public class UserLoginController {
       return ResponseEntity.ok(Map.of("token", token));
     } catch (AuthenticationException e) {
       // 認証失敗時のエラーレスポンス
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body("Invalid username or password");
     }
   }
 }

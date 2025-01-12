@@ -14,21 +14,19 @@ import com.readrecords.backend.entity.RegisterBookRecords;
 import jakarta.transaction.Transactional;
 
 @Repository
-public interface ReadRecordsUpdateRepository extends JpaRepository<RegisterBookRecords, Integer> {
-  // record_idを取得するクエリ
-  @Query(
-      value = "SELECT record_id FROM register_book_records WHERE ISBN = :isbn AND user_id = :userId",
-      nativeQuery = true)
-  Optional<Integer> findRecordIdByIsbnAndUserId(
-      @Param("isbn") String isbn, @Param("userId") String userId);
+public interface ReadRecordsUpdateRepository
+        extends JpaRepository<RegisterBookRecords, Integer> {
+    // record_idを取得するクエリ
+    @Query(value = "SELECT record_id FROM register_book_records WHERE ISBN = :isbn AND user_id = :userId", nativeQuery = true)
+    Optional<Integer> findRecordIdByIsbnAndUserId(
+            @Param("isbn") String isbn, @Param("userId") String userId);
 
-  @Transactional
-  @Modifying
-  @Query(
-      "UPDATE RegisterBookRecords SET startDate = :startDate, endDate = :endDate, priority = :priority WHERE recordId = :recordId")
-  void updateReadRecords(
-      @Param("recordId") Integer recordId,
-      @Param("startDate") Date startDate,
-      @Param("endDate") Date endDate,
-      @Param("priority") Integer priority);
+    @Transactional
+    @Modifying
+    @Query("UPDATE RegisterBookRecords SET startDate = :startDate, endDate = :endDate, priority = :priority WHERE recordId = :recordId")
+    void updateReadRecords(
+            @Param("recordId") Integer recordId,
+            @Param("startDate") Date startDate,
+            @Param("endDate") Date endDate,
+            @Param("priority") Integer priority);
 }

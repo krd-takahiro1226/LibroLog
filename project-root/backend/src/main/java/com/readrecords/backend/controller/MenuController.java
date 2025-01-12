@@ -17,21 +17,26 @@ import org.springframework.web.bind.annotation.RestController;
 // 初期メニューから各種機能へ遷移させるためのController
 @RestController
 public class MenuController {
-  private static final Logger logger = LoggerFactory.getLogger(MenuController.class);
-  @Autowired RegisterBookRecordsService readRecordsService;
+  private static final Logger logger = LoggerFactory
+      .getLogger(MenuController.class);
+  @Autowired
+  RegisterBookRecordsService readRecordsService;
 
-  @Autowired ReadingAchievementsService readingAchievementsService;
+  @Autowired
+  ReadingAchievementsService readingAchievementsService;
 
   @GetMapping("/showRecords")
   public ResponseEntity<?> showUserReadRecords(Authentication authentication) {
     String userId = getUserId(authentication);
     try {
-      List<UserReadRecordsDto> userReadRecords = readRecordsService.getReadRecordsByUserId(userId);
+      List<UserReadRecordsDto> userReadRecords = readRecordsService
+          .getReadRecordsByUserId(userId);
       return ResponseEntity.ok(userReadRecords);
 
     } catch (Exception e) {
       logger.error("Error fetching records", e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching records");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Error fetching records");
     }
   }
 
@@ -41,24 +46,27 @@ public class MenuController {
   }
 
   @GetMapping("/showAchievements")
-  public ResponseEntity<?> showReadingAchievementsWindow(Authentication authentication) {
+  public ResponseEntity<?> showReadingAchievementsWindow(
+      Authentication authentication) {
     String userId = getUserId(authentication);
     try {
-      ReadingAchievementsDto userReadingAchievements =
-          readingAchievementsService.getReadAchievementsByUserId(userId);
+      ReadingAchievementsDto userReadingAchievements = readingAchievementsService
+          .getReadAchievementsByUserId(userId);
       logger.info("実績情報: {}", userReadingAchievements);
       return ResponseEntity.ok(userReadingAchievements);
 
     } catch (Exception e) {
       logger.error("Error fetching records", e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching records");
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Error fetching records");
     }
   }
 
   private String getUserId(Authentication authentication) {
     if (authentication == null || !authentication.isAuthenticated()) {
       logger.warn("Unauthorized access attempt");
-      throw new IllegalStateException("Authentication is required to fetch userId");
+      throw new IllegalStateException(
+          "Authentication is required to fetch userId");
     }
 
     try {

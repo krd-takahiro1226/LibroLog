@@ -17,18 +17,22 @@ import org.springframework.web.bind.annotation.RestController;
 public class ReadRecordsDeleteController {
   @Autowired
   ReadRecordsDeleteService readRecordsDeleteService;
-  private static final Logger logger = LoggerFactory.getLogger(ReadRecordsDeleteController.class);
+  private static final Logger logger = LoggerFactory
+      .getLogger(ReadRecordsDeleteController.class);
 
   @PostMapping("/deleteRecords")
   public ResponseEntity<?> deleteRecords(
-      @RequestBody Map<String, List<String>> requestData, Authentication authentication) {
+      @RequestBody Map<String, List<String>> requestData,
+      Authentication authentication) {
     if (authentication == null || !authentication.isAuthenticated()) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body("Unauthorized access");
     }
     try {
       String userId = authentication.getDetails().toString();
       logger.info("Fetching records for userId: {}", userId);
-      readRecordsDeleteService.deleteReadRecords(requestData.get("isbns"), userId);
+      readRecordsDeleteService.deleteReadRecords(requestData.get("isbns"),
+          userId);
       return ResponseEntity.ok("Records Deleted successfully");
     } catch (Exception e) {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

@@ -10,15 +10,18 @@ import org.springframework.stereotype.Service;
 @Service
 @Transactional
 public class UserRegistrationServiceImpl implements UserRegistrationService {
-  @Autowired PasswordEncoder passwordEncoder;
-  @Autowired UserRegistrationRepository userRegistrationRepository;
+  @Autowired
+  PasswordEncoder passwordEncoder;
+  @Autowired
+  UserRegistrationRepository userRegistrationRepository;
 
   @Override
   public void userRegistration(
       String username, String email, String password, String confirmPassword) {
     String hashPassword = passwordEncoder.encode(password);
     String userId = UUID.randomUUID().toString();
-    userRegistrationRepository.insertUserRecords(userId, username, email, hashPassword);
+    userRegistrationRepository.insertUserRecords(userId, username, email,
+        hashPassword);
   }
 
   @Override
