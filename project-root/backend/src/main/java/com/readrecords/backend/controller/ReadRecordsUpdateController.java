@@ -18,13 +18,16 @@ public class ReadRecordsUpdateController {
   @Autowired
   ReadRecordsUpdateService readRecordsUpdateService;
 
-  private static final Logger logger = LoggerFactory.getLogger(ReadRecordsUpdateController.class);
+  private static final Logger logger = LoggerFactory
+      .getLogger(ReadRecordsUpdateController.class);
 
   @PostMapping("/updateRecords")
   public ResponseEntity<?> updateRecords(
-      @RequestBody List<UserReadRecordsDto> requestData, Authentication authentication) {
+      @RequestBody List<UserReadRecordsDto> requestData,
+      Authentication authentication) {
     if (authentication == null || !authentication.isAuthenticated()) {
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+          .body("Unauthorized access");
     }
     try {
       String userId = authentication.getDetails().toString();

@@ -19,8 +19,8 @@ public class ReadRecordsDeleteServiceImp implements ReadRecordsDeleteService {
   @Transactional
   public void deleteReadRecords(List<String> ISBNs, String userId) {
     for (String ISBN : ISBNs) {
-      Optional<Integer> optionalRecordId =
-          readRecordsDeleteRepository.findRecordIdByIsbnAndUserId(ISBN, userId);
+      Optional<Integer> optionalRecordId = readRecordsDeleteRepository
+          .findRecordIdByIsbnAndUserId(ISBN, userId);
       if (optionalRecordId.isPresent()) {
         Integer recordId = optionalRecordId.get();
         readRecordsDeleteRepository.deleteReadRecords(recordId, userId);

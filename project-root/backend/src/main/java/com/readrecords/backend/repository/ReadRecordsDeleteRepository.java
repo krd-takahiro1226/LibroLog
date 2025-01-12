@@ -13,16 +13,16 @@ import com.readrecords.backend.entity.RegisterBookRecords;
 import jakarta.transaction.Transactional;
 
 @Repository
-public interface ReadRecordsDeleteRepository extends JpaRepository<RegisterBookRecords, Integer> {
-  // record_idを取得するクエリ
-  @Query(
-      value = "SELECT record_id FROM register_book_records WHERE ISBN = :isbn AND user_id = :userId",
-      nativeQuery = true)
-  Optional<Integer> findRecordIdByIsbnAndUserId(
-      @Param("isbn") String isbn, @Param("userId") String userId);
+public interface ReadRecordsDeleteRepository
+        extends JpaRepository<RegisterBookRecords, Integer> {
+    // record_idを取得するクエリ
+    @Query(value = "SELECT record_id FROM register_book_records WHERE ISBN = :isbn AND user_id = :userId", nativeQuery = true)
+    Optional<Integer> findRecordIdByIsbnAndUserId(
+            @Param("isbn") String isbn, @Param("userId") String userId);
 
-  @Transactional
-  @Modifying
-  @Query("DELETE FROM RegisterBookRecords WHERE recordId = :recordId AND userId = :userId")
-  void deleteReadRecords(@Param("recordId") Integer recordId, @Param("userId") String userId);
+    @Transactional
+    @Modifying
+    @Query("DELETE FROM RegisterBookRecords WHERE recordId = :recordId AND userId = :userId")
+    void deleteReadRecords(@Param("recordId") Integer recordId,
+            @Param("userId") String userId);
 }

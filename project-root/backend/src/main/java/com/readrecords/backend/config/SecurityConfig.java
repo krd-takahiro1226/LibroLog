@@ -29,30 +29,28 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain securityFilterChain(HttpSecurity http)
+      throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .authorizeHttpRequests(
-            authorize ->
-                authorize
-                    .requestMatchers("/login", "/userRegistration")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated())
-        // .addFilterBefore(new
-        // JwtAuthorizationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
-        // UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+            authorize -> authorize
+                .requestMatchers("/login", "/userRegistration")
+                .permitAll()
+                .anyRequest()
+                .authenticated())
+        .addFilterBefore(new JwtAuthorizationFilter(),
+            UsernamePasswordAuthenticationFilter.class)
         .sessionManagement(
-            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .logout(
-            logout ->
-                logout
-                    .logoutUrl("/logout") // ログアウトのURL
-                    .logoutSuccessUrl("/login") // ログアウト後のリダイレクトURL
-                    .invalidateHttpSession(true) // セッションの無効化
-                    .deleteCookies("JSESSIONID") // クッキーの削除
-            )
+            logout -> logout
+                .logoutUrl("/logout") // ログアウトのURL
+                .logoutSuccessUrl("/login") // ログアウト後のリダイレクトURL
+                .invalidateHttpSession(true) // セッションの無効化
+                .deleteCookies("JSESSIONID") // クッキーの削除
+        )
         .authenticationProvider(authenticationProvider());
 
     return http.build();
@@ -60,7 +58,8 @@ public class SecurityConfig {
 
   @Bean
   public AuthenticationManager authenticationManager(
-      AuthenticationConfiguration authenticationConfiguration) throws Exception {
+      AuthenticationConfiguration authenticationConfiguration)
+      throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
   }
 

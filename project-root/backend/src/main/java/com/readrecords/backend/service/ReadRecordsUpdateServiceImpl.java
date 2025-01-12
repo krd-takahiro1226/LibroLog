@@ -18,16 +18,19 @@ public class ReadRecordsUpdateServiceImpl implements ReadRecordsUpdateService {
 
   @Override
   @Transactional
-  public void updateReadRecords(List<UserReadRecordsDto> updateRequestDtos, String userId) {
+  public void updateReadRecords(List<UserReadRecordsDto> updateRequestDtos,
+      String userId) {
     for (UserReadRecordsDto request : updateRequestDtos) {
-      Optional<Integer> optionalRecordId =
-          readRecordsUpdateRepository.findRecordIdByIsbnAndUserId(request.getISBN(), userId);
+      Optional<Integer> optionalRecordId = readRecordsUpdateRepository
+          .findRecordIdByIsbnAndUserId(request.getISBN(), userId);
       if (optionalRecordId.isPresent()) {
         Integer recordId = optionalRecordId.get();
         readRecordsUpdateRepository.updateReadRecords(
-            recordId, request.getStartDate(), request.getEndDate(), request.getPriority());
+            recordId, request.getStartDate(), request.getEndDate(),
+            request.getPriority());
       } else {
-        throw new RuntimeException("Record not found for ISBN: " + request.getISBN());
+        throw new RuntimeException(
+            "Record not found for ISBN: " + request.getISBN());
       }
     }
   }

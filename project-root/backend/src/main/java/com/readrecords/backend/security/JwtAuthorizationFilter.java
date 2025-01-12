@@ -15,7 +15,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
   @Override
   protected void doFilterInternal(
-      HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+      HttpServletRequest request, HttpServletResponse response,
+      FilterChain filterChain)
       throws ServletException, IOException {
     String token = resolveToken(request);
     System.out.println("Token: " + token);
@@ -27,7 +28,8 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         Authentication authentication = jwtUtils.validateToken(token);
         if (authentication != null) {
           SecurityContextHolder.getContext().setAuthentication(authentication);
-          System.out.println("Authentication in SecurityContext: " + authentication);
+          System.out
+              .println("Authentication in SecurityContext: " + authentication);
           System.out.println(
               "SecurityContext Authentication: "
                   + SecurityContextHolder.getContext().getAuthentication());

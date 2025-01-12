@@ -12,15 +12,17 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
-public class RegisterBookRecordsServiceImpl implements RegisterBookRecordsService {
+public class RegisterBookRecordsServiceImpl
+    implements RegisterBookRecordsService {
   final String REGISTER_SUCCESS_MESSAGE = "successRegister";
   final String DUPLICATE_RECORD_MESSAGE = "duplicateRecord";
-  @Autowired RegisterBookRecordsRepository registerBookRecordsRepository;
+  @Autowired
+  RegisterBookRecordsRepository registerBookRecordsRepository;
 
   @Override
   public List<UserReadRecordsDto> getReadRecordsByUserId(String user_id) {
-    Iterator<UserReadRecordsDto> iterator =
-        registerBookRecordsRepository.getReadRecordsByUserId(user_id).iterator();
+    Iterator<UserReadRecordsDto> iterator = registerBookRecordsRepository
+        .getReadRecordsByUserId(user_id).iterator();
     List<UserReadRecordsDto> userReadRecords = new ArrayList<>();
     while (iterator.hasNext()) {
       UserReadRecordsDto userReadRecord = iterator.next();
@@ -39,8 +41,8 @@ public class RegisterBookRecordsServiceImpl implements RegisterBookRecordsServic
       int priority,
       String memo) {
     String message;
-    List<RegisterBookRecords> readRecords =
-        registerBookRecordsRepository.getReadRecordsByISBNandUserId(ISBN, user_id);
+    List<RegisterBookRecords> readRecords = registerBookRecordsRepository
+        .getReadRecordsByISBNandUserId(ISBN, user_id);
     if (readRecords.isEmpty()) {
       // 読書情報を登録
       registerBookRecordsRepository.insertReadRecords(

@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class ShowMenuController {
   @GetMapping
   public String showMenu(Model model) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    UserLoginDetails userDetails = (UserLoginDetails) authentication.getPrincipal();
+    Authentication authentication = SecurityContextHolder.getContext()
+        .getAuthentication();
+    UserLoginDetails userDetails = (UserLoginDetails) authentication
+        .getPrincipal();
     String userId = userDetails.getUserId();
     model.addAttribute("userId", userId);
     return "menu";

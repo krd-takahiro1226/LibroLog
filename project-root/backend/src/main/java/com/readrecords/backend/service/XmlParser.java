@@ -10,7 +10,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class XmlParser {
   public SearchBooksResponseDto parse(String xml) throws JAXBException {
-    JAXBContext jaxbContext = JAXBContext.newInstance(SearchBooksResponseDto.class);
+    JAXBContext jaxbContext = JAXBContext
+        .newInstance(SearchBooksResponseDto.class);
     Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
     StringReader reader = new StringReader(xml);
     return (SearchBooksResponseDto) unmarshaller.unmarshal(reader);
