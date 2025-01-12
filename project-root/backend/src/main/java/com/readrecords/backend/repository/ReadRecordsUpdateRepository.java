@@ -1,18 +1,20 @@
 package com.readrecords.backend.repository;
 
+import java.util.Date;
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
-import java.util.Optional;
-import java.util.Date;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import com.readrecords.backend.entity.ReadRecords;
+
+import com.readrecords.backend.entity.ReadingRecords;
 
 import jakarta.transaction.Transactional;
 
 @Repository
-public interface ReadRecordsUpdateRepository extends JpaRepository<ReadRecords, Integer> {
+public interface ReadRecordsUpdateRepository extends JpaRepository<ReadingRecords, Integer> {
     // record_idを取得するクエリ
     @Query(
         value=
@@ -31,4 +33,3 @@ public interface ReadRecordsUpdateRepository extends JpaRepository<ReadRecords, 
         @Param("priority") Integer priority
     );
 }
-
