@@ -84,10 +84,14 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.addAllowedOrigin("http://localhost:3000"); // ReactアプリのURL
-    configuration.addAllowedMethod("*"); // 全てのHTTPメソッドを許可
-    configuration.addAllowedHeader("*"); // 全てのヘッダーを許可
-    configuration.setAllowCredentials(true); // 認証情報を含むリクエストを許可
+    // ReactアプリのURL
+    configuration.addAllowedOrigin("http://localhost:3000");
+    // 全てのHTTPメソッドを許可
+    configuration.addAllowedMethod("*");
+    // 全てのヘッダーを許可
+    configuration.addAllowedHeader("*");
+    // 認証情報を含むリクエストを許可
+    configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;
