@@ -1,14 +1,19 @@
 package com.readrecords.backend.entity;
 
+import java.sql.Date;
+
 import com.readrecords.backend.dto.UserReadRecordsDto;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.ColumnResult;
 import jakarta.persistence.ConstructorResult;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.NamedNativeQuery;
 import jakarta.persistence.SqlResultSetMapping;
 import jakarta.persistence.Table;
-import java.sql.Date;
 import lombok.Data;
 
 @Data
@@ -38,12 +43,21 @@ import lombok.Data;
             + "where rr.user_id = :user_id",
     resultSetMapping = "UserReadRecordsDtoMapping")
 public class RegisterBookRecords {
-  @Id private Integer record_id;
+  @Column(name = "record_id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id private Integer recordId;
+  @Column(name = "ISBN")
   private String ISBN;
-  private String user_id;
-  private Date start_date;
-  private Date end_date;
-  private Integer read_count;
+  @Column(name = "user_id")
+  private String userId;
+  @Column(name = "start_date")
+  private Date startDate;
+  @Column(name = "end_date")
+  private Date endDate;
+  @Column(name = "read_count")
+  private Integer readCount;
+  @Column(name = "priority")
   private Integer priority;
+  @Column(name = "memo")
   private String memo;
 }
