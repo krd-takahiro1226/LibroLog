@@ -52,10 +52,10 @@ public class BookSearchApiController {
   public ResponseEntity<?> registerRecords(
       @RequestBody Map<String, Object> requestData, Authentication authentication) {
     String ISBN = (String) requestData.get("isbn");
-    String book_name = (String) requestData.get("title");
+    String bookName = (String) requestData.get("title");
     String author = (String) requestData.get("author");
     String genre = (String) requestData.get("size");
-    String publication_year = (String) requestData.get("salesDate");
+    String publicationYear = (String) requestData.get("salesDate");
     String publisher = (String) requestData.get("publisherName");
     int priority = (int) requestData.get("selectedOption");
     // 登録成功可否
@@ -66,18 +66,18 @@ public class BookSearchApiController {
     // 現在日付の取得(レコード登録用)
     Date date = new Date(Calendar.getInstance().getTimeInMillis());
     // 出版年のフォーマット変換
-    String convertPublicationYear = convertPublicetionYear(publication_year);
+    String convertPublicationYear = convertPublicetionYear(publicationYear);
     // 登録情報一覧
     logger.info(
-        "ISBN: {}, book_name: {}, author: {}, genre: {}, publication_year: {}, publisher: {}",
+        "ISBN: {}, bookName: {}, author: {}, genre: {}, publicationYear: {}, publisher: {}",
         ISBN,
-        book_name,
+        bookName,
         author,
         genre,
-        publication_year,
+        publicationYear,
         publisher);
     // 書籍情報の登録
-    registerBoookRecords(ISBN, book_name, author, genre, convertPublicationYear, publisher);
+    registerBoookRecords(ISBN, bookName, author, genre, convertPublicationYear, publisher);
     // 読書情報の登録
     registerStatus = registerReadRecords(userId, ISBN, date, date, 1, priority, null);
     // TODO 本来は検索結果画面にリダイレクトして他の本の登録とかもしたいはずだが、現状できていない
@@ -92,70 +92,70 @@ public class BookSearchApiController {
 
   private void registerBoookRecords(
       String ISBN,
-      String book_name,
+      String bookName,
       String author,
       String genre,
-      String publication_year,
+      String publicationYear,
       String publisher) {
     BookRecords bookRecords = new BookRecords();
     bookRecords.setISBN(ISBN);
-    bookRecords.setBook_name(book_name);
+    bookRecords.setBookName(bookName);
     bookRecords.setAuthor(author);
     bookRecords.setGenre(genre);
-    bookRecords.setPublication_year(publication_year);
+    bookRecords.setPublicationYear(publicationYear);
     bookRecords.setPublisher(publisher);
 
     bookRecordsService.registerBookRecords(
         bookRecords.getISBN(),
-        bookRecords.getBook_name(),
+        bookRecords.getBookName(),
         bookRecords.getAuthor(),
         bookRecords.getGenre(),
-        bookRecords.getPublication_year().toString(),
+        bookRecords.getPublicationYear().toString(),
         bookRecords.getPublisher());
   }
 
   private String registerReadRecords(
       String userId,
       String ISBN,
-      Date start_date,
-      Date end_date,
-      int read_count,
+      Date startDate,
+      Date endDate,
+      int readCount,
       int priority,
       String memo) {
     RegisterBookRecords readRecords = new RegisterBookRecords();
     readRecords.setISBN(ISBN);
-    readRecords.setUser_id(userId);
-    readRecords.setStart_date(start_date);
-    readRecords.setEnd_date(end_date);
-    readRecords.setRead_count(read_count);
+    readRecords.setUserId(userId);
+    readRecords.setStartDate(startDate);
+    readRecords.setEndDate(endDate);
+    readRecords.setReadCount(readCount);
     readRecords.setPriority(priority);
     readRecords.setMemo(memo);
     // 読書情報の登録
     String message =
         readRecordsService.registerReadRecords(
             readRecords.getISBN(),
-            readRecords.getUser_id(),
-            readRecords.getStart_date().toString(),
-            readRecords.getEnd_date().toString(),
-            readRecords.getRead_count(),
+            readRecords.getUserId(),
+            readRecords.getStartDate().toString(),
+            readRecords.getEndDate().toString(),
+            readRecords.getReadCount(),
             readRecords.getPriority(),
             readRecords.getMemo());
     return message;
   }
 
-  private String convertPublicetionYear(String publication_year) {
-    publication_year = publication_year.replace("年", "-");
-    publication_year = publication_year.replace("月", "-");
-    if (publication_year.contains("日頃")) {
+  private String convertPublicetionYear(String publicationYear) {
+    publicationYear = publicationYear.replace("年", "-");
+    publicationYear = publicationYear.replace("月", "-");
+    if (publicationYear.contains("日頃")) {
       // 末尾2文字を削除する
-      publication_year = publication_year.substring(0, publication_year.length() - 2);
-    } else if (publication_year.contains("日")) {
+      publicationYear = publicationYear.substring(0, publicationYear.length() - 2);
+    } else if (publicationYear.contains("日")) {
       // 末尾1文字を削除する
-      publication_year = publication_year.substring(0, publication_year.length() - 1);
+      publicationYear = publicationYear.substring(0, publicationYear.length() - 1);
     } else {
       // 日付が存在しない時、仮で日付を設定する
-      publication_year = publication_year += "-01";
+      publicationYear = publicationYear += "-01";
     }
-    return publication_year;
+    return publicationYear;
   }
 }
