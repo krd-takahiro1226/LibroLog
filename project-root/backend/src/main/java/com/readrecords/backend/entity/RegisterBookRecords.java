@@ -20,14 +20,14 @@ import lombok.Data;
         @ConstructorResult(
             targetClass = UserReadRecordsDto.class,
             columns = {
-                @ColumnResult(name = "ISBN", type = String.class),
-                @ColumnResult(name = "book_name", type = String.class),
-                @ColumnResult(name = "author", type = String.class),
-                @ColumnResult(name = "start_date", type = Date.class),
-                @ColumnResult(name = "end_date", type = Date.class),
-                @ColumnResult(name = "read_count", type = Integer.class),
-                @ColumnResult(name = "priority", type = Integer.class),
-                @ColumnResult(name = "memo", type = String.class)
+              @ColumnResult(name = "ISBN", type = String.class),
+              @ColumnResult(name = "book_name", type = String.class),
+              @ColumnResult(name = "author", type = String.class),
+              @ColumnResult(name = "start_date", type = Date.class),
+              @ColumnResult(name = "end_date", type = Date.class),
+              @ColumnResult(name = "read_count", type = Integer.class),
+              @ColumnResult(name = "priority", type = Integer.class),
+              @ColumnResult(name = "memo", type = String.class)
             }))
 @NamedNativeQuery(
     name = "UserReadRecordsDto.getReadRecordsByUserId",
