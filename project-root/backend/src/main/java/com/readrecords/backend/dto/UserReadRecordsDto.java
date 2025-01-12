@@ -6,29 +6,29 @@ import lombok.Data;
 @Data
 public class UserReadRecordsDto {
   private String ISBN;
-  private String book_name;
+  private String bookName;
   private String author;
-  private Date start_date;
-  private Date end_date;
-  private Integer read_count;
+  private Date startDate;
+  private Date endDate;
+  private Integer readCount;
   private Integer priority;
   private String memo;
 
   public UserReadRecordsDto(
       String ISBN,
-      String book_name,
+      String bookName,
       String author,
-      Date start_date,
-      Date end_date,
-      Integer read_count,
+      Date startDate,
+      Date endDate,
+      Integer readCount,
       Integer priority,
       String memo) {
     this.ISBN = ISBN;
-    this.book_name = book_name;
+    this.bookName = bookName;
     this.author = author;
-    this.start_date = start_date;
-    this.end_date = end_date;
-    this.read_count = read_count;
+    this.startDate = startDate;
+    this.endDate = endDate;
+    this.readCount = readCount;
     this.priority = priority;
     this.memo = memo;
   }
