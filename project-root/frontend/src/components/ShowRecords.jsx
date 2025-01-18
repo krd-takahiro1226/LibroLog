@@ -1,6 +1,6 @@
 "use client";
-import {React, useEffect, useState } from "react";
-import { useNavigate} from "react-router-dom";
+import { React, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function ShowRecords() {
@@ -9,8 +9,8 @@ function ShowRecords() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [selectedBooks, setSelectedBooks] = useState([]);
-  const [showPopup, setShowPopup] = useState(false); 
-  const [editableBooks, setEditableBooks] = useState([]); 
+  const [showPopup, setShowPopup] = useState(false);
+  const [editableBooks, setEditableBooks] = useState([]);
   const [showDeletePopup, setShowDeletePopup] = useState(false); // 登録解除ポップアップ
 
   useEffect(() => {
@@ -20,7 +20,7 @@ function ShowRecords() {
       window.location.href = '/login';
       return;
     }
-  
+
     const decodedToken = JSON.parse(atob(token.split('.')[1]));
     if (Date.now() >= decodedToken.exp * 1000) {
       alert('トークンの有効期限が切れています。再ログインしてください。');
@@ -28,7 +28,7 @@ function ShowRecords() {
       window.location.href = '/login';
       return;
     }
-  
+
     // レコード取得
     axios
       .get('http://localhost:8080/showRecords', {
@@ -48,7 +48,7 @@ function ShowRecords() {
         setLoading(false);
       });
   }, []);
-  
+
 
   if (loading) return <div>読み込み中...</div>;
   if (error) return <div>{error}</div>;
@@ -73,62 +73,62 @@ function ShowRecords() {
           },
         }
       );
-    if (response.status === 200) {
+      if (response.status === 200) {
         const updatedBooks = await axios.get("http://localhost:8080/showRecords", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         }
-      );
-      setBooks(updatedBooks.data); 
-      alert("保存しました");
-      setShowPopup(false); 
-    } 
-    else {
-      throw new Error(`Unexpected response status: ${response.status}`);
-    }
-  }
-   catch (error) {
-    if (error.response) {
-      alert(`エラーが発生しました: ${error.response.status} - ${error.response.data.message || "詳細は不明です"}`);
-    } else if (error.request) {
-      alert("サーバーに接続できませんでした。ネットワークを確認してください。");
-    } else {
-      alert(`エラーが発生しました: ${error.message}`);
-    }
-  }
-};
-
-// レコードの物理削除
-const handleDelete = async () => {
-  try {
-    const token = localStorage.getItem("token");
-    const response = await axios.post(
-      "http://localhost:8080/deleteRecords",
-      { isbns: selectedBooks },
-      {
-        headers: { Authorization: `Bearer ${token}` },
+        );
+        setBooks(updatedBooks.data);
+        alert("保存しました");
+        setShowPopup(false);
       }
-    );
-    if (response.status === 200) {
-      alert("登録解除しました");
-      setShowDeletePopup(false);
-      const updatedBooks = await axios.get("http://localhost:8080/showRecords", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setBooks(updatedBooks.data);
-      setSelectedBooks([]); // 選択をリセット
+      else {
+        throw new Error(`Unexpected response status: ${response.status}`);
+      }
     }
-  } catch (error) {
-    if (error.response) {
-      alert(`登録解除エラーが発生しました: ${error.response.status} - ${error.response.data.message || "詳細は不明です"}`);
-    } else if (error.request) {
-      alert("サーバーに接続できませんでした。ネットワークを確認してください。");
-    } else {
-      alert(`エラーが発生しました: ${error.message}`);
+    catch (error) {
+      if (error.response) {
+        alert(`エラーが発生しました: ${error.response.status} - ${error.response.data.message || "詳細は不明です"}`);
+      } else if (error.request) {
+        alert("サーバーに接続できませんでした。ネットワークを確認してください。");
+      } else {
+        alert(`エラーが発生しました: ${error.message}`);
+      }
     }
-  }
-};
+  };
+
+  // レコードの物理削除
+  const handleDelete = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.post(
+        "http://localhost:8080/deleteRecords",
+        { isbns: selectedBooks },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      if (response.status === 200) {
+        alert("登録解除しました");
+        setShowDeletePopup(false);
+        const updatedBooks = await axios.get("http://localhost:8080/showRecords", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        setBooks(updatedBooks.data);
+        setSelectedBooks([]); // 選択をリセット
+      }
+    } catch (error) {
+      if (error.response) {
+        alert(`登録解除エラーが発生しました: ${error.response.status} - ${error.response.data.message || "詳細は不明です"}`);
+      } else if (error.request) {
+        alert("サーバーに接続できませんでした。ネットワークを確認してください。");
+      } else {
+        alert(`エラーが発生しました: ${error.message}`);
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen w-screen bg-[#f5f5f5] p-8">
@@ -140,28 +140,28 @@ const handleDelete = async () => {
           >
             📚 Libro Log
           </button>
-        <div className="flex space-x-4">
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
-            disabled={selectedBooks.length === 0}
-            onClick={() => {
-              const selected = books.filter((book) =>
-                selectedBooks.includes(book.isbn)
-              );
-              setEditableBooks(selected);
-              setShowPopup(true);
-            }}
-          >
-            編集
-          </button>
-          <button
-          className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-300"
-          disabled={selectedBooks.length === 0}
-          onClick={() => setShowDeletePopup(true)}
-          >
-            登録解除
-          </button>
-        </div>
+          <div className="flex space-x-4">
+            <button
+              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
+              disabled={selectedBooks.length === 0}
+              onClick={() => {
+                const selected = books.filter((book) =>
+                  selectedBooks.includes(book.isbn)
+                );
+                setEditableBooks(selected);
+                setShowPopup(true);
+              }}
+            >
+              編集
+            </button>
+            <button
+              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-300"
+              disabled={selectedBooks.length === 0}
+              onClick={() => setShowDeletePopup(true)}
+            >
+              登録解除
+            </button>
+          </div>
         </div>
       </div>
       <div className="overflow-x-auto">
@@ -190,10 +190,10 @@ const handleDelete = async () => {
                     />
                   </td>
                   <td className="border p-3">{book.isbn}</td>
-                  <td className="border p-3">{book.book_name}</td>
+                  <td className="border p-3">{book.bookName}</td>
                   <td className="border p-3">{book.author}</td>
-                  <td className="border p-3">{book.start_date}</td>
-                  <td className="border p-3">{book.end_date}</td>
+                  <td className="border p-3">{book.startDate}</td>
+                  <td className="border p-3">{book.endDate}</td>
                   {/* <td className="border p-3">{book.priority}</td> */}
                   <td className="border p-3">
                     {(() => {
@@ -240,16 +240,16 @@ const handleDelete = async () => {
                 {editableBooks.map((book, index) => (
                   <tr key={index}>
                     <td className="border p-2">{book.isbn}</td>
-                    <td className="border p-2">{book.book_name}</td>
+                    <td className="border p-2">{book.bookName}</td>
                     <td className="border p-2">{book.author}</td>
                     <td className="border p-2">
                       <input
                         type="date"
-                        value={book.start_date}
+                        value={book.startDate}
                         onChange={(e) =>
                           setEditableBooks((prev) =>
                             prev.map((b, i) =>
-                              i === index ? { ...b, start_date: e.target.value } : b
+                              i === index ? { ...b, startDate: e.target.value } : b
                             )
                           )
                         }
@@ -259,11 +259,11 @@ const handleDelete = async () => {
                     <td className="border p-2">
                       <input
                         type="date"
-                        value={book.end_date}
+                        value={book.endDate}
                         onChange={(e) =>
                           setEditableBooks((prev) =>
                             prev.map((b, i) =>
-                              i === index ? { ...b, end_date: e.target.value } : b
+                              i === index ? { ...b, endDate: e.target.value } : b
                             )
                           )
                         }
@@ -329,7 +329,7 @@ const handleDelete = async () => {
                   return (
                     <tr key={isbn}>
                       <td className="border p-2">{book?.isbn}</td>
-                      <td className="border p-2">{book?.book_name}</td>
+                      <td className="border p-2">{book?.bookName}</td>
                       <td className="border p-2">{book?.author}</td>
                     </tr>
                   );
