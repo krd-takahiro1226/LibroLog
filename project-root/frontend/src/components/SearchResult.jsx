@@ -146,6 +146,40 @@ function SearchResult() {
                 ))}
               </tbody>
             </table>
+            {/* モーダル */}
+            {isModalOpen && selectedBook && (
+              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+                  <h2 className="text-lg font-bold mb-4">「{selectedBook.title}」を登録します</h2>
+                  <div className="space-y-4">
+                    <button
+                      className="bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600"
+                      onClick={() => handleRegisterOption(1)}
+                    >
+                      すぐに読みたい
+                    </button>
+                    <button
+                      className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
+                      onClick={() => handleRegisterOption(2)}
+                    >
+                      今後読みたい
+                    </button>
+                    <button
+                      className="bg-yellow-500 text-white px-4 py-2 rounded w-full hover:bg-yellow-600"
+                      onClick={() => handleRegisterOption(3)}
+                    >
+                      既に読んだ
+                    </button>
+                  </div>
+                  <button
+                    className="mt-4 bg-gray-500 text-white px-4 py-2 rounded w-full hover:bg-gray-600"
+                    onClick={handleModalClose}
+                  >
+                    キャンセル
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
