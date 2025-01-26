@@ -12,7 +12,7 @@ function Menu() {
   const menuItems = [
     { icon: faSearch, text: "書籍を検索", link: "/searchBooks" },
     { icon: faBook, text: "登録書籍一覧", link: "/showRecords" },
-    { icon: faUser, text: "マイページ", link: "#" },
+    { icon: faUser, text: "マイページ", link: "/myPage" },
     { icon: faBookOpen, text: "現在読んでいる本", link: "#" },
     { icon: faClock, text: "読書履歴", link: "/achievements" },
     { icon: faStar, text: "お気に入りの本", link: "#" },
