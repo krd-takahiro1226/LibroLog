@@ -25,8 +25,17 @@ function MyPage() {
 
         <div className="bg-white rounded-lg shadow p-6">
           <div className="space-y-8">
+
             <div className="flex flex-col space-y-2">
-              <label className="font-noto-sans text-gray-600">ユーザー名</label>
+              <div className="flex items-center justify-between">
+                <label className="font-noto-sans text-gray-600">
+                  ユーザー名
+                </label>
+                <button className="bg-[#4b89dc] text-white px-4 py-1 text-sm rounded hover:bg-[#357abd] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  disabled>
+                  変更
+                </button>
+              </div>
               <div className="text-lg">{user.name}</div>
             </div>
 
@@ -48,7 +57,10 @@ function MyPage() {
                 <label className="font-noto-sans text-gray-600">
                   パスワード
                 </label>
-                <button className="bg-[#4b89dc] text-white px-4 py-1 text-sm rounded hover:bg-[#357abd] transition-colors">
+                <button
+                  className="bg-[#4b89dc] text-white px-4 py-1 text-sm rounded hover:bg-[#357abd] transition-colors"
+                  onClick={() => (window.location.href = "/userPassChange")}
+                >
                   変更
                 </button>
               </div>
