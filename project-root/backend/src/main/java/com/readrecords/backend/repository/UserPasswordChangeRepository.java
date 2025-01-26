@@ -12,7 +12,7 @@ import com.readrecords.backend.entity.UserLogin;
 public interface UserPasswordChangeRepository extends CrudRepository<UserLogin, String> {
     @Modifying
     @Query(
-        value = "UPDATE users SET password = :hashPassword WHERE user_id = :user_id",
+        value = "UPDATE users SET password = :hashPassword WHERE user_id = :userId",
         nativeQuery = true)
-    void updatePassword(@Param("user_id") String user_id, @Param("hashPassword") String password);
+    void updatePassword(@Param("userId") String userId, @Param("hashPassword") String password);
   }
