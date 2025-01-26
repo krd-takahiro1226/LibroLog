@@ -1,5 +1,5 @@
 "use client";
-import {React, useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import axios from "axios";
 import "../assets/styles/styles.css";
 
@@ -11,22 +11,29 @@ function UserPassChange() {
 
 
   useEffect(() => {
-    // トークンのチェック
-    const token = localStorage.getItem('token');
+    // トークンをローカルストレージから取得
+    const token = localStorage.getItem("token");
     if (!token) {
-      alert('トークンが存在しません。再ログインしてください。');
-      window.location.href = '/login';
+      alert("トークンが存在しません。再ログインしてください。");
+      window.location.href = "/login";
       return;
     }
 
-    const decodedToken = JSON.parse(atob(token.split('.')[1]));
-    if (Date.now() >= decodedToken.exp * 1000) {
-      alert('トークンの有効期限が切れています。再ログインしてください。');
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-      return;
+    // トークンの有効期限を確認
+    try {
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      if (Date.now() >= decodedToken.exp * 1000) {
+        alert("トークンの有効期限が切れています。再ログインしてください。");
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        return;
+      }
+    } catch (error) {
+      console.error("トークンの解析に失敗しました:", error);
+      alert("無効なトークンです。再ログインしてください。");
+      localStorage.removeItem("token");
+      window.location.href = "/login";
     }
-  
   }, []);
   
 
@@ -40,11 +47,23 @@ function UserPassChange() {
     }
 
     try {
+      const token = localStorage.getItem("token"); // トークンを取得
+      if (!token) {
+        alert("トークンが存在しません。再ログインしてください。");
+        window.location.href = "/login";
+        return;
+      }
+
       // サーバーへ変更リクエストを送信（PUTメソッド）
       const response = await axios.put(
         "http://localhost:8080/userPassword/change",
         { oldpassword, newpassword },
-        { withCredentials: true }
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
       );
 
       // レスポンスの内容をコンソールに表示
