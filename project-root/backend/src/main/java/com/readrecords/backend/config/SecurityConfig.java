@@ -29,30 +29,28 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain securityFilterChain(HttpSecurity http)
+      throws Exception {
     http.csrf(AbstractHttpConfigurer::disable)
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .authorizeHttpRequests(
-            authorize ->
-                authorize
-                    .requestMatchers("/login", "/userRegistration")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated())
-        // .addFilterBefore(new
-        // JwtAuthorizationFilter(authenticationManager(http.getSharedObject(AuthenticationConfiguration.class))),
-        // UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(new JwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+            authorize -> authorize
+                .requestMatchers("/login", "/userRegistration")
+                .permitAll()
+                .anyRequest()
+                .authenticated())
+        .addFilterBefore(new JwtAuthorizationFilter(),
+            UsernamePasswordAuthenticationFilter.class)
         .sessionManagement(
-            session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .logout(
-            logout ->
-                logout
-                    .logoutUrl("/logout") // ログアウトのURL
-                    .logoutSuccessUrl("/login") // ログアウト後のリダイレクトURL
-                    .invalidateHttpSession(true) // セッションの無効化
-                    .deleteCookies("JSESSIONID") // クッキーの削除
-            )
+            logout -> logout
+                .logoutUrl("/logout") // ログアウトのURL
+                .logoutSuccessUrl("/login") // ログアウト後のリダイレクトURL
+                .invalidateHttpSession(true) // セッションの無効化
+                .deleteCookies("JSESSIONID") // クッキーの削除
+        )
         .authenticationProvider(authenticationProvider());
 
     return http.build();
@@ -60,7 +58,8 @@ public class SecurityConfig {
 
   @Bean
   public AuthenticationManager authenticationManager(
-      AuthenticationConfiguration authenticationConfiguration) throws Exception {
+      AuthenticationConfiguration authenticationConfiguration)
+      throws Exception {
     return authenticationConfiguration.getAuthenticationManager();
   }
 
@@ -85,10 +84,14 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.addAllowedOrigin("http://localhost:3000"); // ReactアプリのURL
-    configuration.addAllowedMethod("*"); // 全てのHTTPメソッドを許可
-    configuration.addAllowedHeader("*"); // 全てのヘッダーを許可
-    configuration.setAllowCredentials(true); // 認証情報を含むリクエストを許可
+    // ReactアプリのURL
+    configuration.addAllowedOrigin("http://localhost:3000");
+    // 全てのHTTPメソッドを許可
+    configuration.addAllowedMethod("*");
+    // 全てのヘッダーを許可
+    configuration.addAllowedHeader("*");
+    // 認証情報を含むリクエストを許可
+    configuration.setAllowCredentials(true);
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
     source.registerCorsConfiguration("/**", configuration);
     return source;

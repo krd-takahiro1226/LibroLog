@@ -15,7 +15,8 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class BookSearchApiClientImpl implements BookSearchApiClient {
-  @Autowired XmlParser xmlParser;
+  @Autowired
+  XmlParser xmlParser;
 
   private static final String TITLEHEADER = "&title=";
 
@@ -32,7 +33,8 @@ public class BookSearchApiClientImpl implements BookSearchApiClient {
 
   @Override
   public SearchBooksResponseDto getBookSearch(
-      String title, String author, String publisherName, String isbn, Integer page)
+      String title, String author, String publisherName, String isbn,
+      Integer page)
       throws Exception {
     // ベースとなるリクエストURLの作成
     String requestPath = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?";
@@ -43,11 +45,14 @@ public class BookSearchApiClientImpl implements BookSearchApiClient {
     // リクエストパラメータを追加したURLの作成
     try {
       // UTF-8エンコード処理
-      String titleEncoding = URLEncoder.encode(title != null ? title : "", "UTF-8");
-      String authorEncoding = URLEncoder.encode(author != null ? author : "", "UTF-8");
-      String publisherNameEncoding =
-          URLEncoder.encode(publisherName != null ? publisherName : "", "UTF-8");
-      String isbnEncoding = URLEncoder.encode(isbn != null ? isbn : "", "UTF-8");
+      String titleEncoding = URLEncoder.encode(title != null ? title : "",
+          "UTF-8");
+      String authorEncoding = URLEncoder.encode(author != null ? author : "",
+          "UTF-8");
+      String publisherNameEncoding = URLEncoder
+          .encode(publisherName != null ? publisherName : "", "UTF-8");
+      String isbnEncoding = URLEncoder.encode(isbn != null ? isbn : "",
+          "UTF-8");
 
       String titlequery = TITLEHEADER + titleEncoding;
       String authorquery = AUTHORHEADER + authorEncoding;
@@ -86,10 +91,12 @@ public class BookSearchApiClientImpl implements BookSearchApiClient {
     conn.setRequestProperty("Accept", "application/xml");
     // 正常終了以外エラーとする
     if (conn.getResponseCode() != 200) {
-      throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+      throw new RuntimeException(
+          "Failed : HTTP error code : " + conn.getResponseCode());
     }
     // InputStreamReaderを使用するとUTF-16で取得してしまうため、もしかしたら修正する必要あり
-    BufferedReader br = new BufferedReader(new java.io.InputStreamReader((conn.getInputStream())));
+    BufferedReader br = new BufferedReader(
+        new java.io.InputStreamReader((conn.getInputStream())));
     // StringBuilder=文字列連結が効率よく行えるStringのイメージ
     StringBuilder response = new StringBuilder();
     String output;

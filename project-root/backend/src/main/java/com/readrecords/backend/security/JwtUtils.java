@@ -19,8 +19,7 @@ public class JwtUtils {
   private static final long EXPIRATION_TIME = 15 * 60 * 1000; // 15分
 
   @Value("${key.security}")
-  private static final String SECRET_KEY =
-      "your-very-long-and-secure-random-key-here-your-very-long-and-secure-random-key-here-64-bytes-long";
+  private static final String SECRET_KEY = "your-very-long-and-secure-random-key-here-your-very-long-and-secure-random-key-here-64-bytes-long";
 
   private static Key getSigningKey() {
     byte[] keyBytes = SECRET_KEY.getBytes(StandardCharsets.UTF_8);
@@ -41,12 +40,11 @@ public class JwtUtils {
 
   public static Authentication validateToken(String token) {
     try {
-      Claims claims =
-          Jwts.parserBuilder()
-              .setSigningKey(getSigningKey())
-              .build()
-              .parseClaimsJws(token)
-              .getBody();
+      Claims claims = Jwts.parserBuilder()
+          .setSigningKey(getSigningKey())
+          .build()
+          .parseClaimsJws(token)
+          .getBody();
       System.out.println("Claims: " + claims);
 
       String username = claims.getSubject();
@@ -57,9 +55,10 @@ public class JwtUtils {
 
       if (username != null && userId != null) {
         try {
-          System.out.println("Token validated successfully for username: " + username);
-          UsernamePasswordAuthenticationToken authentication =
-              new UsernamePasswordAuthenticationToken(username, null, null);
+          System.out.println(
+              "Token validated successfully for username: " + username);
+          UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+              username, null, null);
           authentication.setDetails(userId);
           return authentication;
         } catch (Exception e) {

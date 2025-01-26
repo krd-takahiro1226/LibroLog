@@ -4,6 +4,7 @@ import axios from 'axios';
 import '../assets/styles/styles.css'; 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faBook, faUser, faBookOpen, faClock, faStar, faChevronRight, faSignOutAlt} from "@fortawesome/free-solid-svg-icons";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Menu() {
   const [isOpen, setIsOpen] = React.useState(false);
@@ -13,7 +14,7 @@ function Menu() {
     { icon: faBook, text: "登録書籍一覧", link: "/showRecords" },
     { icon: faUser, text: "マイページ", link: "#" },
     { icon: faBookOpen, text: "現在読んでいる本", link: "#" },
-    { icon: faClock, text: "読書履歴", link: "#" },
+    { icon: faClock, text: "読書履歴", link: "/achievements" },
     { icon: faStar, text: "お気に入りの本", link: "#" },
   ];
   const handleLogout = () => {
@@ -25,15 +26,19 @@ function Menu() {
         console.error("ログアウトに失敗しました", error);
       });
   };
+  const navigate = useNavigate();
 
 return (
   <div className="min-h-screen w-screen bg-[#f5f5f5] p-8 w-full">
     <div className="w-full mx-auto">
       <header className="flex items-center justify-between mb-12">
         <div>
-          <h1 className="text-2xl md:text-3xl font-crimson-text text-[#333333] mb-2">
+          <button
+            onClick={() => navigate("/menu")}
+            className="text-3xl font-noto-sans hover:text-gray-600 transition-colors"
+          >
             📚 Libro Log
-          </h1>
+          </button>
           <p className="text-[#666666] font-crimson-text">
             あなたの読書体験を記録・管理
           </p>

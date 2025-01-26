@@ -13,20 +13,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/userRegistration")
 public class UserRegistrationController {
-  @Autowired private UserRegistrationServiceImpl userRegistrationService;
+  @Autowired
+  private UserRegistrationServiceImpl userRegistrationService;
 
   @PostMapping
-  public ResponseEntity<?> registerUser(@RequestBody Map<String, String> userDetails) {
+  public ResponseEntity<?> registerUser(
+      @RequestBody Map<String, String> userDetails) {
     String username = userDetails.get("username");
     String email = userDetails.get("email");
     String password = userDetails.get("password");
     String confirmPassword = userDetails.get("confirmPassword");
 
-    boolean check = userRegistrationService.checkPassword(password, confirmPassword);
+    boolean check = userRegistrationService.checkPassword(password,
+        confirmPassword);
     if (!check) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passwords do not match");
+      return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+          .body("Passwords do not match");
     }
-    userRegistrationService.userRegistration(username, email, password, confirmPassword);
-    return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+    userRegistrationService.userRegistration(username, email, password,
+        confirmPassword);
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body("User registered successfully");
   }
 }

@@ -1,7 +1,9 @@
 package com.readrecords.backend.controller;
 
+import com.readrecords.backend.dto.ReadingAchievementsDto;
 import com.readrecords.backend.dto.UserReadRecordsDto;
-import com.readrecords.backend.service.ReadRecordsService;
+import com.readrecords.backend.service.ReadingAchievementsService;
+import com.readrecords.backend.service.RegisterBookRecordsService;
 import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,14 +17,56 @@ import org.springframework.web.bind.annotation.RestController;
 // 初期メニューから各種機能へ遷移させるためのController
 @RestController
 public class MenuController {
-  private static final Logger logger = LoggerFactory.getLogger(MenuController.class);
-  @Autowired ReadRecordsService readRecordsService;
+  private static final Logger logger = LoggerFactory
+      .getLogger(MenuController.class);
+  @Autowired
+  RegisterBookRecordsService readRecordsService;
+
+  @Autowired
+  ReadingAchievementsService readingAchievementsService;
 
   @GetMapping("/showRecords")
   public ResponseEntity<?> showUserReadRecords(Authentication authentication) {
+    String userId = getUserId(authentication);
+    try {
+      List<UserReadRecordsDto> userReadRecords = readRecordsService
+          .getReadRecordsByUserId(userId);
+      return ResponseEntity.ok(userReadRecords);
+
+    } catch (Exception e) {
+      logger.error("Error fetching records", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Error fetching records");
+    }
+  }
+
+  @GetMapping("/searchBooks")
+  public ResponseEntity<String> showSearchWindow() {
+    return ResponseEntity.ok("searchBooks endpoint");
+  }
+
+  @GetMapping("/showAchievements")
+  public ResponseEntity<?> showReadingAchievementsWindow(
+      Authentication authentication) {
+    String userId = getUserId(authentication);
+    try {
+      ReadingAchievementsDto userReadingAchievements = readingAchievementsService
+          .getReadAchievementsByUserId(userId);
+      logger.info("実績情報: {}", userReadingAchievements);
+      return ResponseEntity.ok(userReadingAchievements);
+
+    } catch (Exception e) {
+      logger.error("Error fetching records", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+          .body("Error fetching records");
+    }
+  }
+
+  private String getUserId(Authentication authentication) {
     if (authentication == null || !authentication.isAuthenticated()) {
       logger.warn("Unauthorized access attempt");
-      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized access");
+      throw new IllegalStateException(
+          "Authentication is required to fetch userId");
     }
 
     try {
@@ -30,18 +74,11 @@ public class MenuController {
       System.out.println("Authentication: " + authentication);
       String userId = authentication.getDetails().toString();
       logger.info("Fetching records for userId: {}", userId);
-
-      List<UserReadRecordsDto> userReadRecords = readRecordsService.getReadRecordsByUserId(userId);
-      return ResponseEntity.ok(userReadRecords);
+      return userId;
 
     } catch (Exception e) {
       logger.error("Error fetching records", e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching records");
+      throw new IllegalStateException("Failed to fetch userId", e);
     }
-  }
-
-  @GetMapping("/searchBooks")
-  public ResponseEntity<String> showSearchWindow() {
-    return ResponseEntity.ok("searchBooks endpoint");
   }
 }
