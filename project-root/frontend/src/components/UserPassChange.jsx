@@ -1,19 +1,40 @@
 "use client";
-import React from "react";
+import {React, useEffect} from "react";
 import axios from "axios";
 import "../assets/styles/styles.css";
 
 
 function UserPassChange() {
   const [oldpassword, setOldPassword] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [newpassword, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
+
+
+  useEffect(() => {
+    // トークンのチェック
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('トークンが存在しません。再ログインしてください。');
+      window.location.href = '/login';
+      return;
+    }
+
+    const decodedToken = JSON.parse(atob(token.split('.')[1]));
+    if (Date.now() >= decodedToken.exp * 1000) {
+      alert('トークンの有効期限が切れています。再ログインしてください。');
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+      return;
+    }
+  
+  }, []);
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     // 新しいパスワードの一致確認
-    if (password !== confirmPassword) {
+    if (newpassword !== confirmPassword) {
       alert("新しいパスワードが一致しません。入力内容を確認してください。");
       return;
     }
@@ -21,8 +42,8 @@ function UserPassChange() {
     try {
       // サーバーへ変更リクエストを送信（PUTメソッド）
       const response = await axios.put(
-        "http://localhost:8080/userPassChange",
-        { oldpassword, password, confirmPassword },
+        "http://localhost:8080/userPassword/change",
+        { oldpassword, newpassword },
         { withCredentials: true }
       );
 
@@ -93,7 +114,7 @@ function UserPassChange() {
               <input
                 type="password"
                 name="password"
-                value={password}
+                value={newpassword}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-4 py-2 border border-[#c8d1d3] rounded-lg focus:outline-none focus:border-[#2d3436]"
                 required
@@ -133,13 +154,24 @@ function UserPassChange() {
             
         </div>
 
+
+        <div className="mt-8 text-center">
+          <button
+            className="bg-[#656d78] text-white px-6 py-2 rounded flex items-center justify-center gap-2 mx-auto hover:bg-[#434a54] transition-colors"
+            onClick={() => (window.location.href = "/myPage")}
+          >
+            <i className="fas fa-home"></i>
+            キャンセル
+          </button>
+        </div>
+
         <div className="mt-8 text-center">
           <button
             className="bg-[#656d78] text-white px-6 py-2 rounded flex items-center justify-center gap-2 mx-auto hover:bg-[#434a54] transition-colors"
             onClick={() => (window.location.href = "/menu")}
           >
             <i className="fas fa-home"></i>
-            メニューに戻る
+            変更を保存せずにメニューに戻る
           </button>
         </div>
       </div>
