@@ -1,15 +1,49 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../assets/styles/styles.css";
 
 
 function MyPage() {
-  const [user] = React.useState({
-    name: "test_user",
+  //const [user, setUser] = useState(null); // 初期値はnull
+
+  // 初期値を固定値として設定
+  const [user, setUser] = useState({
+    name: "Loading...", // ユーザー名は最初は読み込み中と表示
     email: "example@email.com",
     password: "********",
   });
+
+
+  // バックエンドからユーザー情報を取得
+  useEffect(() => {
+    // JWTトークンを取得（localStorageから）
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      console.error("トークンが見つかりません");
+      return;
+    }
+
+    axios
+      .get("http://localhost:8080/api/user/me",{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        // nameの値を更新し、他の固定値をそのまま保持
+        setUser((prevUser) => ({
+          ...prevUser, // 以前のstateを保持
+          name: response.data.name, // nameだけを更新
+        }));
+      })
+      .catch((error) => {
+        console.error("ユーザー情報の取得に失敗しました:", error);
+      });
+  }, []);
+
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 px-4">
