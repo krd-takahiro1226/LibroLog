@@ -8,6 +8,7 @@ function UserPassChange() {
   const [oldpassword, setOldPassword] = React.useState("");
   const [newpassword, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
+  const [passwordStrength, setPasswordStrength] = useState("");
 
 
   useEffect(() => {
@@ -34,7 +35,38 @@ function UserPassChange() {
       localStorage.removeItem("token");
       window.location.href = "/login";
     }
-  }, []);
+
+    // 新しいパスワードの強度をチェック
+    if (newpassword.length === 0) {
+      setPasswordStrength(""); // 何も入力されていないときは空
+      return;
+    }
+    const strength = checkPasswordStrength(newpassword);
+    setPasswordStrength(strength);
+    
+  }, [newpassword]);
+
+  const checkPasswordStrength = (password) => {
+    let strength = 0;
+    let weakFlag = 0;
+    if (password.length >= 8) strength++;
+    // if (/[A-Z]/.test(password)) strength++;
+    // if (/[a-z]/.test(password)) strength++;
+    // if (/[0-9]/.test(password)) strength++;
+    // if (/[\W]/.test(password)) strength++;
+
+    if (password === "password") weakFlag=1;
+    if (password === "qwertyui") weakFlag=1;
+    if (password === "00000000") weakFlag=1;
+    if (password === "12345678") weakFlag=1;
+    if (password === "01234567") weakFlag=1;
+
+    if (strength <= 0) return "パスワードは8文字以上で設定してください。";
+    if (weakFlag === 1) return "そのパスワードは使用できません。";
+    // if (strength <= 2) return "Weak";
+    // if (strength === 3) return "Moderate";
+    return "OK";
+  };
   
 
   const handleSubmit = async (e) => {
@@ -43,6 +75,17 @@ function UserPassChange() {
     // 新しいパスワードの一致確認
     if (newpassword !== confirmPassword) {
       alert("新しいパスワードが一致しません。入力内容を確認してください。");
+      return;
+    }
+    
+    // 新しいパスワードの強度をチェック（要件を満たさない場合はエラーメッセージを表示）
+    if (newpassword.length === 0) {
+      alert("新しいパスワードが入力されていません。");
+      return;
+    }
+    const strength = checkPasswordStrength(newpassword);
+    if (strength !== "OK") {
+      alert(strength);
       return;
     }
 
@@ -57,7 +100,10 @@ function UserPassChange() {
       // サーバーへ変更リクエストを送信（PUTメソッド）
       const response = await axios.put(
         "http://localhost:8080/userPassword/change",
-        { oldpassword, newpassword },
+        { 
+          oldPassword: oldpassword, // キー名は"oldPassword"に変更
+          newPassword: newpassword, // キー名は"newPassword"に変更
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -88,9 +134,15 @@ function UserPassChange() {
         alert("変更に失敗しました。再度お試しください。");
       }
 
-    } catch (error) {
-      console.error("エラー:", error.response || error);
-      alert("エラーが発生しました。後ほどお試しください。");
+    } 
+    catch (error) {
+      if (error.response && error.response.status === 401) {
+        alert("現在のパスワードが間違っています。");
+      } else if (error.response && error.response.status === 500) {
+        alert("Internal Server Error");
+      } else {
+        alert("エラーが発生しました。後ほどお試しください。");
+      }
     }
   };
 
@@ -99,21 +151,21 @@ function UserPassChange() {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="w-[600px]">
-        <div className="flex items-center gap-3 mb-8">
-          <img
-            src="/images/LibroLogIcon.jpg"
-            alt="Libro Logのアイコン"
-            className="w-8 h-8"
-          />
-          <h1 className="font-noto-sans text-xl">パスワード変更</h1>
-        </div>
-
+    <div className="min-h-screen w-screen bg-[#f5f5f5] p-8">
+      <div className="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <header className="flex items-center justify-between mb-12">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-crimson-text text-[#333333] mb-2">
+              📚 Libro Log
+            </h1>
+          </div>
+        </header>
+        <h1 className="text-xl font-bold mb-6s">パスワード変更</h1>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
             <div>
-              <label className="block text-sm font-noto-sans text-[#505e61] mb-2">
+              
+              <label className="block text-sm font-noto-sans mb-2">
                 現在のパスワード
               </label>
               <input
@@ -127,7 +179,7 @@ function UserPassChange() {
             </div>
 
             <div>
-              <label className="block text-sm font-noto-sans text-[#505e61] mb-2">
+              <label className="block text-sm font-noto-sans mb-2">
                 新しいパスワード
               </label>
               <input
@@ -138,10 +190,13 @@ function UserPassChange() {
                 className="w-full px-4 py-2 border border-[#c8d1d3] rounded-lg focus:outline-none focus:border-[#2d3436]"
                 required
               />
+              <p className={`mt-2 text-sm ${passwordStrength === "OK" ? "text-green-500" : passwordStrength === "Moderate" ? "text-yellow-500" : "text-red-500"}`}>
+              {passwordStrength}
+            </p>
             </div>
 
             <div>
-              <label className="block text-sm font-noto-sans text-[#505e61] mb-2">
+              <label className="block text-sm font-noto-sans mb-2">
                 新しいパスワード（確認）
               </label>
               <input
@@ -154,45 +209,27 @@ function UserPassChange() {
               />
             </div>
 
+            <div className="flex gap-4 mt-6">
+              <button
+                className="mt-4 bg-gray-200 text-gray-700 px-6 py-2 rounded hover:bg-gray-300"
+                onClick={() => (window.location.href = "/myPage")}
+              >
+                <i className="fas fa-home"></i>
+                キャンセル
+              </button>
 
-            <button
-              type="submit"
-              className="bg-[#2d3436] text-white px-6 py-2 rounded flex items-center justify-center gap-2 mx-auto hover:bg-[#434a54] transition-colors"
-            >
-              <i className="fas fa-user-edit"></i>
-              変更する
-            </button>
+              <button
+                type="submit"
+                className="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+              >
+                <i className="fas fa-user-edit"></i>
+                変更する
+              </button>
+            </div>
 
         </form>
 
 
-
-        
-
-        <div className="bg-white rounded-lg shadow p-6">
-            
-        </div>
-
-
-        <div className="mt-8 text-center">
-          <button
-            className="bg-[#656d78] text-white px-6 py-2 rounded flex items-center justify-center gap-2 mx-auto hover:bg-[#434a54] transition-colors"
-            onClick={() => (window.location.href = "/myPage")}
-          >
-            <i className="fas fa-home"></i>
-            キャンセル
-          </button>
-        </div>
-
-        <div className="mt-8 text-center">
-          <button
-            className="bg-[#656d78] text-white px-6 py-2 rounded flex items-center justify-center gap-2 mx-auto hover:bg-[#434a54] transition-colors"
-            onClick={() => (window.location.href = "/menu")}
-          >
-            <i className="fas fa-home"></i>
-            変更を保存せずにメニューに戻る
-          </button>
-        </div>
       </div>
     </div>
   );
