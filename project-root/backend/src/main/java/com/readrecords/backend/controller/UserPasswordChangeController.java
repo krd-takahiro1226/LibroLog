@@ -19,7 +19,7 @@ import com.readrecords.backend.service.UserPasswordChangeService;
 @RestController
 @RequestMapping("/userPassword")
 public class UserPasswordChangeController {
-  @Autowired private UserPasswordChangeService userPasswordChangeService;
+  @Autowired UserPasswordChangeService userPasswordChangeService;
 
   private static final Logger logger = LoggerFactory.getLogger(UserPasswordChangeController.class);
 

@@ -19,7 +19,7 @@ import com.readrecords.backend.service.UsernameChangeService;
 @RequestMapping("/username")
 public class UsernameChangeController {
   @Autowired
-  private UsernameChangeService usernameChangeService;
+  UsernameChangeService usernameChangeService;
 
   private static final Logger logger = LoggerFactory.getLogger(UsernameChangeController.class);
 

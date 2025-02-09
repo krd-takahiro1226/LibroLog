@@ -4,9 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
 
 import com.readrecords.backend.repository.UsernameChangeRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
@@ -14,7 +15,7 @@ public class UsernameChangeServiceImpl implements UsernameChangeService {
   private static final Logger logger = LoggerFactory.getLogger(UsernameChangeServiceImpl.class);
 
   @Autowired
-  private UsernameChangeRepository usernameChangeRepository;
+  UsernameChangeRepository usernameChangeRepository;
 
   @Override
   public void changeUsername(String userId, String newUsername) {
