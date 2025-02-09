@@ -9,9 +9,10 @@ function MyPage() {
 
   // 初期値を固定値として設定
   const [user, setUser] = useState({
-    name: "Loading...", // ユーザー名は最初は読み込み中と表示
-    email: "example@email.com",
+    name: "Loading...", // 最初は読み込み中と表示
+    email: "Loading...",
     password: "********",
+    role: null, // 初期値はnull
   });
 
 
@@ -33,30 +34,35 @@ function MyPage() {
       })
       .then((response) => {
         console.log(response.data);
-        // nameの値を更新し、他の固定値をそのまま保持
+        // nameとemailの値を更新し、他の固定値をそのまま保持
         setUser((prevUser) => ({
           ...prevUser, // 以前のstateを保持
-          name: response.data.name, // nameだけを更新
+          name: response.data.name, // nameを更新
+          email: response.data.email, // emailを更新
+          role: response.data.role || null, // roleが存在する場合のみ更新
         }));
       })
       .catch((error) => {
         console.error("ユーザー情報の取得に失敗しました:", error);
       });
+
   }, []);
 
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 px-4">
-      <div className="w-[600px]">
-        <div className="flex items-center gap-3 mb-8">
-          <img
-            src="/images/LibroLogIcon.jpg"
-            alt="Libro Logのアイコン"
-            className="w-8 h-8"
-          />
-          <h1 className="font-noto-sans text-xl">マイページ</h1>
-        </div>
-
+    <div className="min-h-screen w-screen bg-[#f5f5f5] p-8">
+      <div className="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-md">
+        <header className="flex items-center justify-between mb-12">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-crimson-text text-[#333333] mb-2">
+              📚 Libro Log
+            </h1>
+            <p className="text-[#666666] font-crimson-text">
+              あなたの読書体験を記録・管理
+            </p>
+          </div>
+        </header>
+        <h1 className="text-xl font-bold mb-6s">ユーザー情報照会・変更</h1><br></br>
         <div className="bg-white rounded-lg shadow p-6">
           <div className="space-y-8">
 
@@ -66,7 +72,9 @@ function MyPage() {
                   ユーザー名
                 </label>
                 <button className="bg-[#4b89dc] text-white px-4 py-1 text-sm rounded hover:bg-[#357abd] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-                  disabled>
+                  onClick={() => (window.location.href = "/usernameChange")}
+                  
+                >
                   変更
                 </button>
               </div>
@@ -78,8 +86,11 @@ function MyPage() {
                 <label className="font-noto-sans text-gray-600">
                   メールアドレス
                 </label>
-                <button className="bg-[#4b89dc] text-white px-4 py-1 text-sm rounded hover:bg-[#357abd] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-                  disabled>
+                <button 
+                  className="bg-[#4b89dc] text-white px-4 py-1 text-sm rounded hover:bg-[#357abd] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  onClick={() => (window.location.href = "/userEmailChange")}
+                  
+                >
                   変更
                 </button>
               </div>
@@ -100,6 +111,15 @@ function MyPage() {
               </div>
               <div className="text-lg">{user.password}</div>
             </div>
+
+
+            {user.role && (
+              <div className="flex flex-col space-y-2">
+                <label className="font-noto-sans text-gray-600">権限（管理者のみ表示）</label>
+                <div className="text-lg">{user.role}</div>
+              </div>
+            )}
+
           </div>
         </div>
 
