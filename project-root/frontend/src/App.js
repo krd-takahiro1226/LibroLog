@@ -9,6 +9,7 @@ import NewUserRegister from './components/NewUserRegister';
 import './assets/styles/styles.css';
 import SearchResult from './components/SearchResult';
 import ReadingAchievements from './components/ReadingAchievements';
+import SetReadingGoals from './components/SetReadingGoals';
 
 function App() {
     return (
@@ -17,10 +18,11 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/menu" element={<Menu />} />
                 <Route path="/searchBooks" element={<Search />} />
-                <Route path = "/searchBooksResult" element={<SearchResult/>}></Route>
+                <Route path="/searchBooksResult" element={<SearchResult />}></Route>
                 <Route path="/showRecords" element={<ShowRecords />} />
                 <Route path="/userRegistration" element={<NewUserRegister />} />
                 <Route path="/achievements" element={<ReadingAchievements />} />
+                <Route path="/setReadingGoals" element={<SetReadingGoals />}></Route>
             </Routes>
         </Router>
     );
