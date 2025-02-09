@@ -5,6 +5,11 @@
 - issue番号をもとにローカルにブランチ作成
   - ブランチ名はissue番号と作業概要がわかる名前とする
   - 例 : git checkout -b issue#1-CreateTable
+- (必要に応じて)rebase
+  - rebaseが必要なのは、自作業が完了する前にブランチを作成したもとのブランチに変更が入った場合
+  - 例
+    - git rebase main
+    - git push -u origin issue#1-CreateTable -f
 - 開発
 - リモートブランチに開発内容をプッシュ
   - 以下コマンドでリモートブランチの作成およびプッシュができる

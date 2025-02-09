@@ -1,0 +1,243 @@
+/* styles.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* height: 100vh; */
+  height: 100%;
+  overflow: auto;
+  margin: 0;
+}
+
+.container {
+  width: 60%;
+  
+  background-color: #ffffff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.container h1 {
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 10px;
+}
+.form-group input{
+  margin-left: 10px;
+  width: 90%;
+}
+
+.form-group input[type="text"],
+.form-group input[type="password"],
+.form-group input[type="search"] {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.buttons {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.buttons button {
+  padding: 10px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 4px;
+  background-color: #4CAF50;
+  color: white;
+  cursor: pointer;
+  
+}
+
+.buttons button:hover {
+  background-color: #45a049;
+}
+
+.buttons button.clear {
+  background-color: #f44336;
+}
+
+.buttons button.clear:hover {
+  background-color: #d32f2f;
+}
+
+.buttons .cancel-button {
+  background-color: #f44336; /* キャンセルボタンの背景色を赤に設定 */
+  max-width: 200px;
+}
+
+.buttons .cancel-button:hover {
+  background-color: #d32f2f; /* ホバー時の背景色を変更 */
+}
+
+
+select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-left: 5px;
+}
+
+/* テーブルのスタイル */
+table.book-list {
+  width: 100%;
+  min-width: 800px;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table.book-list th, table.book-list td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
+}
+
+table.book-list th {
+  background-color: #f2f2f2;
+}
+/*
+table.book-list tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+*/
+table.book-list tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.reserve-button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 10px;
+  min-width: 50px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.reserve-button:hover {
+  background-color: #45a049;
+}
+
+
+/* ラジオボタンのスタイル */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.radio-group label {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    cursor: pointer; /* カーソルをポインターにする */
+}
+
+
+
+/* ラジオボタンのスタイル */
+.radio-group .radio-label {
+  display: flex;
+  align-items: center;
+  margin-left: 15px;
+  margin-right: 15px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; /* 背景色の変化をアニメーション化 */
+  min-width: 
+  200px;
+}
+
+.radio-group .radio-label:hover {
+  background-color: #f0f0f0; /* ホバー時の背景色を変更 */
+}
+
+.radio-group input[type="radio"] {
+  margin-right: 10px;
+}
+
+/* ポップアップウィンドウの全体背景 */
+.popup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 50;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* 薄暗い背景で画面全体を覆う */
+}
+
+/* ポップアップの内容 */
+.popup-content {
+  background-color: #ffffff; /* ポップアップ自体の背景色 */
+  padding: 40px 30px;
+  width: 400px;
+  max-width: 80%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* シャドウを追加 */
+  text-align: center;
+}
+
+/* 閉じるボタン */
+.close {
+  color: #333;
+  float: right;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: #f44336; /* 閉じるボタンがホバー時に赤色 */
+  text-decoration: none;
+}
+
+/* OKボタンのスタイル */
+.popup-ok-button {
+  background-color: #2d3436; /* ボタンの背景色 */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  margin-top: 30px;
+}
+
+.popup-ok-button:hover {
+  background-color: #1e2527; /* ホバー時のボタン色 */
+
+  .container {
+    max-height: 100vh; /* 画面の高さに収める */
+    overflow-y: auto; /* 縦方向のスクロールを有効化 */
+  }
+}
