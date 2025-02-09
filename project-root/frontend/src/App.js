@@ -13,6 +13,7 @@ import MyPage from './components/MyPage';
 import UserPassChange from './components/UserPassChange';
 import UsernameChange from './components/UsernameChange';
 import UserEmailChange from './components/UserEmailChange';
+import SetReadingGoals from './components/SetReadingGoals';
 
 function App() {
     return (
@@ -21,7 +22,7 @@ function App() {
                 <Route path="/login" element={<Login />} />
                 <Route path="/menu" element={<Menu />} />
                 <Route path="/searchBooks" element={<Search />} />
-                <Route path = "/searchBooksResult" element={<SearchResult/>}></Route>
+                <Route path="/searchBooksResult" element={<SearchResult />}></Route>
                 <Route path="/showRecords" element={<ShowRecords />} />
                 <Route path="/userRegistration" element={<NewUserRegister />} />
                 <Route path="/achievements" element={<ReadingAchievements />} />
@@ -29,6 +30,7 @@ function App() {
                 <Route path="/userPassChange" element={<UserPassChange />} />
                 <Route path="/usernameChange" element={<UsernameChange />} />
                 <Route path="/userEmailChange" element={<UserEmailChange />} />
+                <Route path="/setReadingGoals" element={<SetReadingGoals />}></Route>
             </Routes>
         </Router>
     );
