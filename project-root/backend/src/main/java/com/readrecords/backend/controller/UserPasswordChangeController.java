@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.readrecords.backend.exception.IncorrectPasswordException;
 import com.readrecords.backend.service.UserPasswordChangeService;
 
 @RestController
@@ -26,7 +27,7 @@ public class UserPasswordChangeController {
   public ResponseEntity<?> changePassword(
       Authentication authentication, 
       @RequestBody Map<String, String> passwordDetails) {
-    
+        
     String userId = getUserId(authentication);
     String oldPassword = passwordDetails.get("oldPassword");
     String newPassword = passwordDetails.get("newPassword");
@@ -35,8 +36,13 @@ public class UserPasswordChangeController {
     try {
       userPasswordChangeService.changePassword(userId, oldPassword, newPassword);
       return ResponseEntity.status(HttpStatus.OK).body("Password updated successfully");
-    } catch (IllegalArgumentException e) {
-      return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    } 
+    catch (IncorrectPasswordException e) {
+      return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+    } 
+    catch (Exception e) {
+      logger.error("パスワード変更中にエラーが発生しました:", e);
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("エラーが発生しました。後ほどお試しください。");
     }
   }
 
