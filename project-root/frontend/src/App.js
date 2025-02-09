@@ -11,6 +11,8 @@ import SearchResult from './components/SearchResult';
 import ReadingAchievements from './components/ReadingAchievements';
 import MyPage from './components/MyPage';
 import UserPassChange from './components/UserPassChange';
+import UsernameChange from './components/UsernameChange';
+import UserEmailChange from './components/UserEmailChange';
 
 function App() {
     return (
@@ -25,6 +27,8 @@ function App() {
                 <Route path="/achievements" element={<ReadingAchievements />} />
                 <Route path="/myPage" element={<MyPage />} />
                 <Route path="/userPassChange" element={<UserPassChange />} />
+                <Route path="/usernameChange" element={<UsernameChange />} />
+                <Route path="/userEmailChange" element={<UserEmailChange />} />
             </Routes>
         </Router>
     );
