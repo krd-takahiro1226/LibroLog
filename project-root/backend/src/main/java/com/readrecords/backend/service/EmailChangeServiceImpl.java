@@ -15,7 +15,7 @@ public class EmailChangeServiceImpl implements EmailChangeService {
   private static final Logger logger = LoggerFactory.getLogger(EmailChangeServiceImpl.class);
 
   @Autowired
-  private EmailChangeRepository emailChangeRepository;
+  EmailChangeRepository emailChangeRepository;
 
   @Override
   public void changeEmail(String userId, String newUserEmail) {

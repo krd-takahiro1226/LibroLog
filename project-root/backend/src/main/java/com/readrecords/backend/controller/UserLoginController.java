@@ -1,8 +1,7 @@
 package com.readrecords.backend.controller;
 
-import com.readrecords.backend.entity.UserLogin;
-import com.readrecords.backend.security.JwtUtils;
 import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +14,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.readrecords.backend.entity.UserLogin;
+import com.readrecords.backend.security.JwtUtils;
+
 @RestController
 public class UserLoginController {
 
   @Autowired
-  private AuthenticationManager authenticationManager;
+  AuthenticationManager authenticationManager;
 
   @Autowired
-  private JwtUtils jwtUtils;
+  JwtUtils jwtUtils;
 
   @PostMapping("/login")
   public ResponseEntity<?> authenticateUser(@RequestBody UserLogin userLogin) {

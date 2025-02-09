@@ -19,7 +19,7 @@ import com.readrecords.backend.service.EmailChangeService;
 @RequestMapping("/useremail")
 public class EmailChangeController {
   @Autowired
-  private EmailChangeService emailChangeService;
+  EmailChangeService emailChangeService;
 
   private static final Logger logger = LoggerFactory.getLogger(EmailChangeController.class);
 
