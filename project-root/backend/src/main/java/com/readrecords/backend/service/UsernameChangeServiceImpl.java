@@ -22,10 +22,9 @@ public class UsernameChangeServiceImpl implements UsernameChangeService {
     logger.info("Updating username for userId: {}", userId);
 
     int updatedRows = usernameChangeRepository.updateUsername(userId, newUsername);
-    
+
     if (updatedRows == 0) {
       throw new IllegalArgumentException("User not found or username unchanged.");
     }
   }
 }
-

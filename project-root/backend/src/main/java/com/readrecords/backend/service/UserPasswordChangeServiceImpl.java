@@ -16,8 +16,10 @@ import jakarta.transaction.Transactional;
 public class UserPasswordChangeServiceImpl implements UserPasswordChangeService {
   private static final Logger logger = LoggerFactory.getLogger(UserPasswordChangeServiceImpl.class);
 
-  @Autowired PasswordEncoder passwordEncoder;
-  @Autowired UserPasswordChangeRepository userPasswordChangeRepository;
+  @Autowired
+  PasswordEncoder passwordEncoder;
+  @Autowired
+  UserPasswordChangeRepository userPasswordChangeRepository;
 
   @Override
   public void changePassword(
