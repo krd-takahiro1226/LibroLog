@@ -11,48 +11,63 @@ function ShowRecords() {
   const [selectedBooks, setSelectedBooks] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [editableBooks, setEditableBooks] = useState([]);
-  const [showDeletePopup, setShowDeletePopup] = useState(false); // 登録解除ポップアップ
+  const [showDeletePopup, setShowDeletePopup] = useState(false);
+  //後でコメントアウトを削除
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('トークンが存在しません。再ログインしてください。');
-      window.location.href = '/login';
-      return;
-    }
-
-    const decodedToken = JSON.parse(atob(token.split('.')[1]));
-    if (Date.now() >= decodedToken.exp * 1000) {
-      alert('トークンの有効期限が切れています。再ログインしてください。');
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-      return;
-    }
-
-    // レコード取得
-    axios
-      .get('http://localhost:8080/showRecords', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      })
-      .then((response) => {
+    const fetchData = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('トークンが存在しません。再ログインしてください。');
+        window.location.href = '/login';
+        return;
+      }
+  
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      if (Date.now() >= decodedToken.exp * 1000) {
+        alert('トークンの有効期限が切れています。再ログインしてください。');
+        localStorage.removeItem('token');
+        window.location.href = '/login';
+        return;
+      }
+  
+      try {
+        const response = await axios.get(`http://localhost:8080/showRecords?page=${currentPage}&limit=${limit}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
         console.log('Records:', response.data);
-        setBooks(response.data);
-      })
-      .catch((error) => {
+        setBooks(response.data.books);
+        setTotalPages(response.data.totalPages);
+      } catch (error) {
         console.error('Error fetching data:', error);
         setError('データの取得に失敗しました');
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      });
-  }, []);
+      }
+    };
+  
+    fetchData();
+  }, [currentPage, limit]); // currentPage または limit が変更されたら再取得
 
 
   if (loading) return <div>読み込み中...</div>;
   if (error) return <div>{error}</div>;
 
+  // ページを変更する関数
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+    }
+  };
   // チェックボックスの有効化
   const handleCheckboxChange = (isbn) => {
     setSelectedBooks((prev) =>
@@ -220,6 +235,24 @@ function ShowRecords() {
             )}
           </tbody>
         </table>
+      </div>
+      {/* ページングボタン */}
+      <div className="flex justify-center mt-4">
+        <button
+          onClick={handlePrevPage}
+          disabled={currentPage === 1}
+          className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 disabled:bg-gray-300 mx-2"
+        >
+          Prev
+        </button>
+        <span className="px-4 py-2">{currentPage} / {totalPages}</span>
+        <button
+          onClick={handleNextPage}
+          disabled={currentPage >= totalPages}
+          className="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 disabled:bg-gray-300 mx-2"
+        >
+          Next
+        </button>
       </div>
       {showPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
