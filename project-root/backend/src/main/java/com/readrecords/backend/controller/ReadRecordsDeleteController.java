@@ -1,8 +1,8 @@
 package com.readrecords.backend.controller;
 
-import com.readrecords.backend.service.ReadRecordsDeleteService;
 import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +13,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.readrecords.backend.service.RegisterBookRecordsDeleteService;
+
 @RestController
 public class ReadRecordsDeleteController {
   @Autowired
-  ReadRecordsDeleteService readRecordsDeleteService;
+  RegisterBookRecordsDeleteService registerBookRecordsDeleteService;
   private static final Logger logger = LoggerFactory
       .getLogger(ReadRecordsDeleteController.class);
 
@@ -31,7 +33,7 @@ public class ReadRecordsDeleteController {
     try {
       String userId = authentication.getDetails().toString();
       logger.info("Fetching records for userId: {}", userId);
-      readRecordsDeleteService.deleteReadRecords(requestData.get("isbns"),
+      registerBookRecordsDeleteService.deleteReadRecords(requestData.get("isbns"),
           userId);
       return ResponseEntity.ok("Records Deleted successfully");
     } catch (Exception e) {
