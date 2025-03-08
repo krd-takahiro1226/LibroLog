@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../assets/styles/styles.css";
+import { useLocation, useNavigate } from "react-router-dom";
 
 
 function MyPage() {
@@ -14,6 +15,8 @@ function MyPage() {
     password: "********",
     role: null, // 初期値はnull
   });
+  const navigate = useNavigate();
+
 
 
   // バックエンドからユーザー情報を取得
@@ -27,7 +30,7 @@ function MyPage() {
     }
 
     axios
-      .get("http://localhost:8080/api/user/me",{
+      .get("http://localhost:8080/api/user/me", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -54,9 +57,12 @@ function MyPage() {
       <div className="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-md">
         <header className="flex items-center justify-between mb-12">
           <div>
-            <h1 className="text-2xl md:text-3xl font-crimson-text text-[#333333] mb-2">
+            <button
+              onClick={() => navigate("/menu")}
+              className="text-3xl font-noto-sans hover:text-gray-600 transition-colors"
+            >
               📚 Libro Log
-            </h1>
+            </button>
             <p className="text-[#666666] font-crimson-text">
               あなたの読書体験を記録・管理
             </p>
@@ -73,7 +79,6 @@ function MyPage() {
                 </label>
                 <button className="bg-[#4b89dc] text-white px-4 py-1 text-sm rounded hover:bg-[#357abd] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                   onClick={() => (window.location.href = "/usernameChange")}
-                  
                 >
                   変更
                 </button>
@@ -86,10 +91,10 @@ function MyPage() {
                 <label className="font-noto-sans text-gray-600">
                   メールアドレス
                 </label>
-                <button 
+                <button
                   className="bg-[#4b89dc] text-white px-4 py-1 text-sm rounded hover:bg-[#357abd] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
                   onClick={() => (window.location.href = "/userEmailChange")}
-                  
+
                 >
                   変更
                 </button>
