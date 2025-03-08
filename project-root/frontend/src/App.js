@@ -14,6 +14,7 @@ import UserPassChange from './components/UserPassChange';
 import UsernameChange from './components/UsernameChange';
 import UserEmailChange from './components/UserEmailChange';
 import SetReadingGoals from './components/SetReadingGoals';
+import AchievementsSettings from './components/AchievementsSettings';
 
 function App() {
     return (
@@ -31,6 +32,7 @@ function App() {
                 <Route path="/usernameChange" element={<UsernameChange />} />
                 <Route path="/userEmailChange" element={<UserEmailChange />} />
                 <Route path="/setReadingGoals" element={<SetReadingGoals />}></Route>
+                <Route path="/achievementsSettings" element={<AchievementsSettings />}></Route>
             </Routes>
         </Router>
     );
