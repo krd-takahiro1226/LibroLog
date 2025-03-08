@@ -43,11 +43,12 @@ public class BookSearchApiController {
       @RequestParam(required = false) String author,
       @RequestParam(required = false) String publisherName,
       @RequestParam(required = false) String isbn,
-      @RequestParam(value = "page", defaultValue = "1") Integer page)
-      throws Exception {
+      @RequestParam(value = "currentPage", defaultValue = "1") Integer currentPage,
+      @RequestParam(value = "limit", defaultValue = "10") Integer limit) throws Exception {
     SearchBooksResponseDto response = bookSearchApiClient.getBookSearch(title,
-        author, publisherName, isbn, page);
-    System.out.println(response);
+        author, publisherName, isbn, currentPage, limit);
+    int totalPages = response.getPageCount();
+    response.setPageCount(totalPages);
     return ResponseEntity.ok(response);
   }
 
