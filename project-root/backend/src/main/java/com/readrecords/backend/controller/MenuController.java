@@ -1,10 +1,14 @@
 package com.readrecords.backend.controller;
 
 import com.readrecords.backend.dto.ReadingAchievementsDto;
+import com.readrecords.backend.dto.ReadingRecordsDto;
 import com.readrecords.backend.dto.UserReadRecordsDto;
 import com.readrecords.backend.service.ReadingAchievementsService;
+import com.readrecords.backend.service.ReadingRecordsService;
 import com.readrecords.backend.service.RegisterBookRecordsService;
 import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +28,9 @@ public class MenuController {
 
   @Autowired
   ReadingAchievementsService readingAchievementsService;
+
+  @Autowired
+  ReadingRecordsService readingRecordsService;
 
   @GetMapping("/showRecords")
   public ResponseEntity<?> showUserReadRecords(Authentication authentication) {
@@ -60,6 +67,13 @@ public class MenuController {
       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
           .body("Error fetching records");
     }
+  }
+
+  @GetMapping("/showSettingAchievements")
+  public ResponseEntity<?> showSettingReadingAchievementsWindow(
+      Authentication authentication) {
+    Map<String, List<ReadingRecordsDto>> userReadRecordsList = readingRecordsService.getReadingRecords(authentication);
+    return ResponseEntity.ok(userReadRecordsList);
   }
 
   private String getUserId(Authentication authentication) {
