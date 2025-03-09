@@ -60,7 +60,6 @@ function AchievementsSettings() {
       .then((response) => {
         const data = response.data;
 
-        // TODO 目標冊数は目標管理テーブルから取得したものを採用する
         setMonthlyGoal({
           bookCount: Array.isArray(data["MonthlyGoal"]) ? data["MonthlyGoal"].length : 0,
           targetBooks: Array.isArray(data["MonthlyGoal"])
@@ -169,7 +168,20 @@ function AchievementsSettings() {
             })}
           </div>
         )}
+        <div className="flex justify-center mt-6">
+          <button className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors">
+            <i className="fas fa-save mr-2"></i>目標を保存
+          </button>
+        </div>
       </div>
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} onSelect={(option) => {
+        setShowModal(false);
+        if (option === "search") {
+          navigate(`/search-books?target=${targetType}`);
+        } else if (option === "existing") {
+          navigate(`/select-existing-books?target=${targetType}`);
+        }
+      }} />
     </div>
   );
 }
