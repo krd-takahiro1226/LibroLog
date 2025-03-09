@@ -4,14 +4,18 @@ import com.readrecords.backend.dto.ReadingAchievementsDto;
 import com.readrecords.backend.dto.UserReadRecordsDto;
 import com.readrecords.backend.service.ReadingAchievementsService;
 import com.readrecords.backend.service.RegisterBookRecordsService;
-import java.util.List;
+
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 // 初期メニューから各種機能へ遷移させるためのController
@@ -26,12 +30,21 @@ public class MenuController {
   ReadingAchievementsService readingAchievementsService;
 
   @GetMapping("/showRecords")
-  public ResponseEntity<?> showUserReadRecords(Authentication authentication) {
+  public ResponseEntity<?> showUserReadRecords(
+    Authentication authentication,
+    @RequestParam(defaultValue = "1") int page,  // ページ番号（デフォルト: 1）
+    @RequestParam(defaultValue = "10") int limit // 1ページの件数（デフォルト: 10）
+    ) {
     String userId = getUserId(authentication);
     try {
-      List<UserReadRecordsDto> userReadRecords = readRecordsService
-          .getReadRecordsByUserId(userId);
-      return ResponseEntity.ok(userReadRecords);
+      Page<UserReadRecordsDto> userReadRecords = readRecordsService.getReadRecordsByUserId(userId, page, limit);
+      Map<String, Object> response = new HashMap<>();
+      response.put("books", userReadRecords.getContent()); // 書籍リスト
+      response.put("totalPages", userReadRecords.getTotalPages()); // 全ページ数
+      response.put("currentPage", userReadRecords.getNumber() + 1); // 現在のページ（1ベース）
+      response.put("totalItems", userReadRecords.getTotalElements()); // 総件数
+
+      return ResponseEntity.ok(response);
 
     } catch (Exception e) {
       logger.error("Error fetching records", e);

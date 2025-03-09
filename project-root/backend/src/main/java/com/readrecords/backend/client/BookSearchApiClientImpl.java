@@ -26,7 +26,10 @@ public class BookSearchApiClientImpl implements BookSearchApiClient {
 
   private static final String ISBNHEADER = "&isbn=";
 
-  private static final String PAGEHEADER = "&page=";
+  private static final String CURRENTPAGEHEADER = "&page=";
+
+  private static final String LIMITHEADER = "&hits=";
+
 
   @Value("${key.api}")
   private String applicationId;
@@ -34,7 +37,7 @@ public class BookSearchApiClientImpl implements BookSearchApiClient {
   @Override
   public SearchBooksResponseDto getBookSearch(
       String title, String author, String publisherName, String isbn,
-      Integer page)
+      Integer currentPage, Integer limit)
       throws Exception {
     // ベースとなるリクエストURLの作成
     String requestPath = "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?";
@@ -58,7 +61,8 @@ public class BookSearchApiClientImpl implements BookSearchApiClient {
       String authorquery = AUTHORHEADER + authorEncoding;
       String publisherquery = PUBLISHERNAMEHEADER + publisherNameEncoding;
       String isbnquery = ISBNHEADER + isbnEncoding;
-      String pagequery = PAGEHEADER + page;
+      String currentPagequery = CURRENTPAGEHEADER + currentPage;
+      String limitquery = LIMITHEADER + limit;
       String query = "";
       if (title != null && !title.isEmpty()) {
         query += titlequery;
@@ -72,7 +76,12 @@ public class BookSearchApiClientImpl implements BookSearchApiClient {
       if (isbn != null && !isbn.isEmpty()) {
         query += isbnquery;
       }
-      query += pagequery;
+      if (currentPage >= 1){
+        query += currentPagequery;
+      }
+      if (limit >= 1){
+        query += limitquery;
+      }
       if (query == null || query.isEmpty()) {
         throw new Exception("検索条件を入力してください");
       }

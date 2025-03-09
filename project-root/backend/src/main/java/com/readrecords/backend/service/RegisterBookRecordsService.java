@@ -1,11 +1,11 @@
 package com.readrecords.backend.service;
 
+import org.springframework.data.domain.Page;
+
 import com.readrecords.backend.dto.UserReadRecordsDto;
-import java.util.List;
 
 public interface RegisterBookRecordsService {
-  public List<UserReadRecordsDto> getReadRecordsByUserId(String user_id);
-
+  public Page<UserReadRecordsDto> getReadRecordsByUserId(String userId, int page, int limit);
   public String registerReadRecords(
       String ISBN,
       String user_id,

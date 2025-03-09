@@ -4,10 +4,10 @@ import com.readrecords.backend.dto.UserReadRecordsDto;
 import com.readrecords.backend.entity.RegisterBookRecords;
 import com.readrecords.backend.repository.RegisterBookRecordsRepository;
 import jakarta.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,15 +20,9 @@ public class RegisterBookRecordsServiceImpl
   RegisterBookRecordsRepository registerBookRecordsRepository;
 
   @Override
-  public List<UserReadRecordsDto> getReadRecordsByUserId(String user_id) {
-    Iterator<UserReadRecordsDto> iterator = registerBookRecordsRepository
-        .getReadRecordsByUserId(user_id).iterator();
-    List<UserReadRecordsDto> userReadRecords = new ArrayList<>();
-    while (iterator.hasNext()) {
-      UserReadRecordsDto userReadRecord = iterator.next();
-      userReadRecords.add(userReadRecord);
-    }
-    return userReadRecords;
+  public Page<UserReadRecordsDto> getReadRecordsByUserId(String user_id, int page, int limit) {
+    PageRequest pageable = PageRequest.of(page - 1, limit); // Spring Data JPA のページングは 0 ベース
+    return registerBookRecordsRepository.getReadRecordsByUserId(user_id, pageable);
   }
 
   @Override
