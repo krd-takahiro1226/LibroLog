@@ -46,17 +46,20 @@ public interface ReadingGoalsRepository
                         @Param("countStartDate") String countStartDate,
                         @Param("countEndDate") String countEndDate);
 
-        @Query(value = "SELECT goal_id FROM reading_goals" + " WHERE user_id = :user_id"
+        @Query(value = "SELECT goal_id FROM reading_goals"
+                        + " WHERE user_id = :user_id"
                         + " AND CURRENT_DATE BETWEEN count_start_date AND count_end_date and is_year_goal = '0'", nativeQuery = true)
         String getMonthlyGoalIdByUserIdAndCurrentDate(
                         @Param("user_id") String userId);
 
-        @Query(value = "SELECT goal_id FROM reading_goals" + " WHERE user_id = :user_id"
+        @Query(value = "SELECT goal_id FROM reading_goals"
+                        + " WHERE user_id = :user_id"
                         + " AND CURRENT_DATE BETWEEN count_start_date AND count_end_date and is_year_goal = '1'", nativeQuery = true)
         String getYearlyGoalIdByUserIdAndCurrentDate(
                         @Param("user_id") String userId);
 
-        @Query(value = "SELECT goal_read_number FROM reading_goals" + " WHERE goal_id = :goal_id", nativeQuery = true)
+        @Query(value = "SELECT goal_read_number FROM reading_goals"
+                        + " WHERE goal_id = :goal_id", nativeQuery = true)
         int getGoalReadNumberByGoalId(
                         @Param("goal_id") String goalId);
 }

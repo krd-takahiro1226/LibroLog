@@ -12,7 +12,8 @@ import lombok.Data;
 @Table(name = "reading_goals")
 public class ReadingGoals {
   /** 目標管理ID(PK) */
-  @Id private Integer goalId;
+  @Id
+  private Integer goalId;
 
   /** 目標読書数 */
   private Integer goalReadNumber;

@@ -28,7 +28,8 @@ public class ReadingAchievementsServiceImpl
                         .getLogger(ReadingAchievementsServiceImpl.class);
 
         @Override
-        public ReadingAchievementsDto getReadAchievementsByUserId(String userId) {
+        public ReadingAchievementsDto getReadAchievementsByUserId(
+                        String userId) {
                 // 返却用のDTOを作成
                 ReadingAchievementsDto readingAchievementsDto = new ReadingAchievementsDto();
                 // 実行日付を取得
@@ -42,37 +43,49 @@ public class ReadingAchievementsServiceImpl
                                 .getReadingGoalsByUserId(userId, excecuteDate);
                 logger.info("読書目標: {}", userReadingGoals);
                 ReadingGoals userYearlyReadingGoals = userReadingGoals.stream()
-                                .filter(s -> s.isYearGoal()).findFirst().orElse(null);
+                                .filter(s -> s.isYearGoal()).findFirst()
+                                .orElse(null);
                 logger.info("年間目標: {}", userYearlyReadingGoals);
                 ReadingGoals userMonthlyReadingGoals = userReadingGoals.stream()
-                                .filter(s -> !s.isYearGoal()).findFirst().orElse(null);
+                                .filter(s -> !s.isYearGoal()).findFirst()
+                                .orElse(null);
                 logger.info("月間目標: {}", userMonthlyReadingGoals);
 
                 // 年間目標に対する処理
                 if (userYearlyReadingGoals != null) {
                         // 年間目標の目標冊数を取得
-                        int yearlyGoal = userYearlyReadingGoals.getGoalReadNumber();
+                        int yearlyGoal = userYearlyReadingGoals
+                                        .getGoalReadNumber();
                         // 年間目標の終了日を取得
-                        Date yearlyCountEndDate = userYearlyReadingGoals.getCountEndDate();
+                        Date yearlyCountEndDate = userYearlyReadingGoals
+                                        .getCountEndDate();
                         // 年間目標冊数の取得および達成率を計算し、格納
                         int yearlyTotalBooks = readingRecordsRepository
-                                        .getYearlyBooksCountByUserId(userId, yearlyCountEndDate);
-                        double yearlyPercentage = (double) yearlyTotalBooks / yearlyGoal;
-                        readingAchievementsDto.setYearlyTotalBooks(yearlyTotalBooks);
+                                        .getYearlyBooksCountByUserId(userId,
+                                                        yearlyCountEndDate);
+                        double yearlyPercentage = (double) yearlyTotalBooks
+                                        / yearlyGoal;
+                        readingAchievementsDto
+                                        .setYearlyTotalBooks(yearlyTotalBooks);
                         readingAchievementsDto.setYearlyGoal(yearlyGoal);
-                        readingAchievementsDto.setYearlyPercentage(yearlyPercentage);
+                        readingAchievementsDto
+                                        .setYearlyPercentage(yearlyPercentage);
                 }
 
                 // 月間目標に対する処理
                 if (userMonthlyReadingGoals != null) {
                         // 月間目標の終了日を取得
-                        Date monthlyCountEndDate = userMonthlyReadingGoals.getCountEndDate();
+                        Date monthlyCountEndDate = userMonthlyReadingGoals
+                                        .getCountEndDate();
                         // 月間目標冊数の取得および達成率を計算し、格納
                         int monthlyTotalBooks = readingRecordsRepository
-                                        .getMonthlyBooksCountByUserId(userId, monthlyCountEndDate);
-                        readingAchievementsDto.setMonthlyRead(monthlyTotalBooks);
+                                        .getMonthlyBooksCountByUserId(userId,
+                                                        monthlyCountEndDate);
                         readingAchievementsDto
-                                        .setMonthlyGoal(userMonthlyReadingGoals.getGoalReadNumber());
+                                        .setMonthlyRead(monthlyTotalBooks);
+                        readingAchievementsDto
+                                        .setMonthlyGoal(userMonthlyReadingGoals
+                                                        .getGoalReadNumber());
                 }
 
                 return readingAchievementsDto;

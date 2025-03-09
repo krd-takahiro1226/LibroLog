@@ -31,5 +31,6 @@ public interface BookRecordsRepository
 
         @Query(value = "select br.ISBN, br.book_name, br.author, br.genre, br.publication_year, br.publisher from "
                         + "book_records br JOIN reading_records rr ON br.ISBN = rr.ISBN where rr.goal_id = :goal_id", nativeQuery = true)
-        List<BookRecords> getBookRecordsByISBNAndGoalId(@Param("goal_id") String goalId);
+        List<BookRecords> getBookRecordsByISBNAndGoalId(
+                        @Param("goal_id") String goalId);
 }

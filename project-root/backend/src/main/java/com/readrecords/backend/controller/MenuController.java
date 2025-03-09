@@ -72,7 +72,8 @@ public class MenuController {
   @GetMapping("/showSettingAchievements")
   public ResponseEntity<?> showSettingReadingAchievementsWindow(
       Authentication authentication) {
-    Map<String, List<ReadingRecordsDto>> userReadRecordsList = readingRecordsService.getReadingRecords(authentication);
+    Map<String, List<ReadingRecordsDto>> userReadRecordsList = readingRecordsService
+        .getReadingRecords(authentication);
     return ResponseEntity.ok(userReadRecordsList);
   }
 
