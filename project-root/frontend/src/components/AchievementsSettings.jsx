@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function Modal({ isOpen, onClose, onSelect }) {
+  const navigate = useNavigate();
   if (!isOpen) return null;
 
   return (
@@ -12,13 +13,13 @@ function Modal({ isOpen, onClose, onSelect }) {
       <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <h3 className="text-lg font-semibold mb-4">本を追加する方法を選択</h3>
         <button
-          onClick={() => onSelect("search")}
+          onClick={() => navigate("/searchBooks")}
           className="block w-full bg-blue-500 text-white px-4 py-2 rounded-md mb-2 hover:bg-blue-600"
         >
           書籍を検索する
         </button>
         <button
-          onClick={() => onSelect("existing")}
+          onClick={() => navigate("/showRecords")}
           className="block w-full bg-green-500 text-white px-4 py-2 rounded-md mb-2 hover:bg-green-600"
         >
           登録済みの書籍から追加する
@@ -61,9 +62,9 @@ function AchievementsSettings() {
         const data = response.data;
 
         setMonthlyGoal({
-          bookCount: Array.isArray(data["MonthlyGoal"]) ? data["MonthlyGoal"].length : 0,
-          targetBooks: Array.isArray(data["MonthlyGoal"])
-            ? data["MonthlyGoal"].map((book, index) => ({
+          bookCount: data["MonthlyGoal"]?.BookCount ?? 0,
+          targetBooks: Array.isArray(data["MonthlyGoal"]?.TargetBooks)
+            ? data["MonthlyGoal"].TargetBooks.map((book, index) => ({
               id: index + 1,
               title: book.bookName,
               author: book.author,
@@ -72,9 +73,9 @@ function AchievementsSettings() {
         });
 
         setYearlyGoal({
-          bookCount: Array.isArray(data["YearlyGoal"]) ? data["YearlyGoal"].length : 0,
-          targetBooks: Array.isArray(data["YearlyGoal"])
-            ? data["YearlyGoal"].map((book, index) => ({
+          bookCount: data["YearlyGoal"]?.BookCount ?? 0,
+          targetBooks: Array.isArray(data["YearlyGoal"]?.TargetBooks)
+            ? data["YearlyGoal"].TargetBooks.map((book, index) => ({
               id: index + 1,
               title: book.bookName,
               author: book.author,
