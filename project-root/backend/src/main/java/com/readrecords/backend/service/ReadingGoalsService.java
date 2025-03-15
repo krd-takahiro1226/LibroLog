@@ -16,6 +16,19 @@ public class ReadingGoalsService {
   private static final Logger logger = LoggerFactory
       .getLogger(ReadingGoalsService.class);
 
+  private static final String cuurentDate = LocalDate.now().toString();
+
+  private static final String countStartDate = LocalDate.now().withDayOfMonth(1)
+      .toString();
+
+  private static final String countMonthlyEndDate = YearMonth
+      .from(LocalDate.now())
+      .atEndOfMonth().toString();
+
+  private static final String countYearlyEndDate = YearMonth
+      .from(LocalDate.now().withDayOfMonth(1))
+      .plusYears(1).atEndOfMonth().toString();
+
   @Autowired
   ReadingGoalsRepository readingGoalsRepository;
 
@@ -23,21 +36,29 @@ public class ReadingGoalsService {
       Authentication authentication) {
     String userId = getUserId(authentication);
     // TODO 目標開始日は1日で良いか確認
-    String countStartDate = LocalDate.now().withDayOfMonth(1).toString();
-    String countEndDate = YearMonth.from(LocalDate.now()).atEndOfMonth()
-        .toString();
     readingGoalsRepository.insertReadingMonthlyGoals(goalReadNumber, userId,
-        countStartDate, countEndDate);
+        countStartDate, countMonthlyEndDate);
+  }
+
+  public void updateReadingMonthlyGoals(int goalReadNumber,
+      Authentication authentication) {
+    String userId = getUserId(authentication);
+    readingGoalsRepository.updateReadingMonthlyGoals(goalReadNumber, userId,
+        countStartDate, countMonthlyEndDate);
   }
 
   public void registerReadingYearlyGoals(int goalReadNumber,
       Authentication authentication) {
-    String countStartDate = LocalDate.now().withDayOfMonth(1).toString();
-    String countEndDate = YearMonth.from(LocalDate.now().withDayOfMonth(1))
-        .plusYears(1).atEndOfMonth().toString();
     String userId = getUserId(authentication);
     readingGoalsRepository.insertReadingYearlyGoals(goalReadNumber, userId,
-        countStartDate, countEndDate);
+        countStartDate, countYearlyEndDate);
+  }
+
+  public void updateReadingYearlyGoals(int goalReadNumber,
+      Authentication authentication) {
+    String userId = getUserId(authentication);
+    readingGoalsRepository.updateReadingYearlyGoals(goalReadNumber, userId,
+        cuurentDate);
   }
 
   private String getUserId(Authentication authentication) {

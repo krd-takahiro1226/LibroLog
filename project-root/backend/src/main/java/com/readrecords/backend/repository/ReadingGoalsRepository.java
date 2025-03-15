@@ -38,6 +38,17 @@ public interface ReadingGoalsRepository
 
         @Modifying
         @Transactional
+        @Query(value = "update reading_goals "
+                        + "set goal_read_number = :goalReadNumber "
+                        + " where user_id = :userId and count_start_date = :countStartDate and count_end_date = :countEndDate and is_year_goal = 0", nativeQuery = true)
+        void updateReadingMonthlyGoals(
+                        @Param("goalReadNumber") int goalReadNumber,
+                        @Param("userId") String userId,
+                        @Param("countStartDate") String countStartDate,
+                        @Param("countEndDate") String countEndDate);
+
+        @Modifying
+        @Transactional
         @Query(value = "insert into reading_goals "
                         + "(goal_read_number, user_id, count_start_date, count_end_date, is_year_goal) values "
                         + "(:goalReadNumber, :userId, :countStartDate, :countEndDate, 1)", nativeQuery = true)
@@ -46,6 +57,16 @@ public interface ReadingGoalsRepository
                         @Param("userId") String userId,
                         @Param("countStartDate") String countStartDate,
                         @Param("countEndDate") String countEndDate);
+
+        @Modifying
+        @Transactional
+        @Query(value = "update reading_goals "
+                        + "set goal_read_number = :goalReadNumber "
+                        + " where user_id = :userId and count_start_date <= :currentDate and count_end_date >= :currentDate and is_year_goal = 1", nativeQuery = true)
+        void updateReadingYearlyGoals(
+                        @Param("goalReadNumber") int goalReadNumber,
+                        @Param("userId") String userId,
+                        @Param("currentDate") String currentDate);
 
         @Query(value = "SELECT goal_id FROM reading_goals"
                         + " WHERE user_id = :user_id"
