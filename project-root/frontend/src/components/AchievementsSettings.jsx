@@ -42,6 +42,8 @@ function AchievementsSettings() {
   const [targetType, setTargetType] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [popupMessage, setPopupMessage] = useState(""); // ポップアップメッセージ
+  const [showPopup, setShowPopup] = useState(false); // ポップアップの表示状態
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -54,9 +56,7 @@ function AchievementsSettings() {
 
     axios
       .get("http://localhost:8080/showSettingAchievements", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
         const data = response.data;
@@ -70,6 +70,7 @@ function AchievementsSettings() {
               author: book.author,
             }))
             : [],
+          isMonthlySet: data["MonthlyGoal"]?.BookCount > 0
         });
 
         setYearlyGoal({
@@ -81,6 +82,7 @@ function AchievementsSettings() {
               author: book.author,
             }))
             : [],
+          isYearlySet: data["YearlyGoal"]?.BookCount > 0
         });
       })
       .catch((error) => {
@@ -91,6 +93,42 @@ function AchievementsSettings() {
         setLoading(false);
       });
   }, []);
+
+  // 目標を保存する関数
+  const handleSaveGoals = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("トークンが存在しません。再ログインしてください。");
+      window.location.href = "/login";
+      return;
+    }
+
+    const requestData = {
+      monthlyGoalReadNumber: Number(monthlyGoal.bookCount),
+      yearlyGoalReadNumber: Number(yearlyGoal.bookCount),
+      isMonthlySet: monthlyGoal.isMonthlySet,
+      isYearlySet: yearlyGoal.isYearlySet,
+    };
+
+    try {
+      await axios.post("http://localhost:8080/setReadingGoals", null, {
+        params: requestData,
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      setPopupMessage("目標が正常に登録されました！");
+      setShowPopup(true);
+
+      // 3秒後にポップアップを非表示にする
+      setTimeout(() => setShowPopup(false), 3000);
+    } catch (error) {
+      console.error("Error saving goals:", error);
+      setPopupMessage("目標の登録に失敗しました。");
+      setShowPopup(true);
+
+      setTimeout(() => setShowPopup(false), 3000);
+    }
+  };
 
   const handleAddBook = (type) => {
     setTargetType(type);
@@ -170,19 +208,33 @@ function AchievementsSettings() {
           </div>
         )}
         <div className="flex justify-center mt-6">
-          <button className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors">
+          <button
+            onClick={handleSaveGoals}
+            className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors"
+          >
             <i className="fas fa-save mr-2"></i>目標を保存
           </button>
         </div>
       </div>
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} onSelect={(option) => {
-        setShowModal(false);
-        if (option === "search") {
-          navigate(`/search-books?target=${targetType}`);
-        } else if (option === "existing") {
-          navigate(`/select-existing-books?target=${targetType}`);
-        }
-      }} />
+
+      {showPopup && (
+        <div className="fixed bottom-5 right-5 bg-green-500 text-white py-3 px-6 rounded-lg shadow-lg">
+          {popupMessage}
+        </div>
+      )}
+
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onSelect={(option) => {
+          setShowModal(false);
+          if (option === "search") {
+            navigate(`/search-books?target=${targetType}`);
+          } else if (option === "existing") {
+            navigate(`/select-existing-books?target=${targetType}`);
+          }
+        }}
+      />
     </div>
   );
 }
