@@ -1,6 +1,7 @@
 package com.readrecords.backend.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -60,6 +61,6 @@ public interface ReadingGoalsRepository
 
         @Query(value = "SELECT goal_read_number FROM reading_goals"
                         + " WHERE goal_id = :goal_id", nativeQuery = true)
-        int getGoalReadNumberByGoalId(
+        Optional<Integer> getGoalReadNumberByGoalId(
                         @Param("goal_id") String goalId);
 }

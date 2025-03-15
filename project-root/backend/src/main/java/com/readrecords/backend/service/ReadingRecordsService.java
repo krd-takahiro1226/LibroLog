@@ -1,5 +1,6 @@
 package com.readrecords.backend.service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,13 +25,17 @@ public class ReadingRecordsService {
 
   private static final String YEARLY_GOAL = "YearlyGoal";
 
+  private static final String BOOK_COUNT = "BookCount";
+
+  private static final String TARGET_BOOKS = "TargetBooks";
+
   @Autowired
   BookRecordsRepository bookRecordsRepository;
 
   @Autowired
   ReadingGoalsRepository readingGoalsRepository;
 
-  public Map<String, List<ReadingRecordsDto>> getReadingRecords(
+  public Map<String, Object> getReadingRecords(
       Authentication authentication) {
     String userId = getUserId(authentication);
     String monthlyGoalId = readingGoalsRepository
@@ -38,37 +43,32 @@ public class ReadingRecordsService {
     String yearlyGoalId = readingGoalsRepository
         .getYearlyGoalIdByUserIdAndCurrentDate(userId);
 
-    // 返却用のMapを作成
-    Map<String, List<ReadingRecordsDto>> readingRecordsDtoListMap = new HashMap<String, List<ReadingRecordsDto>>();
-    List<ReadingRecordsDto> readingMonthlyRecordsDtoList = new java.util.ArrayList<ReadingRecordsDto>();
-    List<ReadingRecordsDto> readingYearlyRecordsDtoList = new java.util.ArrayList<ReadingRecordsDto>();
+    // 結果を格納するMap
+    Map<String, Object> readingRecordsMap = new HashMap<>();
+    Map<String, Object> monthlyBooksMap = new HashMap<>();
+    Map<String, Object> yearlyBooksMap = new HashMap<>();
 
     // 月間・年間目標に紐づく書籍情報を取得
-    List<BookRecords> monthlyBookRecordsList = bookRecordsRepository
-        .getBookRecordsByISBNAndGoalId(monthlyGoalId);
-    List<BookRecords> yearlyBookRecordsList = bookRecordsRepository
-        .getBookRecordsByISBNAndGoalId(yearlyGoalId);
+    List<ReadingRecordsDto> readingMonthlyRecords = getBookRecordsByGoalId(
+        monthlyGoalId);
+    List<ReadingRecordsDto> readingYearlyRecords = getBookRecordsByGoalId(
+        yearlyGoalId);
 
-    // 月間目標に紐づく書籍情報に関する処理
-    for (BookRecords monthlyBookRecord : monthlyBookRecordsList) {
-      ReadingRecordsDto readingMonthlyRecordsDto = new ReadingRecordsDto();
-      readingMonthlyRecordsDto.setISBN(monthlyBookRecord.getISBN());
-      readingMonthlyRecordsDto.setBookName(monthlyBookRecord.getBookName());
-      readingMonthlyRecordsDto.setAuthor(monthlyBookRecord.getAuthor());
-      readingMonthlyRecordsDtoList.add(readingMonthlyRecordsDto);
-    }
-    // 年間目標に紐づく書籍情報に関する処理
-    for (BookRecords yearlyBookRecord : yearlyBookRecordsList) {
-      ReadingRecordsDto readingYearlyRecordsDto = new ReadingRecordsDto();
-      readingYearlyRecordsDto.setISBN(yearlyBookRecord.getISBN());
-      readingYearlyRecordsDto.setBookName(yearlyBookRecord.getBookName());
-      readingYearlyRecordsDto.setAuthor(yearlyBookRecord.getAuthor());
-      readingYearlyRecordsDtoList.add(readingYearlyRecordsDto);
-    }
-    // 返却用のMapに格納
-    readingRecordsDtoListMap.put(MONTHLY_GOAL, readingMonthlyRecordsDtoList);
-    readingRecordsDtoListMap.put(YEARLY_GOAL, readingYearlyRecordsDtoList);
-    return readingRecordsDtoListMap;
+    // 月間・年間の読書目標数を取得
+    int monthlyGoalCount = readingGoalsRepository
+        .getGoalReadNumberByGoalId(monthlyGoalId).orElse(0);
+    int yearlyGoalCount = readingGoalsRepository
+        .getGoalReadNumberByGoalId(yearlyGoalId).orElse(0);
+
+    // Mapに格納
+    monthlyBooksMap.put(BOOK_COUNT, monthlyGoalCount);
+    monthlyBooksMap.put(TARGET_BOOKS, readingMonthlyRecords);
+    readingRecordsMap.put(MONTHLY_GOAL, monthlyBooksMap);
+    yearlyBooksMap.put(BOOK_COUNT, yearlyGoalCount);
+    yearlyBooksMap.put(TARGET_BOOKS, readingYearlyRecords);
+    readingRecordsMap.put(YEARLY_GOAL, yearlyBooksMap);
+    System.out.println(readingRecordsMap);
+    return readingRecordsMap;
   }
 
   private String getUserId(Authentication authentication) {
@@ -89,5 +89,21 @@ public class ReadingRecordsService {
       logger.error("Error fetching records", e);
       throw new IllegalStateException("Failed to fetch userId", e);
     }
+  }
+
+  // 月間・年間目標に紐づく書籍情報を取得
+  private List<ReadingRecordsDto> getBookRecordsByGoalId(String goalId) {
+    List<BookRecords> bookRecordsList = bookRecordsRepository
+        .getBookRecordsByISBNAndGoalId(goalId);
+    List<ReadingRecordsDto> bookDtos = new ArrayList<>();
+
+    for (BookRecords bookRecord : bookRecordsList) {
+      ReadingRecordsDto dto = new ReadingRecordsDto();
+      dto.setISBN(bookRecord.getISBN());
+      dto.setBookName(bookRecord.getBookName());
+      dto.setAuthor(bookRecord.getAuthor());
+      bookDtos.add(dto);
+    }
+    return bookDtos;
   }
 }

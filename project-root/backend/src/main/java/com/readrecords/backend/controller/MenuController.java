@@ -1,11 +1,5 @@
 package com.readrecords.backend.controller;
 
-import com.readrecords.backend.dto.ReadingAchievementsDto;
-import com.readrecords.backend.dto.ReadingRecordsDto;
-import com.readrecords.backend.dto.UserReadRecordsDto;
-import com.readrecords.backend.service.ReadingAchievementsService;
-import com.readrecords.backend.service.ReadingRecordsService;
-import com.readrecords.backend.service.RegisterBookRecordsService;
 import java.util.List;
 import java.util.Map;
 
@@ -17,6 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.readrecords.backend.dto.ReadingAchievementsDto;
+import com.readrecords.backend.dto.UserReadRecordsDto;
+import com.readrecords.backend.service.ReadingAchievementsService;
+import com.readrecords.backend.service.ReadingRecordsService;
+import com.readrecords.backend.service.RegisterBookRecordsService;
 
 // 初期メニューから各種機能へ遷移させるためのController
 @RestController
@@ -72,7 +72,7 @@ public class MenuController {
   @GetMapping("/showSettingAchievements")
   public ResponseEntity<?> showSettingReadingAchievementsWindow(
       Authentication authentication) {
-    Map<String, List<ReadingRecordsDto>> userReadRecordsList = readingRecordsService
+    Map<String, Object> userReadRecordsList = readingRecordsService
         .getReadingRecords(authentication);
     return ResponseEntity.ok(userReadRecordsList);
   }
