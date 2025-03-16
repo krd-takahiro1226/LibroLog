@@ -16,6 +16,8 @@ function ShowRecords() {
   const [currentPage, setCurrentPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedPriorities, setSelectedPriorities] = useState([1, 2, 3, 0]); 
+  const [showPriorityFilter, setShowPriorityFilter] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -39,7 +41,8 @@ function ShowRecords() {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log('Records:', response.data);
-        setBooks(response.data.books);
+        // booksが配列かチェックし、配列でない場合は空配列をセット
+        setBooks(Array.isArray(response.data.books) ? response.data.books : []);
         setTotalPages(response.data.totalPages);
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -145,6 +148,20 @@ function ShowRecords() {
     }
   };
 
+  // 優先度に応じたフィルタリング
+  const filteredBooks = Array.isArray(books)
+    ? books.filter((book) => selectedPriorities.includes(book.priority))
+    : [];
+
+  // 優先度チェックボックスの変更処理
+  const handlePriorityChange = (priority) => {
+    setSelectedPriorities((prev) =>
+      prev.includes(priority)
+        ? prev.filter((p) => p !== priority)
+        : [...prev, priority]
+    );
+  };
+
   return (
     <div className="min-h-screen w-screen bg-[#f5f5f5] p-8">
       <div className="mx-auto bg-white p-6 rounded-lg shadow-md w-full">
@@ -189,18 +206,29 @@ function ShowRecords() {
               <th className="border p-3 text-left">著者</th>
               <th className="border p-3 text-left">読み始めた日</th>
               <th className="border p-3 text-left">読了日</th>
-              <th className="border p-3 text-left">優先度</th>
+              <th
+                className="border p-3 text-left cursor-pointer text-blue-600 underline"
+                onClick={() => setShowPriorityFilter(true)}
+              >
+                優先度 ▼
+              </th>
             </tr>
           </thead>
           <tbody>
-            {Array.isArray(books) && books.length > 0 ? (
-              books.map((book, index) => (
+          {Array.isArray(filteredBooks) && filteredBooks.length > 0 ? (
+              filteredBooks.map((book, index) => (
                 <tr key={index} className="hover:bg-gray-50">
                   <td className="border p-3">
                     <input
                       type="checkbox"
                       checked={selectedBooks.includes(book.isbn)}
-                      onChange={() => handleCheckboxChange(book.isbn)}
+                      onChange={() =>
+                        setSelectedBooks((prev) =>
+                          prev.includes(book.isbn)
+                            ? prev.filter((id) => id !== book.isbn)
+                            : [...prev, book.isbn]
+                        )
+                      }
                       className="w-4 h-4"
                     />
                   </td>
@@ -236,6 +264,58 @@ function ShowRecords() {
           </tbody>
         </table>
       </div>
+
+      {/* 優先度フィルターのポップアップ */}
+      {showPriorityFilter && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-1/3">
+            <h2 className="text-lg font-bold mb-2">優先度フィルター</h2>
+            <div className="flex flex-col gap-2">
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedPriorities.includes(1)}
+                  onChange={() => handlePriorityChange(1)}
+                />
+                すぐ読みたい本
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedPriorities.includes(2)}
+                  onChange={() => handlePriorityChange(2)}
+                />
+                今後読みたい本
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedPriorities.includes(3)}
+                  onChange={() => handlePriorityChange(3)}
+                />
+                読んだことのある本
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={selectedPriorities.includes(0)}
+                  onChange={() => handlePriorityChange(0)}
+                />
+                未分類
+              </label>
+            </div>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setShowPriorityFilter(false)}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                閉じる
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ページングボタン */}
       <div className="flex justify-center mt-4">
         <button
