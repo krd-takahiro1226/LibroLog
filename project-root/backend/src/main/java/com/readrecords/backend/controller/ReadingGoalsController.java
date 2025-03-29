@@ -19,8 +19,7 @@ public class ReadingGoalsController {
       int yearlyGoalReadNumber, Authentication authentication,
       boolean isMonthlySet, boolean isYearlySet) {
 
-    System.out.println("isMonthlySet: " + isMonthlySet);
-    System.out.println("isYearlySet: " + isYearlySet);
+    // ToDo 目標設定を0に変更した際のことを考慮する必要あり
     if (!isMonthlySet && monthlyGoalReadNumber != 0) {
       // 月間目標の登録
       readingGoalsService.registerReadingMonthlyGoals(monthlyGoalReadNumber,
