@@ -40,6 +40,24 @@ services:
       - db_data:/var/lib/mysql
       # - ./mysql-config/custom.cnf:/etc/mysql/conf.d/custom.cnf
 
+  mail:
+    # Web画面: http://localhost:19980
+    image: axllent/mailpit:latest
+    ports:
+      - "19925:1025"
+      - "19980:8025"
+    volumes:
+      - ./mailpit:/data
+    environment:
+      TZ: Asia/Tokyo
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    networks:
+      - app-network
+
+
 networks:
   app-network:
     driver: bridge
