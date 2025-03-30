@@ -1,0 +1,48 @@
+version: '3'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/BooksManagement
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+
+    networks:
+      - app-network
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    environment:
+      - REACT_APP_BACKEND_URL=http://backend:8080
+
+  db:
+    build: ./mysql-config
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: BooksManagement
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+    volumes:
+      - db_data:/var/lib/mysql
+      # - ./mysql-config/custom.cnf:/etc/mysql/conf.d/custom.cnf
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  db_data:
