@@ -9,7 +9,8 @@ import lombok.Data;
 @Entity
 @Table(name = "book_records")
 public class BookRecords {
-  @Id private String ISBN;
+  @Id
+  private String ISBN;
   private String bookName;
   private String author;
   private String genre;

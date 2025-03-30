@@ -6,14 +6,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.readrecords.backend.repository.ReadRecordsDeleteRepository;
+import com.readrecords.backend.repository.RegisterBookRecordsDeleteRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class ReadRecordsDeleteServiceImp implements ReadRecordsDeleteService {
+public class RegisterBookRecordsDeleteServiceImpl implements RegisterBookRecordsDeleteService {
   @Autowired
-  ReadRecordsDeleteRepository readRecordsDeleteRepository;
+  RegisterBookRecordsDeleteRepository readRecordsDeleteRepository;
 
   @Override
   @Transactional

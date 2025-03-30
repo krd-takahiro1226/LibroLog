@@ -1,5 +1,5 @@
 "use client";
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "../assets/styles/styles.css";
 
@@ -43,7 +43,7 @@ function UserPassChange() {
     }
     const strength = checkPasswordStrength(newpassword);
     setPasswordStrength(strength);
-    
+
   }, [newpassword]);
 
   const checkPasswordStrength = (password) => {
@@ -55,11 +55,11 @@ function UserPassChange() {
     // if (/[0-9]/.test(password)) strength++;
     // if (/[\W]/.test(password)) strength++;
 
-    if (password === "password") weakFlag=1;
-    if (password === "qwertyui") weakFlag=1;
-    if (password === "00000000") weakFlag=1;
-    if (password === "12345678") weakFlag=1;
-    if (password === "01234567") weakFlag=1;
+    if (password === "password") weakFlag = 1;
+    if (password === "qwertyui") weakFlag = 1;
+    if (password === "00000000") weakFlag = 1;
+    if (password === "12345678") weakFlag = 1;
+    if (password === "01234567") weakFlag = 1;
 
     if (strength <= 0) return "パスワードは8文字以上で設定してください。";
     if (weakFlag === 1) return "そのパスワードは使用できません。";
@@ -67,7 +67,7 @@ function UserPassChange() {
     // if (strength === 3) return "Moderate";
     return "OK";
   };
-  
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -77,7 +77,7 @@ function UserPassChange() {
       alert("新しいパスワードが一致しません。入力内容を確認してください。");
       return;
     }
-    
+
     // 新しいパスワードの強度をチェック（要件を満たさない場合はエラーメッセージを表示）
     if (newpassword.length === 0) {
       alert("新しいパスワードが入力されていません。");
@@ -100,7 +100,7 @@ function UserPassChange() {
       // サーバーへ変更リクエストを送信（PUTメソッド）
       const response = await axios.put(
         "http://localhost:8080/userPassword/change",
-        { 
+        {
           oldPassword: oldpassword, // キー名は"oldPassword"に変更
           newPassword: newpassword, // キー名は"newPassword"に変更
         },
@@ -134,7 +134,7 @@ function UserPassChange() {
         alert("変更に失敗しました。再度お試しください。");
       }
 
-    } 
+    }
     catch (error) {
       if (error.response && error.response.status === 401) {
         alert("現在のパスワードが間違っています。");
@@ -163,69 +163,69 @@ function UserPassChange() {
         <h1 className="text-xl font-bold mb-6s">パスワード変更</h1>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
-            <div>
-              
-              <label className="block text-sm font-noto-sans mb-2">
-                現在のパスワード
-              </label>
-              <input
-                type="password"
-                name="oldpassword"
-                value={oldpassword}
-                onChange={(e) => setOldPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-[#c8d1d3] rounded-lg focus:outline-none focus:border-[#2d3436]"
-                required
-              />
-            </div>
+          <div>
 
-            <div>
-              <label className="block text-sm font-noto-sans mb-2">
-                新しいパスワード
-              </label>
-              <input
-                type="password"
-                name="password"
-                value={newpassword}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-[#c8d1d3] rounded-lg focus:outline-none focus:border-[#2d3436]"
-                required
-              />
-              <p className={`mt-2 text-sm ${passwordStrength === "OK" ? "text-green-500" : passwordStrength === "Moderate" ? "text-yellow-500" : "text-red-500"}`}>
+            <label className="block text-sm font-noto-sans mb-2">
+              現在のパスワード
+            </label>
+            <input
+              type="password"
+              name="oldpassword"
+              value={oldpassword}
+              onChange={(e) => setOldPassword(e.target.value)}
+              className="w-full px-4 py-2 border border-[#c8d1d3] rounded-lg focus:outline-none focus:border-[#2d3436]"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-noto-sans mb-2">
+              新しいパスワード
+            </label>
+            <input
+              type="password"
+              name="password"
+              value={newpassword}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-4 py-2 border border-[#c8d1d3] rounded-lg focus:outline-none focus:border-[#2d3436]"
+              required
+            />
+            <p className={`mt-2 text-sm ${passwordStrength === "OK" ? "text-green-500" : passwordStrength === "Moderate" ? "text-yellow-500" : "text-red-500"}`}>
               {passwordStrength}
             </p>
-            </div>
+          </div>
 
-            <div>
-              <label className="block text-sm font-noto-sans mb-2">
-                新しいパスワード（確認）
-              </label>
-              <input
-                type="password"
-                name="confirmPassword"
-                value={confirmPassword}
-                onChange={(e) => setConfirmPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-[#c8d1d3] rounded-lg focus:outline-none focus:border-[#2d3436]"
-                required
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-noto-sans mb-2">
+              新しいパスワード（確認）
+            </label>
+            <input
+              type="password"
+              name="confirmPassword"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              className="w-full px-4 py-2 border border-[#c8d1d3] rounded-lg focus:outline-none focus:border-[#2d3436]"
+              required
+            />
+          </div>
 
-            <div className="flex gap-4 mt-6">
-              <button
-                className="mt-4 bg-gray-200 text-gray-700 px-6 py-2 rounded hover:bg-gray-300"
-                onClick={() => (window.location.href = "/myPage")}
-              >
-                <i className="fas fa-home"></i>
-                キャンセル
-              </button>
+          <div className="flex gap-4 mt-6">
+            <button
+              className="mt-4 bg-gray-200 text-gray-700 px-6 py-2 rounded hover:bg-gray-300"
+              onClick={() => (window.location.href = "/myPage")}
+            >
+              <i className="fas fa-home"></i>
+              キャンセル
+            </button>
 
-              <button
-                type="submit"
-                className="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-              >
-                <i className="fas fa-user-edit"></i>
-                変更する
-              </button>
-            </div>
+            <button
+              type="submit"
+              className="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+            >
+              <i className="fas fa-user-edit"></i>
+              変更する
+            </button>
+          </div>
 
         </form>
 
