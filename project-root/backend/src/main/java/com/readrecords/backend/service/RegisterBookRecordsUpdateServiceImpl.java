@@ -7,14 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.readrecords.backend.dto.UserReadRecordsDto;
-import com.readrecords.backend.repository.ReadRecordsUpdateRepository;
+import com.readrecords.backend.repository.RegisterBookRecordsUpdateRepository;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class ReadRecordsUpdateServiceImpl implements ReadRecordsUpdateService {
+public class RegisterBookRecordsUpdateServiceImpl implements RegisterBookRecordsUpdateService {
   @Autowired
-  ReadRecordsUpdateRepository readRecordsUpdateRepository;
+  RegisterBookRecordsUpdateRepository readRecordsUpdateRepository;
 
   @Override
   @Transactional

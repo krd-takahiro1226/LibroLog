@@ -75,18 +75,18 @@ function UserEmailChange() {
           {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
           <div className="flex gap-4 mt-6">
-          <button
-            className="mt-4 bg-gray-200 text-gray-700 px-6 py-2 rounded hover:bg-gray-300"
-            onClick={() => (window.location.href = "/myPage")}
-          >
-            キャンセル
-          </button>
-          <button
-            type="submit"
-            className="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-          >
-            変更する
-          </button>
+            <button
+              className="mt-4 bg-gray-200 text-gray-700 px-6 py-2 rounded hover:bg-gray-300"
+              onClick={() => (window.location.href = "/myPage")}
+            >
+              キャンセル
+            </button>
+            <button
+              type="submit"
+              className="mt-4 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
+            >
+              変更する
+            </button>
           </div>
         </form>
       </div>
