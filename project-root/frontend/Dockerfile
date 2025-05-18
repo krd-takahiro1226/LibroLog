@@ -9,8 +9,9 @@ WORKDIR /app
 COPY package*.json ./
 
 # ビルド時にバックエンド URL を埋め込む
-ARG REACT_APP_BACKEND_URL
-ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
+#ARG REACT_APP_BACKEND_URL
+#ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
+#--build-argで渡さない自動ビルドのためコメントアウト
 
 # 依存関係をインストール
 RUN npm install
