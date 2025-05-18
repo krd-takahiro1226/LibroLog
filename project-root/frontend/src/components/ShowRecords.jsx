@@ -31,7 +31,7 @@ function ShowRecords() {
 
     // レコード取得
     axios
-      .get('http://localhost:8080/showRecords', {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/showRecords`, {
         headers: {
           Authorization: `Bearer ${token}`,
         }
@@ -65,7 +65,7 @@ function ShowRecords() {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        "http://localhost:8080/updateRecords",
+        `${process.env.REACT_APP_BACKEND_URL}/updateRecords`,
         editableBooks,
         {
           headers: {
@@ -74,7 +74,7 @@ function ShowRecords() {
         }
       );
       if (response.status === 200) {
-        const updatedBooks = await axios.get("http://localhost:8080/showRecords", {
+        const updatedBooks = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/showRecords`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -104,7 +104,7 @@ function ShowRecords() {
     try {
       const token = localStorage.getItem("token");
       const response = await axios.post(
-        "http://localhost:8080/deleteRecords",
+        `${process.env.REACT_APP_BACKEND_URL}/deleteRecords`,
         { isbns: selectedBooks },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -113,7 +113,7 @@ function ShowRecords() {
       if (response.status === 200) {
         alert("登録解除しました");
         setShowDeletePopup(false);
-        const updatedBooks = await axios.get("http://localhost:8080/showRecords", {
+        const updatedBooks = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/showRecords`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setBooks(updatedBooks.data);

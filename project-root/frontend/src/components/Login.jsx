@@ -22,7 +22,7 @@ function Login() {
     try {
       // サーバーへログインリクエスト
       const response = await axios.post(
-        "http://localhost:8080/login",
+        `${process.env.REACT_APP_BACKEND_URL}/login`,
         { username, password },
         { withCredentials: true } // 必要に応じてクッキーを有効化
       );

@@ -30,7 +30,7 @@ function MyPage() {
     }
 
     axios
-      .get("http://localhost:8080/api/user/me", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

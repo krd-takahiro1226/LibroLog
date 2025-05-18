@@ -55,7 +55,7 @@ function AchievementsSettings() {
     }
 
     axios
-      .get("http://localhost:8080/showSettingAchievements", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/showSettingAchievements`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -111,7 +111,7 @@ function AchievementsSettings() {
     };
 
     try {
-      await axios.post("http://localhost:8080/setReadingGoals", null, {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/setReadingGoals`, null, {
         params: requestData,
         headers: { Authorization: `Bearer ${token}` },
       });

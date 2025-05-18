@@ -17,7 +17,7 @@ function SearchResult() {
       setIsLoading(true); // 検索中に設定
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8080/searchBooks/sruSearch", {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/searchBooks/sruSearch`, {
           params: searchForm,
           headers: {
             Authorization: `Bearer ${token}`,
@@ -63,7 +63,7 @@ function SearchResult() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://localhost:8080/searchBooks/sruSearch/register", requestData, {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/searchBooks/sruSearch/register`, requestData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

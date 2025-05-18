@@ -10,7 +10,7 @@ public class WebConfig implements WebMvcConfigurer {
   public void addCorsMappings(CorsRegistry registry) {
     registry
         .addMapping("/**")
-        .allowedOrigins("http://localhost:3000") // ReactアプリのURL
+        .allowedOrigins("https://frontend-service-968408560945.asia-northeast1.run.app", "https://librolog.com")
         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
         .allowedHeaders("Authorization", "Content-Type")
         .allowCredentials(true);

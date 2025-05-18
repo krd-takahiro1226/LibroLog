@@ -16,7 +16,7 @@ function UsernameChange() {
       }
 
       const response = await axios.put(
-        "http://localhost:8080/username/changeusername",
+        `${process.env.REACT_APP_BACKEND_URL}/username/changeusername`,
         { newUsername: newUsername },
         {
           headers: {

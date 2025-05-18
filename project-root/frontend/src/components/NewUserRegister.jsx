@@ -21,7 +21,7 @@ function NewUserRegister() {
     try {
       // サーバーへ登録リクエストを送信
       const response = await axios.post(
-        "http://localhost:8080/userRegistration",
+        `${process.env.REACT_APP_BACKEND_URL}/userRegistration`,
         { username, email, password, confirmPassword },
         { withCredentials: true }
       );

@@ -18,13 +18,15 @@ function Menu() {
     { icon: faStar, text: "お気に入りの本", link: "#" },
   ];
   const handleLogout = () => {
-    axios.post('http://localhost:8080/logout', {}, { withCredentials: true })
-      .then(() => {
-        window.location.href = '/login'; // ログインページにリダイレクト
-      })
-      .catch(error => {
-        console.error("ログアウトに失敗しました", error);
-      });
+    // axios.post(`${process.env.REACT_APP_BACKEND_URL}/logout`, {}, { withCredentials: true })
+    //   .then(() => {
+    //     window.location.href = '/login'; // ログインページにリダイレクト
+    //   })
+    //   .catch(error => {
+    //     console.error("ログアウトに失敗しました", error);
+    //   });
+      localStorage.removeItem("token");
+      navigate("/login", { replace: true });
   };
   const navigate = useNavigate();
 

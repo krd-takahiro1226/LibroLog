@@ -30,7 +30,7 @@ function UserEmailChange() {
       }
 
       const response = await axios.put(
-        "http://localhost:8080/useremail/changeemail",
+        `${process.env.REACT_APP_BACKEND_URL}/useremail/changeemail`,
         { newUserEmail: newUserEmail },
         {
           headers: {

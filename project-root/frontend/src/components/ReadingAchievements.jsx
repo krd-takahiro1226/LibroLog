@@ -28,7 +28,7 @@ function ReadingAchievements() {
 
     // 読書目標実績データを取得
     axios
-      .get("http://localhost:8080/showAchievements", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/showAchievements`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
