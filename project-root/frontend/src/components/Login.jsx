@@ -4,6 +4,13 @@ import axios from 'axios';
 import '../assets/styles/styles.css'; 
 
 function Login() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "ログイン | Libro Log";
+  }, []);
+  // --- ここまで ---
+  
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPopup, setShowPopup] = React.useState(false);
