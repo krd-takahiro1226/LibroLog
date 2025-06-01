@@ -2,6 +2,8 @@
 import React from "react";
 import axios from "axios";
 import "../assets/styles/styles.css";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function NewUserRegister() {
 
