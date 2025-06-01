@@ -7,6 +7,14 @@ import { faSearch, faBook, faUser, faBookOpen, faClock, faStar, faChevronRight, 
 import { useLocation, useNavigate } from "react-router-dom";
 
 function Menu() {
+
+    // --- タイトル ---
+  useEffect(() => {
+    document.title = "メニュー | Libro Log";
+  }, []);
+  // --- ここまで ---
+
+
   const [isOpen, setIsOpen] = React.useState(false);
 
   const menuItems = [
@@ -18,13 +26,7 @@ function Menu() {
     { icon: faStar, text: "お気に入りの本", link: "#" },
   ];
   const handleLogout = () => {
-    // axios.post(`${process.env.REACT_APP_BACKEND_URL}/logout`, {}, { withCredentials: true })
-    //   .then(() => {
-    //     window.location.href = '/login'; // ログインページにリダイレクト
-    //   })
-    //   .catch(error => {
-    //     console.error("ログアウトに失敗しました", error);
-    //   });
+      // トークンを削除
       localStorage.removeItem("token");
       navigate("/login", { replace: true });
   };

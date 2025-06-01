@@ -4,6 +4,14 @@ import axios from "axios";
 import "../assets/styles/styles.css";
 
 function NewUserRegister() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "新規登録 | Libro Log";
+  }, []);
+  // --- ここまで ---
+
+  
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");

@@ -5,6 +5,13 @@ import "../assets/styles/styles.css";
 
 
 function UserPassChange() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "パスワード変更 | Libro Log";
+  }, []);
+  // --- ここまで ---
+
   const [oldpassword, setOldPassword] = React.useState("");
   const [newpassword, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");

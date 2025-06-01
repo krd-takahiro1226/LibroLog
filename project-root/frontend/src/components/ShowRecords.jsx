@@ -4,6 +4,16 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function ShowRecords() {
+
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "登録書籍一覧 | Libro Log";
+  }, []);
+  // --- ここまで ---
+  
+
+
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

@@ -2,6 +2,15 @@ import React, { useState } from "react";
 import axios from "axios";
 
 function UserEmailChange() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "メールアドレス変更 | Libro Log";
+  }, []);
+  // --- ここまで ---
+  
+
+
   const [newUserEmail, setNewUserEmail] = useState("");
   const [error, setError] = useState("");
 

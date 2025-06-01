@@ -3,6 +3,15 @@ import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function SetReadingGoals() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "目標設定編集 | Libro Log";
+  }, []);
+  // --- ここまで ---
+  
+
+
   const [monthlyGoal, setMonthlyGoal] = React.useState({
     bookCount: "",
     targetBooks: [

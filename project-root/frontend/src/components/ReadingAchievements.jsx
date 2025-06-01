@@ -3,6 +3,15 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function ReadingAchievements() {
+
+  
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "目標設定 | Libro Log";
+  }, []);
+  // --- ここまで ---
+
+
   const [readingStats, setReadingStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

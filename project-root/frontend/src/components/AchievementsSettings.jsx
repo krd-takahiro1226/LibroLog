@@ -36,6 +36,14 @@ function Modal({ isOpen, onClose, onSelect }) {
 }
 
 function AchievementsSettings() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "目標設定 | Libro Log";
+  }, []);
+  // --- ここまで ---
+
+
   const [monthlyGoal, setMonthlyGoal] = useState({ bookCount: "", targetBooks: [] });
   const [yearlyGoal, setYearlyGoal] = useState({ bookCount: "", targetBooks: [] });
   const [showModal, setShowModal] = useState(false);

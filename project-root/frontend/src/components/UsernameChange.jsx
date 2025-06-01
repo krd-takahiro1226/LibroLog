@@ -2,6 +2,13 @@ import React, { useState } from "react";
 import axios from "axios";
 
 function UsernameChange() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "ユーザー名変更 | Libro Log";
+  }, []);
+  // --- ここまで ---
+
   const [newUsername, setNewUsername] = useState("");
 
   const handleSubmit = async (e) => {

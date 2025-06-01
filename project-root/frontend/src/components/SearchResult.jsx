@@ -4,6 +4,14 @@ import axios from "axios";
 import "../assets/styles/styles.css";
 
 function SearchResult() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "検索結果 | Libro Log";
+  }, []);
+  // --- ここまで ---
+
+
   const { state: searchForm } = useLocation();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // 検索中の状態を管理
