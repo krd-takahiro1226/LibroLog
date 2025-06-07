@@ -3,12 +3,12 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: [
       'build', '-t',
-      'gcr.io/$PROJECT_ID/github.com/$_REPO_NAME/$SHORT_SHA', '.'
+      'gcr.io/$PROJECT_ID/$_REPO_NAME:$SHORT_SHA', '.'
     ]
 
   # GCR へプッシュ
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/github.com/$_REPO_NAME/$SHORT_SHA']
+    args: ['push', 'gcr.io/$PROJECT_ID/$_REPO_NAME:$SHORT_SHA']
 
   # Cloud Run にデプロイ
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -16,18 +16,17 @@ steps:
     args:
       [
         'run', 'deploy', 'frontend-service',
-        '--image', 'gcr.io/$PROJECT_ID/github.com/$_REPO_NAME/$SHORT_SHA',
+        '--image', 'gcr.io/$PROJECT_ID/$_REPO_NAME:$SHORT_SHA',
         '--region', 'asia-northeast1',
         '--platform', 'managed',
         '--allow-unauthenticated'
       ]
 
 substitutions:
-  _REPO_NAME: 'krd-takahiro1226/LibroLog'
-
+  _REPO_NAME: 'krd-takahiro1226-librolog'  # "/" を含めない安全な名前
 
 images:
-  - 'gcr.io/$PROJECT_ID/github.com/$_REPO_NAME/$SHORT_SHA'
+  - 'gcr.io/$PROJECT_ID/$_REPO_NAME:$SHORT_SHA'
 
 options:
   logging: CLOUD_LOGGING_ONLY
