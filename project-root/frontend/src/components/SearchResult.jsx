@@ -98,7 +98,12 @@ function SearchResult() {
         </div>
 
         {/* 検索中の場合 */}
-        {isLoading && <p className="text-center mt-4 text-gray-600">検索中...</p>}
+        {isLoading && (
+          <div className="text-center mt-6">
+            <div className="windows-spinner"></div>
+            <p className="text-gray-600 mt-2">検索中...</p>
+          </div>
+        )}
 
         {/* エラー表示 */}
         {!isLoading && errorMessage && (
