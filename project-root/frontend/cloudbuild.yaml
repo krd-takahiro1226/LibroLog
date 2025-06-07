@@ -24,3 +24,6 @@ steps:
 
 images:
   - 'gcr.io/$PROJECT_ID/github.com/$_REPO_NAME/$SHORT_SHA'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
