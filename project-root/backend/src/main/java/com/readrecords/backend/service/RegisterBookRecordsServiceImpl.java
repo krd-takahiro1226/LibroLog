@@ -50,7 +50,7 @@ public class RegisterBookRecordsServiceImpl
       message = REGISTER_SUCCESS_MESSAGE;
     } else {
       // 既に登録済みであることを通知
-      message = REGISTER_SUCCESS_MESSAGE;
+      message = DUPLICATE_RECORD_MESSAGE;
     }
     return message;
   }
