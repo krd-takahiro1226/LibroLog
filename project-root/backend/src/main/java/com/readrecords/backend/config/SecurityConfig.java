@@ -1,10 +1,5 @@
 package com.readrecords.backend.config;
 
-import com.readrecords.backend.security.JwtAuthorizationFilter;
-import com.readrecords.backend.service.UserLoginDetailsService;
-
-import jakarta.servlet.http.HttpServletResponse;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,6 +17,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.readrecords.backend.security.JwtAuthorizationFilter;
+import com.readrecords.backend.service.UserLoginDetailsService;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 public class SecurityConfig {
@@ -92,6 +92,7 @@ public class SecurityConfig {
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     // ReactアプリのURL
+    configuration.addAllowedOrigin("http://localhost:3000"); // For Local Test
     configuration.addAllowedOrigin("https://frontend-service-968408560945.asia-northeast1.run.app");
     configuration.addAllowedOrigin("https://librolog.com");
     // 全てのHTTPメソッドを許可
