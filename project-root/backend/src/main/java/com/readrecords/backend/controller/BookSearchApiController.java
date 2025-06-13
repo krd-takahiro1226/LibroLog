@@ -71,7 +71,7 @@ public class BookSearchApiController {
     // 現在日付の取得(レコード登録用)
     Date date = new Date(Calendar.getInstance().getTimeInMillis());
     // 出版年のフォーマット変換
-    String convertPublicationYear = convertPublicetionYear(publicationYear);
+    String convertPublicationYear = convertPublicationYear(publicationYear);
     // 登録情報一覧
     logger.info(
         "ISBN: {}, bookName: {}, author: {}, genre: {}, publicationYear: {}, publisher: {}",
@@ -149,7 +149,7 @@ public class BookSearchApiController {
     return message;
   }
 
-  private String convertPublicetionYear(String publicationYear) {
+  private String convertPublicationYear(String publicationYear) {
     publicationYear = publicationYear.replace("年", "-");
     publicationYear = publicationYear.replace("月", "-");
     if (publicationYear.contains("日頃")) {
