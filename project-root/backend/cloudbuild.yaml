@@ -27,7 +27,7 @@ steps:
           --allow-unauthenticated \
           --add-cloudsql-instances=${PROJECT_ID}:asia-northeast1:mysql-instance \
           --set-env-vars \
-            SPRING_DATASOURCE_URL="jdbc:mysql://google/BooksManagement?cloudSqlInstance=${PROJECT_ID}:asia-northeast1:mysql-instance&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false" \
+            SERVER_PORT=$PORT,SPRING_DATASOURCE_URL="jdbc:mysql://google/BooksManagement?cloudSqlInstance=${PROJECT_ID}:asia-northeast1:mysql-instance&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false" \
           --set-secrets \
             SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest
 
