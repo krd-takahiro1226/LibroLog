@@ -27,10 +27,10 @@ steps:
           --allow-unauthenticated \
           --add-cloudsql-instances=${PROJECT_ID}:asia-northeast1:mysql-instance \
           --set-env-vars \
-            SPRING_DATASOURCE_URL="jdbc:mysql://google/BooksManagement?cloudSqlInstance=${PROJECT_ID}:asia-northeast1:mysql-instance&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false",\
+            SPRING_DATASOURCE_URL="jdbc:mysql://google/BooksManagement?cloudSqlInstance=${PROJECT_ID}:asia-northeast1:mysql-instance&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false" \
           --set-secrets \
-            SPRING_DATASOURCE_USERNAME=projects/${PROJECT_ID}/secrets/DB_USERNAME:latest, \
-            SPRING_DATASOURCE_PASSWORD=projects/${PROJECT_ID}/secrets/DB_PASSWORD:latest
+            SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest, \
+            SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest
 
 # 最後にイメージのリストを通知
 images:
