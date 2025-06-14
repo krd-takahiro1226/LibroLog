@@ -35,3 +35,6 @@ steps:
 # 最後にイメージのリストを通知
 images:
   - asia-northeast1-docker.pkg.dev/${PROJECT_ID}/docker-repo/backend:$SHORT_SHA
+
+options:
+  logging: CLOUD_LOGGING_ONLY
