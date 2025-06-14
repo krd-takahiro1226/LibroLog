@@ -2,8 +2,18 @@
 import React from "react";
 import axios from "axios";
 import "../assets/styles/styles.css";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function NewUserRegister() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "新規登録 | Libro Log";
+  }, []);
+  // --- ここまで ---
+
+  
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -21,7 +31,7 @@ function NewUserRegister() {
     try {
       // サーバーへ登録リクエストを送信
       const response = await axios.post(
-        "http://localhost:8080/userRegistration",
+        `${process.env.REACT_APP_BACKEND_URL}/userRegistration`,
         { username, email, password, confirmPassword },
         { withCredentials: true }
       );

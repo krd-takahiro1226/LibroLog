@@ -5,6 +5,15 @@ import { useNavigate } from "react-router-dom";
 import '../assets/styles/styles.css'; 
 
 function Search() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "検索 | Libro Log";
+  }, []);
+  // --- ここまで ---
+  
+
+
   const [searchForm, setSearchForm] = React.useState({
     title: "",
     author: "",

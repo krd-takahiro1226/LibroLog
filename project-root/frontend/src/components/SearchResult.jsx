@@ -4,6 +4,14 @@ import axios from "axios";
 import "../assets/styles/styles.css";
 
 function SearchResult() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "検索結果 | Libro Log";
+  }, []);
+  // --- ここまで ---
+
+
   const { state: searchForm } = useLocation();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // 検索中の状態を管理
@@ -17,7 +25,7 @@ function SearchResult() {
       setIsLoading(true); // 検索中に設定
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8080/searchBooks/sruSearch", {
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/searchBooks/sruSearch`, {
           params: searchForm,
           headers: {
             Authorization: `Bearer ${token}`,
@@ -63,7 +71,7 @@ function SearchResult() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://localhost:8080/searchBooks/sruSearch/register", requestData, {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/searchBooks/sruSearch/register`, requestData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -90,7 +98,12 @@ function SearchResult() {
         </div>
 
         {/* 検索中の場合 */}
-        {isLoading && <p className="text-center mt-4 text-gray-600">検索中...</p>}
+        {isLoading && (
+          <div className="text-center mt-6">
+            <div className="windows-spinner"></div>
+            <p className="text-gray-600 mt-2">検索中...</p>
+          </div>
+        )}
 
         {/* エラー表示 */}
         {!isLoading && errorMessage && (

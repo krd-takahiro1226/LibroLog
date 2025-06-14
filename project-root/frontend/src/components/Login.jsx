@@ -4,6 +4,13 @@ import axios from 'axios';
 import '../assets/styles/styles.css'; 
 
 function Login() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "ログイン | Libro Log";
+  }, []);
+  // --- ここまで ---
+  
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPopup, setShowPopup] = React.useState(false);
@@ -22,7 +29,7 @@ function Login() {
     try {
       // サーバーへログインリクエスト
       const response = await axios.post(
-        "http://localhost:8080/login",
+        `${process.env.REACT_APP_BACKEND_URL}/login`,
         { username, password },
         { withCredentials: true } // 必要に応じてクッキーを有効化
       );

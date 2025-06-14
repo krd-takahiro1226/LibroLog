@@ -5,8 +5,17 @@ import '../assets/styles/styles.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch, faBook, faUser, faBookOpen, faClock, faStar, faChevronRight, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 function Menu() {
+
+    // --- タイトル ---
+  useEffect(() => {
+    document.title = "メニュー | Libro Log";
+  }, []);
+  // --- ここまで ---
+
+
   const [isOpen, setIsOpen] = React.useState(false);
 
   const menuItems = [
@@ -18,13 +27,9 @@ function Menu() {
     { icon: faStar, text: "お気に入りの本", link: "#" },
   ];
   const handleLogout = () => {
-    axios.post('http://localhost:8080/logout', {}, { withCredentials: true })
-      .then(() => {
-        window.location.href = '/login'; // ログインページにリダイレクト
-      })
-      .catch(error => {
-        console.error("ログアウトに失敗しました", error);
-      });
+      // トークンを削除
+      localStorage.removeItem("token");
+      navigate("/login", { replace: true });
   };
   const navigate = useNavigate();
 

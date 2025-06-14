@@ -1,0 +1,41 @@
+steps:
+  # 1) Docker イメージをビルド
+  - name: 'gcr.io/cloud-builders/docker'
+    dir: 'project-root/backend'
+    args:
+      - build
+      - '-t'
+      - asia-northeast1-docker.pkg.dev/${PROJECT_ID}/docker-repo/backend:$SHORT_SHA
+      - '.'
+
+  # 2) Artifact Registry にプッシュ
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - asia-northeast1-docker.pkg.dev/${PROJECT_ID}/docker-repo/backend:$SHORT_SHA
+
+  # 3) Cloud Run にデプロイ
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud run deploy backend-service \
+          --image=asia-northeast1-docker.pkg.dev/${PROJECT_ID}/docker-repo/backend:$SHORT_SHA \
+          --platform=managed \
+          --region=asia-northeast1 \
+          --allow-unauthenticated \
+          --add-cloudsql-instances=${PROJECT_ID}:asia-northeast1:mysql-instance \
+          --set-env-vars \
+            SPRING_DATASOURCE_URL="jdbc:mysql://google/BooksManagement?cloudSqlInstance=${PROJECT_ID}:asia-northeast1:mysql-instance&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false" \
+          --set-secrets \
+            KEY_API=KEY_API:latest \
+          --set-secrets \
+            SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest
+
+# 最後にイメージのリストを通知
+images:
+  - asia-northeast1-docker.pkg.dev/${PROJECT_ID}/docker-repo/backend:$SHORT_SHA
+
+options:
+  logging: CLOUD_LOGGING_ONLY

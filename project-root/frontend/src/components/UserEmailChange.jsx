@@ -1,7 +1,17 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useEffect } from "react";
 
 function UserEmailChange() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "メールアドレス変更 | Libro Log";
+  }, []);
+  // --- ここまで ---
+  
+
+
   const [newUserEmail, setNewUserEmail] = useState("");
   const [error, setError] = useState("");
 
@@ -30,7 +40,7 @@ function UserEmailChange() {
       }
 
       const response = await axios.put(
-        "http://localhost:8080/useremail/changeemail",
+        `${process.env.REACT_APP_BACKEND_URL}/useremail/changeemail`,
         { newUserEmail: newUserEmail },
         {
           headers: {

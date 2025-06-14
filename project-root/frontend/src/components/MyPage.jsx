@@ -8,6 +8,12 @@ import { useLocation, useNavigate } from "react-router-dom";
 function MyPage() {
   //const [user, setUser] = useState(null); // 初期値はnull
 
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "マイページ | Libro Log";
+  }, []);
+  // --- ここまで ---
+
   // 初期値を固定値として設定
   const [user, setUser] = useState({
     name: "Loading...", // 最初は読み込み中と表示
@@ -30,7 +36,7 @@ function MyPage() {
     }
 
     axios
-      .get("http://localhost:8080/api/user/me", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/api/user/me`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

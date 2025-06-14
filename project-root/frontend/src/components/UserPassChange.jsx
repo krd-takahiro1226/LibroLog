@@ -5,6 +5,13 @@ import "../assets/styles/styles.css";
 
 
 function UserPassChange() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "パスワード変更 | Libro Log";
+  }, []);
+  // --- ここまで ---
+
   const [oldpassword, setOldPassword] = React.useState("");
   const [newpassword, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
@@ -99,7 +106,7 @@ function UserPassChange() {
 
       // サーバーへ変更リクエストを送信（PUTメソッド）
       const response = await axios.put(
-        "http://localhost:8080/userPassword/change",
+        `${process.env.REACT_APP_BACKEND_URL}/userPassword/change`,
         {
           oldPassword: oldpassword, // キー名は"oldPassword"に変更
           newPassword: newpassword, // キー名は"newPassword"に変更
@@ -121,7 +128,7 @@ function UserPassChange() {
         alert("パスワードが変更されました。ログイン画面に遷移します。");
 
         // ログアウト処理
-        axios.post('http://localhost:8080/logout', {}, { withCredentials: true })
+        axios.post(`${process.env.REACT_APP_BACKEND_URL}/logout`, {}, { withCredentials: true })
           .then(() => {
             window.location.href = '/login'; // ログインページにリダイレクト
           })
