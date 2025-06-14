@@ -28,7 +28,7 @@ steps:
           --add-cloudsql-instances=${PROJECT_ID}:asia-northeast1:mysql-instance \
           --set-env-vars \
             SPRING_DATASOURCE_URL="jdbc:mysql://google/BooksManagement?cloudSqlInstance=${PROJECT_ID}:asia-northeast1:mysql-instance&socketFactory=com.google.cloud.sql.mysql.SocketFactory&useSSL=false",\
-SPRING_DATASOURCE_USERNAME="appuser" \
+            SPRING_DATASOURCE_USERNAME="appuser" \
           --set-secrets \
             SPRING_DATASOURCE_PASSWORD=projects/${PROJECT_ID}/secrets/DB_PASSWORD:latest
 
