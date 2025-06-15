@@ -56,3 +56,15 @@ CREATE TABLE reading_records (
     CONSTRAINT fk_reading_records_books
         FOREIGN KEY (ISBN) REFERENCES book_records(ISBN)
 );
+
+CREATE TABLE follow_authors (
+    follow_id     INT AUTO_INCREMENT PRIMARY KEY,
+    user_id       VARCHAR(36) NOT NULL,
+    author_name   VARCHAR(100) NOT NULL,
+    is_active     BOOLEAN NOT NULL DEFAULT TRUE,          -- 現在フォロー中かどうか（論理削除）
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_follow_authors_user
+        FOREIGN KEY (user_id) REFERENCES users(user_id)
+);
