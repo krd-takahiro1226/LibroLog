@@ -1,9 +1,8 @@
 package com.readrecords.backend.config;
 
-import com.readrecords.backend.security.JwtAuthorizationFilter;
-import com.readrecords.backend.service.UserLoginDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -18,6 +17,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import com.readrecords.backend.security.JwtAuthorizationFilter;
+import com.readrecords.backend.service.UserLoginDetailsService;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @Configuration
 public class SecurityConfig {
@@ -35,8 +39,9 @@ public class SecurityConfig {
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .authorizeHttpRequests(
             authorize -> authorize
-                .requestMatchers("/login", "/userRegistration")
-                .permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
+                .requestMatchers("/login", "/userRegistration").permitAll()
                 .anyRequest()
                 .authenticated())
         .addFilterBefore(new JwtAuthorizationFilter(),
@@ -47,7 +52,9 @@ public class SecurityConfig {
         .logout(
             logout -> logout
                 .logoutUrl("/logout") // ログアウトのURL
-                .logoutSuccessUrl("/login") // ログアウト後のリダイレクトURL
+                //.logoutSuccessUrl("/login") // ログアウト後のリダイレクトURL
+                .logoutSuccessHandler((req,res,auth) ->
+                  res.setStatus(HttpServletResponse.SC_NO_CONTENT)) 
                 .invalidateHttpSession(true) // セッションの無効化
                 .deleteCookies("JSESSIONID") // クッキーの削除
         )
@@ -85,7 +92,9 @@ public class SecurityConfig {
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
     // ReactアプリのURL
-    configuration.addAllowedOrigin("http://localhost:3000");
+    configuration.addAllowedOrigin("http://localhost:3000"); // For Local Test
+    configuration.addAllowedOrigin("https://frontend-service-968408560945.asia-northeast1.run.app");
+    configuration.addAllowedOrigin("https://librolog.com");
     // 全てのHTTPメソッドを許可
     configuration.addAllowedMethod("*");
     // 全てのヘッダーを許可

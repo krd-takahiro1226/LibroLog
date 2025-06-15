@@ -1,7 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useEffect } from "react";
 
 function UsernameChange() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "ユーザー名変更 | Libro Log";
+  }, []);
+  // --- ここまで ---
+
   const [newUsername, setNewUsername] = useState("");
 
   const handleSubmit = async (e) => {
@@ -16,7 +24,7 @@ function UsernameChange() {
       }
 
       const response = await axios.put(
-        "http://localhost:8080/username/changeusername",
+        `${process.env.REACT_APP_BACKEND_URL}/username/changeusername`,
         { newUsername: newUsername },
         {
           headers: {
