@@ -36,3 +36,10 @@ docker exec -it project-root-frontend-1 bash
 ```
 docker exec -it project-root-backend-1 bash
 ```
+#### バッチ処理コンテナ
+バッチ処理コンテナが「project-root-batch-1」である前提 \
+project-root/batch配下で以下のコマンドを実行する
+```
+docker exec -it project-root-batch-1 \
+java -jar target/batch-0.0.1-SNAPSHOT.jar --server.port=8081 --run
+```
