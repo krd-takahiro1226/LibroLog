@@ -4,6 +4,14 @@ import axios from "axios";
 import "../assets/styles/styles.css";
 
 function SearchResult() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "検索結果 | Libro Log";
+  }, []);
+  // --- ここまで ---
+
+
   const { state: searchForm } = useLocation();
   const [items, setItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // 検索中の状態を管理
@@ -11,19 +19,24 @@ function SearchResult() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [limit] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
     const fetchBooks = async () => {
       setIsLoading(true); // 検索中に設定
       try {
         const token = localStorage.getItem("token");
-        const response = await axios.get("http://localhost:8080/searchBooks/sruSearch", {
-          params: searchForm,
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/searchBooks/sruSearch`, {
+          params: { ...searchForm, currentPage, limit },
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         setItems(response.data.items || []);
+        setCurrentPage(response.data.page || 1);
+        setTotalPages(response.data.pageCount || 1);
       } catch (error) {
         setErrorMessage("検索中にエラーが発生しました。");
         console.error(error);
@@ -33,7 +46,15 @@ function SearchResult() {
     };
 
     fetchBooks();
-  }, [searchForm]);
+  }, [searchForm, currentPage, limit]);
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
 
   const handleRegisterClick = (book) => {
     setSelectedBook(book);
@@ -63,7 +84,7 @@ function SearchResult() {
 
     try {
       const token = localStorage.getItem("token");
-      await axios.post("http://localhost:8080/searchBooks/sruSearch/register", requestData, {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/searchBooks/sruSearch/register`, requestData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -90,7 +111,12 @@ function SearchResult() {
         </div>
 
         {/* 検索中の場合 */}
-        {isLoading && <p className="text-center mt-4 text-gray-600">検索中...</p>}
+        {isLoading && (
+          <div className="text-center mt-6">
+            <div className="windows-spinner"></div>
+            <p className="text-gray-600 mt-2">検索中...</p>
+          </div>
+        )}
 
         {/* エラー表示 */}
         {!isLoading && errorMessage && (
@@ -121,7 +147,7 @@ function SearchResult() {
               <tbody>
                 {items.map((book, index) => (
                   <tr key={book.id} className="border-b hover:bg-gray-50">
-                    <td className="px-4 py-3">{index + 1}</td>
+                    <td className="px-4 py-3">{(currentPage - 1) * limit + index + 1}</td>
                     <td className="px-4 py-3">
                       <img
                         src={book.smallImageUrl}
@@ -146,6 +172,23 @@ function SearchResult() {
                 ))}
               </tbody>
             </table>
+            <div className="flex justify-center mt-4 space-x-4">
+              <button
+                className={`px-4 py-2 rounded ${currentPage === 1 ? "bg-gray-300" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
+                onClick={handlePreviousPage}
+                disabled={totalPages <= 1 || currentPage === 1}
+              >
+                前へ
+              </button>
+              <span className="px-4 py-2">{currentPage} / {totalPages}</span>
+              <button
+                className={`px-4 py-2 rounded ${currentPage === totalPages ? "bg-gray-300" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
+                onClick={handleNextPage}
+                disabled={totalPages <= 1 || currentPage === totalPages}
+              >
+                次へ
+              </button>
+            </div>
             {/* モーダル */}
             {isModalOpen && selectedBook && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
