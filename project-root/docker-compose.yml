@@ -2,7 +2,9 @@ version: '3'
 
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile_local
     ports:
       - "8080:8080"
 
@@ -17,13 +19,15 @@ services:
       - app-network
 
   frontend:
-    build: ./frontend
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile_local
     ports:
       - "3000:3000"
     networks:
       - app-network
     environment:
-      - REACT_APP_BACKEND_URL=http://backend:8080
+      - REACT_APP_BACKEND_URL=http://localhost:8080
 
   db:
     build: ./mysql-config

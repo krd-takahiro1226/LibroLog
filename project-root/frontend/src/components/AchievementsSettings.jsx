@@ -36,6 +36,14 @@ function Modal({ isOpen, onClose, onSelect }) {
 }
 
 function AchievementsSettings() {
+
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "目標設定 | Libro Log";
+  }, []);
+  // --- ここまで ---
+
+
   const [monthlyGoal, setMonthlyGoal] = useState({ bookCount: "", targetBooks: [] });
   const [yearlyGoal, setYearlyGoal] = useState({ bookCount: "", targetBooks: [] });
   const [showModal, setShowModal] = useState(false);
@@ -55,7 +63,7 @@ function AchievementsSettings() {
     }
 
     axios
-      .get("http://localhost:8080/showSettingAchievements", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/showSettingAchievements`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((response) => {
@@ -111,7 +119,7 @@ function AchievementsSettings() {
     };
 
     try {
-      await axios.post("http://localhost:8080/setReadingGoals", null, {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/setReadingGoals`, null, {
         params: requestData,
         headers: { Authorization: `Bearer ${token}` },
       });

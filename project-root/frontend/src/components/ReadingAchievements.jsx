@@ -3,6 +3,15 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function ReadingAchievements() {
+
+  
+  // --- タイトル ---
+  useEffect(() => {
+    document.title = "目標設定 | Libro Log";
+  }, []);
+  // --- ここまで ---
+
+
   const [readingStats, setReadingStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -28,7 +37,7 @@ function ReadingAchievements() {
 
     // 読書目標実績データを取得
     axios
-      .get("http://localhost:8080/showAchievements", {
+      .get(`${process.env.REACT_APP_BACKEND_URL}/showAchievements`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
