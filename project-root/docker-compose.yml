@@ -39,6 +39,18 @@ services:
     volumes:
       - db_data:/var/lib/mysql
       # - ./mysql-config/custom.cnf:/etc/mysql/conf.d/custom.cnf
+  
+  batch:
+    build: ./batch
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/BooksManagement
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    networks:
+      - app-network
+    restart: "no"  # 任意：バッチなので終了後は再起動しない
 
 networks:
   app-network:
