@@ -1,8 +1,36 @@
 package com.readrecords.backend.service;
 
-import com.readrecords.backend.dto.UserReadRecordsDto;
 import java.util.List;
+import java.util.Optional;
 
-public interface RegisterBookRecordsUpdateService {
-  void updateReadRecords(List<UserReadRecordsDto> updateRequestDtos, String userId);
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.readrecords.backend.dto.UserReadRecordsDto;
+import com.readrecords.backend.repository.RegisterBookRecordsUpdateRepository;
+
+import jakarta.transaction.Transactional;
+
+@Service
+public class RegisterBookRecordsUpdateService {
+  @Autowired
+  RegisterBookRecordsUpdateRepository readRecordsUpdateRepository;
+
+  @Transactional
+  public void updateReadRecords(List<UserReadRecordsDto> updateRequestDtos,
+      String userId) {
+    for (UserReadRecordsDto request : updateRequestDtos) {
+      Optional<Integer> optionalRecordId = readRecordsUpdateRepository
+          .findRecordIdByIsbnAndUserId(request.getISBN(), userId);
+      if (optionalRecordId.isPresent()) {
+        Integer recordId = optionalRecordId.get();
+        readRecordsUpdateRepository.updateReadRecords(
+            recordId, request.getStartDate(), request.getEndDate(),
+            request.getPriority());
+      } else {
+        throw new RuntimeException(
+            "Record not found for ISBN: " + request.getISBN());
+      }
+    }
+  }
 }

@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.readrecords.backend.service.UserRegistrationServiceImpl;
+import com.readrecords.backend.service.UserRegistrationService;
 
 @RestController
 @RequestMapping("/userRegistration")
 public class UserRegistrationController {
   @Autowired
-  UserRegistrationServiceImpl userRegistrationService;
+  UserRegistrationService userRegistrationService;
 
   @PostMapping
   public ResponseEntity<?> registerUser(

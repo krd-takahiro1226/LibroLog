@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 public interface BookSearchApiClient {
   public SearchBooksResponseDto getBookSearch(
       String title, String creator, String publisherName, String isbn,
-      Integer page)
+      Integer currentPage, Integer limit)
       throws Exception;
 }
