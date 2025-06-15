@@ -28,8 +28,8 @@
   - backend配下で以下のコマンドを実行
     - ```mvn -N io.takari:maven:wrapper```
   - application.yamlでAPI Keyの定義
-  - wait-for-mysql.sh
-    - VS Codeで「CRLF」→「LF」にする
+  - wait-for-mysql.sh、pom.xmlなど
+    - VS Codeで改行コードを「CRLF」→「LF」にする
 - LibroLog/project-root/配下で、```docker-compose up --build```を実行
 - コンテナイメージのビルドおよびコンテナの作成が行われ、作成されたコンテナが起動するのを確認する
   - ```docker ps```またはGUIで確認
