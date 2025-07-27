@@ -24,4 +24,8 @@ public interface UserLoginRepository extends JpaRepository<UserLogin, String> {
   @Query(value = "select username, password, role from users "
       + "where username = :username", nativeQuery = true)
   String findPasswordByUsername(@Param("username") String username);
+
+  // email でユーザーを検索（重複チェック用）
+  @Query(value = "SELECT * FROM users WHERE email = :email", nativeQuery = true)
+  Optional<UserLogin> findByEmail(@Param("email") String email);
 }
