@@ -15,6 +15,7 @@ import UsernameChange from './components/UsernameChange';
 import UserEmailChange from './components/UserEmailChange';
 import SetReadingGoals from './components/SetReadingGoals';
 import AchievementsSettings from './components/AchievementsSettings';
+import OtpVerification from './components/OtpVerification';
 
 function App() {
     return (
@@ -26,6 +27,7 @@ function App() {
                 <Route path="/searchBooksResult" element={<SearchResult />}></Route>
                 <Route path="/showRecords" element={<ShowRecords />} />
                 <Route path="/userRegistration" element={<NewUserRegister />} />
+                <Route path="/otpVerification" element={<OtpVerification />} />
                 <Route path="/achievements" element={<ReadingAchievements />} />
                 <Route path="/myPage" element={<MyPage />} />
                 <Route path="/userPassChange" element={<UserPassChange />} />
