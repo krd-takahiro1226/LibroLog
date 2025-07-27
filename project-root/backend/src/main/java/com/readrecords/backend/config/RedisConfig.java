@@ -13,9 +13,8 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  */
 @Configuration
 public class RedisConfig {
-
   /**
-   * TemporaryUser用のRedisTemplateを定義
+   * 一時ユーザー情報用のRedisTemplate
    */
   @Bean
   public RedisTemplate<String, TemporaryUser> temporaryUserRedisTemplate(
@@ -23,16 +22,13 @@ public class RedisConfig {
     RedisTemplate<String, TemporaryUser> template = new RedisTemplate<>();
     template.setConnectionFactory(connectionFactory);
 
-    // Key用のシリアライザー（文字列）
+    // キーのシリアライザー（文字列）
     template.setKeySerializer(new StringRedisSerializer());
     template.setHashKeySerializer(new StringRedisSerializer());
 
-    // Value用のシリアライザー（JSON）
+    // 値のシリアライザー（JSON）
     template.setValueSerializer(new GenericJackson2JsonRedisSerializer());
     template.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
-
-    // デフォルトシリアライザー設定
-    template.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
 
     template.afterPropertiesSet();
     return template;
