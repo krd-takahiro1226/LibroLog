@@ -1,5 +1,5 @@
 CREATE TABLE reading_goals (
-    goal_id            INT AUTO_INCREMENT PRIMARY KEY,  -- PK
+    goal_id            INT AUTO_INCREMENT PRIMARY KEY,  -- 目標管理テーブルID(PK)
     goal_read_number   INT             NOT NULL,        -- 目標冊数
     user_id            varchar(255)    NOT NULL,        -- ユーザID(FK想定)
     count_start_date   DATE            NOT NULL,        -- カウント開始日
