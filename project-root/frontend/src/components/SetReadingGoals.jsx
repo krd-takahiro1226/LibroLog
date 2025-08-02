@@ -63,6 +63,9 @@ function SetReadingGoals() {
           >
             📚 Libro Log
           </button>
+          <p className="text-[#666666] font-crimson-text">
+            あなたの読書体験を記録・管理
+          </p>
         </div>
 
         <div className="space-y-8">

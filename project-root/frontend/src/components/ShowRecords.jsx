@@ -364,6 +364,16 @@ function ShowRecords() {
           </div>
         </div>
       )}
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={() => window.location.href = '/menu'}
+          type="button"
+          className="w-full sm:w-1/2 md:w-1/3 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+          >
+          メニューへ戻る
+        </button>
+      </div>
+
     </div>
   );
 }
