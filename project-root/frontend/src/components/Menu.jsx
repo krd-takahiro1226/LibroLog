@@ -3,7 +3,7 @@ import React from "react";
 import axios from 'axios';
 import '../assets/styles/styles.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch, faBook, faUser, faBookOpen, faClock, faStar, faChevronRight, faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
+import { faSearch, faBook, faUser, faBookOpen, faClock, faStar, faChevronRight, faSignOutAlt, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
@@ -24,6 +24,7 @@ function Menu() {
     { icon: faUser, text: "マイページ", link: "/myPage" },
     { icon: faBookOpen, text: "読書目標設定", link: "/achievementsSettings" },
     { icon: faClock, text: "読書履歴", link: "/achievements" },
+    { icon: faHeart, text: "お気に入り著者", link: "/favoriteAuthors" },
     { icon: faStar, text: "お気に入りの本", link: "#" },
   ];
   const handleLogout = () => {

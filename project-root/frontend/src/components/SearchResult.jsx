@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import AuthorFollowButton from "./AuthorFollowButton";
 import "../assets/styles/styles.css";
 
 function SearchResult() {
@@ -156,7 +157,12 @@ function SearchResult() {
                       />
                     </td>
                     <td className="px-4 py-3">{book.title}</td>
-                    <td className="px-4 py-3">{book.author}</td>
+                    <td className="px-4 py-3">
+                      <div>
+                        <div className="mb-1">{book.author}</div>
+                        <AuthorFollowButton authorName={book.author} size="small" />
+                      </div>
+                    </td>
                     <td className="px-4 py-3">{book.size}</td>
                     <td className="px-4 py-3">{book.publisherName}</td>
                     <td className="px-4 py-3">{book.salesDate}</td>
