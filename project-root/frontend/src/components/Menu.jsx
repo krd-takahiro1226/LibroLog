@@ -9,7 +9,6 @@ function Menu() {
     document.title = "メニュー | Libro Log";
   }, []);
   // --- ここまで ---
-
   const navigate = useNavigate();
 
   const menuItems = [
@@ -35,10 +34,10 @@ function Menu() {
       color: "bg-blue-600 hover:bg-blue-700"
     },
     {
-      title: "お気に入りの本",
-      description: "お気に入り登録した書籍",
+      title: "お気に入り著者",
+      description: "お気に入り登録した著者",
       icon: "⭐",
-      path: "#",
+      path: "/favoriteAuthors",
       color: "bg-blue-600 hover:bg-blue-700"
     },
     {
@@ -80,9 +79,8 @@ function Menu() {
             <div
               key={index}
               onClick={() => item.path !== "#" && navigate(item.path)}
-              className={`bg-[#faf8f3] rounded-xl shadow-md border border-[#e8e2d4] p-6 cursor-pointer hover:shadow-lg transition-all duration-300 group ${
-                item.path === "#" ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`bg-[#faf8f3] rounded-xl shadow-md border border-[#e8e2d4] p-6 cursor-pointer hover:shadow-lg transition-all duration-300 group ${item.path === "#" ? "opacity-50 cursor-not-allowed" : ""
+                }`}
             >
               <div className="text-center">
                 <div className="text-4xl mb-4 group-hover:scale-110 transition-transform duration-300">
@@ -94,9 +92,8 @@ function Menu() {
                 <p className="text-[#5d6d7e] font-noto-sans text-sm mb-4">
                   {item.description}
                 </p>
-                <button className={`${item.color} text-white font-noto-sans px-6 py-2 rounded-lg transition-colors w-full ${
-                  item.path === "#" ? "opacity-50 cursor-not-allowed" : ""
-                }`}>
+                <button className={`${item.color} text-white font-noto-sans px-6 py-2 rounded-lg transition-colors w-full ${item.path === "#" ? "opacity-50 cursor-not-allowed" : ""
+                  }`}>
                   {item.path === "#" ? "準備中" : "開く"}
                 </button>
               </div>
