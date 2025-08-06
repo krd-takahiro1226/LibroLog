@@ -106,4 +106,10 @@ public class ReadingRecordsService {
     }
     return bookDtos;
   }
+
+  // ユーザーの読書記録をCSV出力用に取得
+  public List<Map<String, Object>> getRecordsByUserId(String userId) {
+    logger.info("Fetching records for CSV export, userId: {}", userId);
+    return bookRecordsRepository.getRecordsForCsvExport(userId);
+  }
 }
