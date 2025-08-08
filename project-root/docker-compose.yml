@@ -10,6 +10,8 @@ services:
 
     depends_on:
       - db
+      - redis
+      - mail
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/BooksManagement
       SPRING_DATASOURCE_USERNAME: root
@@ -42,7 +44,7 @@ services:
       - app-network
     volumes:
       - db_data:/var/lib/mysql
-      # - ./mysql-config/custom.cnf:/etc/mysql/conf.d/custom.cnf
+  # - ./mysql-config/custom.cnf:/etc/mysql/conf.d/custom.cnf
 
   mail:
     # Web画面: http://localhost:19980
@@ -61,6 +63,17 @@ services:
     networks:
       - app-network
 
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
 
 networks:
   app-network:
@@ -68,3 +81,4 @@ networks:
 
 volumes:
   db_data:
+  redis_data:
