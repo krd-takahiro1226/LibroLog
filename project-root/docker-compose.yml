@@ -1,5 +1,4 @@
 version: '3'
-
 services:
   backend:
     build:
@@ -7,19 +6,17 @@ services:
       dockerfile: Dockerfile_local
     ports:
       - "8080:8080"
-
     depends_on:
       - db
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/BooksManagement
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-
     networks:
       - app-network
 
   frontend:
-    build:
+    build: 
       context: ./frontend
       dockerfile: Dockerfile_local
     ports:
@@ -28,7 +25,6 @@ services:
       - app-network
     environment:
       - REACT_APP_BACKEND_URL=http://localhost:8080
-
   db:
     build: ./mysql-config
     image: mysql:8.0
@@ -44,43 +40,6 @@ services:
       - db_data:/var/lib/mysql
       # - ./mysql-config/custom.cnf:/etc/mysql/conf.d/custom.cnf
 
-  batch:
-    build:
-      context: ./batch
-      dockerfile: Dockerfile_local
-    depends_on:
-      - db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/BooksManagement
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-      RAKUTEN_API_KEY: ${RAKUTEN_API_KEY:-dummy_key}
-      PUBSUB_PROJECT_ID: ${PUBSUB_PROJECT_ID:-libro-log-project}
-      PUBSUB_TOPIC_NAME: ${PUBSUB_TOPIC_NAME:-new-book-notifications}
-    networks:
-      - app-network
-
   mail:
     # Web画面: http://localhost:19980
     image: axllent/mailpit:latest
-    ports:
-      - "19925:1025"
-      - "19980:8025"
-    volumes:
-      - ./mailpit:/data
-    environment:
-      TZ: Asia/Tokyo
-      MP_MAX_MESSAGES: 5000
-      MP_DATABASE: /data/mailpit.db
-      MP_SMTP_AUTH_ACCEPT_ANY: 1
-      MP_SMTP_AUTH_ALLOW_INSECURE: 1
-    networks:
-      - app-network
-
-
-networks:
-  app-network:
-    driver: bridge
-
-volumes:
-  db_data:
