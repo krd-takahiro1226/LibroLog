@@ -32,20 +32,20 @@ public class FavoriteAuthorsService {
   FavoriteAuthorsRepository favoriteAuthorsRepository;
 
   /**
-   * ユーザーのお気に入り著者一覧を取得
+   * ユーザーのお気に入り著者一覧を取得（アクティブ・非アクティブ両方）
    *
    * @param authentication
    * @return お気に入り著者一覧
    */
   public Map<String, Object> getFavoriteAuthors(Authentication authentication) {
     String userId = getUserId(authentication);
-    logger.info("Fetching favorite authors for userId: {}", userId);
+    logger.info("Fetching all favorite authors for userId: {}", userId);
 
     Map<String, Object> result = new HashMap<>();
     
     try {
       List<FavoriteAuthors> favoriteAuthorsList = favoriteAuthorsRepository
-          .findActiveByUserId(userId);
+          .findAllByUserId(userId);
       
       List<FavoriteAuthorsDto> favoriteAuthorsDtos = convertToDto(favoriteAuthorsList);
       
@@ -123,6 +123,72 @@ public class FavoriteAuthorsService {
       logger.error("Error unfollowing author: {} for userId: {}", authorName, userId, e);
       result.put(STATUS, ERROR);
       result.put(MESSAGE, "フォロー解除に失敗しました");
+    }
+    
+    return result;
+  }
+
+  /**
+   * 著者を再フォロー（再アクティブ化）
+   *
+   * @param authentication
+   * @param authorName
+   * @return 処理結果
+   */
+  public Map<String, Object> refollowAuthor(Authentication authentication, String authorName) {
+    String userId = getUserId(authentication);
+    logger.info("Refollowing author: {} for userId: {}", authorName, userId);
+
+    Map<String, Object> result = new HashMap<>();
+    
+    try {
+      int updateCount = favoriteAuthorsRepository.activateFavoriteAuthor(userId, authorName);
+      
+      if (updateCount > 0) {
+        result.put(STATUS, SUCCESS);
+        result.put(MESSAGE, "再フォローしました");
+      } else {
+        result.put(STATUS, ERROR);
+        result.put(MESSAGE, "再フォローに失敗しました");
+      }
+      
+    } catch (Exception e) {
+      logger.error("Error refollowing author: {} for userId: {}", authorName, userId, e);
+      result.put(STATUS, ERROR);
+      result.put(MESSAGE, "再フォローに失敗しました");
+    }
+    
+    return result;
+  }
+
+  /**
+   * 著者を完全削除
+   *
+   * @param authentication
+   * @param authorName
+   * @return 処理結果
+   */
+  public Map<String, Object> deleteAuthor(Authentication authentication, String authorName) {
+    String userId = getUserId(authentication);
+    logger.info("Deleting author: {} for userId: {}", authorName, userId);
+
+    Map<String, Object> result = new HashMap<>();
+    
+    try {
+      int deleteCount = favoriteAuthorsRepository.deleteFavoriteAuthor(userId, authorName);
+      
+      if (deleteCount > 0) {
+        result.put(STATUS, SUCCESS);
+        result.put(MESSAGE, "著者を削除しました");
+      } else {
+        result.put(STATUS, ERROR);
+        result.put(MESSAGE, "著者の削除に失敗しました");
+      }
+      
+    } catch (Exception e) {
+      logger.error("Error deleting author: {} for userId: {}", authorName, userId, e);
+      result.put(STATUS, ERROR);
+      result.put(MESSAGE, "著者の削除に失敗しました");
     }
     
     return result;
