@@ -122,6 +122,66 @@ function FavoriteAuthors() {
     }
   };
 
+  // 著者を再フォロー
+  const refollowAuthor = async (authorName) => {
+    try {
+      const token = getToken();
+      
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/favoriteAuthors/refollow`, null, {
+        params: { authorName },
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.data.status === 'success') {
+        fetchFavoriteAuthors(); // リフレッシュ
+      } else {
+        setError(response.data.message || '再フォローに失敗しました');
+      }
+    } catch (error) {
+      console.error('Error refollowing author:', error);
+      setError('再フォローに失敗しました');
+    }
+  };
+
+  // 著者を完全削除
+  const deleteAuthor = async (authorName) => {
+    if (!window.confirm(`「${authorName}」を完全に削除しますか？この操作は取り消せません。`)) {
+      return;
+    }
+
+    try {
+      const token = getToken();
+      
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/favoriteAuthors/delete`, null, {
+        params: { authorName },
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.data.status === 'success') {
+        fetchFavoriteAuthors(); // リフレッシュ
+      } else {
+        setError(response.data.message || '削除に失敗しました');
+      }
+    } catch (error) {
+      console.error('Error deleting author:', error);
+      setError('削除に失敗しました');
+    }
+  };
+
   // 新しい著者を追加
   const handleAddAuthor = (e) => {
     e.preventDefault();
@@ -248,7 +308,7 @@ function FavoriteAuthors() {
               <>
                 <div className="mb-6">
                   <p className="text-[#5d6d7e] font-noto-sans">
-                    <span className="font-medium text-[#2d3436]">{favoriteAuthors.length}</span> 人の著者をフォロー中
+                    <span className="font-medium text-[#2d3436]">{favoriteAuthors.length}</span> 人の著者を管理中
                   </p>
                 </div>
                 
@@ -264,19 +324,41 @@ function FavoriteAuthors() {
                             <h3 className="font-noto-sans text-lg font-semibold text-[#2d3436] mb-2">
                               {author.authorName}
                             </h3>
-                            <div className="flex items-center text-sm text-[#5d6d7e] font-noto-sans">
-                              <FontAwesomeIcon icon={faHeart} className="text-red-600 mr-2" />
-                              フォロー中
+                            <div className="flex items-center text-sm font-noto-sans mb-2">
+                              <FontAwesomeIcon 
+                                icon={faHeart} 
+                                className={`mr-2 ${author.isFollowing ? 'text-red-600' : 'text-gray-400'}`} 
+                              />
+                              <span className={author.isFollowing ? 'text-[#2d3436]' : 'text-[#5d6d7e]'}>
+                                {author.isFollowing ? 'フォロー中' : 'フォロー解除中'}
+                              </span>
                             </div>
                           </div>
                         </div>
                         
-                        <button
-                          onClick={() => unfollowAuthor(author.authorName)}
-                          className="bg-red-600 hover:bg-red-700 text-white font-noto-sans py-2 px-4 rounded-lg transition-colors mt-auto"
-                        >
-                          フォロー解除
-                        </button>
+                        <div className="flex flex-col gap-2 mt-auto">
+                          {author.isFollowing ? (
+                            <button
+                              onClick={() => unfollowAuthor(author.authorName)}
+                              className="bg-orange-600 hover:bg-orange-700 text-white font-noto-sans py-2 px-4 rounded-lg transition-colors"
+                            >
+                              フォロー解除
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => refollowAuthor(author.authorName)}
+                              className="bg-green-600 hover:bg-green-700 text-white font-noto-sans py-2 px-4 rounded-lg transition-colors"
+                            >
+                              再フォロー
+                            </button>
+                          )}
+                          <button
+                            onClick={() => deleteAuthor(author.authorName)}
+                            className="bg-red-600 hover:bg-red-700 text-white font-noto-sans py-2 px-4 rounded-lg transition-colors"
+                          >
+                            完全削除
+                          </button>
+                        </div>
                       </div>
                     </div>
                   ))}

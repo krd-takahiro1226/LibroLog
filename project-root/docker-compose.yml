@@ -21,7 +21,7 @@ services:
       - app-network
 
   frontend:
-    build: 
+    build:
       context: ./frontend
       dockerfile: Dockerfile_local
     ports:
