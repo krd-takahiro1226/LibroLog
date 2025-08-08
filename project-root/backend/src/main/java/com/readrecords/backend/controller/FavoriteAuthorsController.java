@@ -99,4 +99,46 @@ public class FavoriteAuthorsController {
       return ResponseEntity.badRequest().body(result);
     }
   }
+
+  /**
+   * 著者を再フォロー
+   *
+   * @param authorName
+   * @param authentication
+   * @return 処理結果
+   */
+  @PostMapping("/favoriteAuthors/refollow")
+  public ResponseEntity<?> refollowAuthor(
+      @RequestParam("authorName") String authorName,
+      Authentication authentication) {
+    
+    Map<String, Object> result = favoriteAuthorsService.refollowAuthor(authentication, authorName);
+    
+    if ("success".equals(result.get("status"))) {
+      return ResponseEntity.ok(result);
+    } else {
+      return ResponseEntity.badRequest().body(result);
+    }
+  }
+
+  /**
+   * 著者を完全削除
+   *
+   * @param authorName
+   * @param authentication
+   * @return 処理結果
+   */
+  @PostMapping("/favoriteAuthors/delete")
+  public ResponseEntity<?> deleteAuthor(
+      @RequestParam("authorName") String authorName,
+      Authentication authentication) {
+    
+    Map<String, Object> result = favoriteAuthorsService.deleteAuthor(authentication, authorName);
+    
+    if ("success".equals(result.get("status"))) {
+      return ResponseEntity.ok(result);
+    } else {
+      return ResponseEntity.badRequest().body(result);
+    }
+  }
 }

@@ -64,4 +64,29 @@ public interface FavoriteAuthorsRepository extends CrudRepository<FavoriteAuthor
             "WHERE user_id = :user_id AND author_name = :author_name", nativeQuery = true)
     int deactivateFavoriteAuthor(@Param("user_id") String userId, 
                                 @Param("author_name") String authorName);
+    
+    /**
+     * 指定したユーザーIDと著者名のお気に入りを完全削除
+     *
+     * @param userId
+     * @param authorName
+     * @return 削除件数
+     */
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM favorite_authors " +
+            "WHERE user_id = :user_id AND author_name = :author_name", nativeQuery = true)
+    int deleteFavoriteAuthor(@Param("user_id") String userId, 
+                            @Param("author_name") String authorName);
+    
+    /**
+     * 指定したユーザーIDのお気に入り著者一覧を取得（アクティブ・非アクティブ両方）
+     *
+     * @param userId
+     * @return お気に入り著者一覧
+     */
+    @Query(value = "SELECT * FROM favorite_authors " +
+            "WHERE user_id = :user_id " +
+            "ORDER BY is_active DESC, created_at DESC", nativeQuery = true)
+    List<FavoriteAuthors> findAllByUserId(@Param("user_id") String userId);
 }
