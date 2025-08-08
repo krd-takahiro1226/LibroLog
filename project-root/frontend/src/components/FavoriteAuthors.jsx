@@ -122,6 +122,66 @@ function FavoriteAuthors() {
     }
   };
 
+  // 著者を再フォロー
+  const refollowAuthor = async (authorName) => {
+    try {
+      const token = getToken();
+      
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/favoriteAuthors/refollow`, null, {
+        params: { authorName },
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.data.status === 'success') {
+        fetchFavoriteAuthors(); // リフレッシュ
+      } else {
+        setError(response.data.message || '再フォローに失敗しました');
+      }
+    } catch (error) {
+      console.error('Error refollowing author:', error);
+      setError('再フォローに失敗しました');
+    }
+  };
+
+  // 著者を完全削除
+  const deleteAuthor = async (authorName) => {
+    if (!window.confirm(`「${authorName}」を完全に削除しますか？この操作は取り消せません。`)) {
+      return;
+    }
+
+    try {
+      const token = getToken();
+      
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/favoriteAuthors/delete`, null, {
+        params: { authorName },
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.data.status === 'success') {
+        fetchFavoriteAuthors(); // リフレッシュ
+      } else {
+        setError(response.data.message || '削除に失敗しました');
+      }
+    } catch (error) {
+      console.error('Error deleting author:', error);
+      setError('削除に失敗しました');
+    }
+  };
+
   // 新しい著者を追加
   const handleAddAuthor = (e) => {
     e.preventDefault();
@@ -239,23 +299,44 @@ function FavoriteAuthors() {
                 {favoriteAuthors.map((author) => (
                   <div
                     key={author.id}
-                    className="bg-gray-50 p-4 rounded-lg border hover:shadow-md transition-shadow"
+                    className={`p-4 rounded-lg border hover:shadow-md transition-shadow ${
+                      author.isFollowing ? 'bg-blue-50 border-blue-200' : 'bg-gray-50 border-gray-200'
+                    }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div>
+                    <div className="flex items-start justify-between">
+                      <div className="flex-1 mr-3">
                         <h3 className="font-medium text-gray-800 mb-1">
                           {author.authorName}
                         </h3>
-                        <p className="text-sm text-gray-600">
-                          フォロー中
+                        <p className={`text-sm mb-2 ${
+                          author.isFollowing ? 'text-blue-600' : 'text-gray-500'
+                        }`}>
+                          {author.isFollowing ? 'フォロー中' : 'フォロー解除中'}
                         </p>
                       </div>
-                      <button
-                        onClick={() => unfollowAuthor(author.authorName)}
-                        className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition-colors text-sm"
-                      >
-                        解除
-                      </button>
+                      <div className="flex flex-col gap-1">
+                        {author.isFollowing ? (
+                          <button
+                            onClick={() => unfollowAuthor(author.authorName)}
+                            className="bg-orange-500 text-white px-3 py-1 rounded-md hover:bg-orange-600 transition-colors text-xs"
+                          >
+                            解除
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => refollowAuthor(author.authorName)}
+                            className="bg-green-500 text-white px-3 py-1 rounded-md hover:bg-green-600 transition-colors text-xs"
+                          >
+                            再フォロー
+                          </button>
+                        )}
+                        <button
+                          onClick={() => deleteAuthor(author.authorName)}
+                          className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 transition-colors text-xs"
+                        >
+                          削除
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
