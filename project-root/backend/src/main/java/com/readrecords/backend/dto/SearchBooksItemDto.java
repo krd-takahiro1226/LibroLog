@@ -37,6 +37,14 @@ public class SearchBooksItemDto {
   @XmlElement(name = "smallImageUrl")
   private String smallImageUrl;
 
+  /** 書影画像(中) */
+  @XmlElement(name = "mediumImageUrl")
+  private String mediumImageUrl;
+
+  /** 書影画像(大) */
+  @XmlElement(name = "largeImageUrl")
+  private String largeImageUrl;
+
   /** 書籍サブタイトル */
   @XmlElement(name = "subTitle")
   private String subTitle;
