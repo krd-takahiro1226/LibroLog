@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 
 function NewUserRegister() {
+  const navigate = useNavigate();
 
   // --- タイトル ---
   useEffect(() => {
@@ -13,7 +14,7 @@ function NewUserRegister() {
   }, []);
   // --- ここまで ---
 
-  
+
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -29,9 +30,9 @@ function NewUserRegister() {
     }
 
     try {
-      // サーバーへ登録リクエストを送信
+      // サーバーへOTP送信リクエストを送信
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/userRegistration`,
+        `${process.env.REACT_APP_BACKEND_URL}/api/otp/send-registration`,
         { username, email, password, confirmPassword },
         { withCredentials: true }
       );
@@ -39,19 +40,22 @@ function NewUserRegister() {
       // レスポンスの内容をコンソールに表示
       console.log("サーバーレスポンス:", response.data);
 
-      // ステータスコードによって処理を分岐
-      if (response.status === 201) {
-        // 登録完了のポップアップを表示
-        alert("登録が完了しました！");
-        // ログイン画面に遷移
-        window.location.href = "/login";
+      // OTP送信が成功した場合
+      if (response.data.success) {
+        alert("認証コードをメールアドレスに送信しました。");
+        // OTP検証画面に遷移（emailを渡す）
+        navigate("/otpVerification", { state: { email } });
       } else {
-        alert("登録に失敗しました。再度お試しください。");
+        alert(response.data.message || "OTP送信に失敗しました。再度お試しください。");
       }
 
     } catch (error) {
       console.error("エラー:", error.response || error);
-      alert("エラーが発生しました。後ほどお試しください。");
+      if (error.response && error.response.data && error.response.data.message) {
+        alert(error.response.data.message);
+      } else {
+        alert("エラーが発生しました。後ほどお試しください。");
+      }
     }
   };
 
