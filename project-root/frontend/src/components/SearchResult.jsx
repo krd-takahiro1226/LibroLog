@@ -160,6 +160,7 @@ function SearchResult() {
   const getBookImageUrl = (book) => {
     return book.largeImageUrl || book.mediumImageUrl || book.smallImageUrl || null;
   };
+
   return (
     <div className="min-h-screen w-screen bg-[#f4f1e8] p-8">
       <div className="max-w-6xl mx-auto">
