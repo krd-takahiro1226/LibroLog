@@ -120,8 +120,27 @@ function SearchResult() {
 
         {/* エラー表示 */}
         {!isLoading && errorMessage && (
-          <p className="text-center mt-4 text-red-500">{errorMessage}</p>
+          <><p className="text-center mt-4 text-red-500">{errorMessage}</p>
+          <div className="flex justify-center mt-16 space-x-4">
+            
+            <button
+              onClick={() => window.location.href = '/searchBooks'}
+              type="button"
+              className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+              >
+              再検索
+            </button>
+            <button
+              onClick={() => window.location.href = '/menu'}
+              type="button"
+              className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+              >
+              メニューへ戻る
+            </button>
+            
+          </div></>
         )}
+
 
         {/* 検索結果がない場合 */}
         {!isLoading && items.length === 0 && !errorMessage && (
@@ -189,6 +208,26 @@ function SearchResult() {
                 次へ
               </button>
             </div>
+
+            <div className="flex justify-center mt-16 space-x-4">
+            
+              <button
+                onClick={() => window.location.href = '/searchBooks'}
+                type="button"
+                className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+                >
+                再検索
+              </button>
+              <button
+                onClick={() => window.location.href = '/menu'}
+                type="button"
+                className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+                >
+                メニューへ戻る
+              </button>
+              
+            </div>
+
             {/* モーダル */}
             {isModalOpen && selectedBook && (
               <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">

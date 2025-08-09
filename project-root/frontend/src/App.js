@@ -1,6 +1,7 @@
 // App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Top from './components/Top';
 import Login from './components/Login';
 import Menu from './components/Menu';
 import Search from './components/Search';
@@ -15,12 +16,14 @@ import UsernameChange from './components/UsernameChange';
 import UserEmailChange from './components/UserEmailChange';
 import SetReadingGoals from './components/SetReadingGoals';
 import AchievementsSettings from './components/AchievementsSettings';
+import NotFound from './components/NotFound';
 import OtpVerification from './components/OtpVerification';
 
 function App() {
     return (
         <Router>
             <Routes>
+                <Route path="/" element={<Top />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/menu" element={<Menu />} />
                 <Route path="/searchBooks" element={<Search />} />
@@ -35,6 +38,7 @@ function App() {
                 <Route path="/userEmailChange" element={<UserEmailChange />} />
                 <Route path="/setReadingGoals" element={<SetReadingGoals />}></Route>
                 <Route path="/achievementsSettings" element={<AchievementsSettings />}></Route>
+                <Route path="*" element={<NotFound />} ></Route>
             </Routes>
         </Router>
     );

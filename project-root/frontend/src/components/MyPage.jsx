@@ -18,10 +18,11 @@ function MyPage() {
   const [user, setUser] = useState({
     name: "Loading...", // 最初は読み込み中と表示
     email: "Loading...",
-    password: "********",
+    password: "セキュリティ保護のため表示されません",
     role: null, // 初期値はnull
   });
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
 
 
@@ -52,7 +53,13 @@ function MyPage() {
         }));
       })
       .catch((error) => {
-        console.error("ユーザー情報の取得に失敗しました:", error);
+        console.error("Error fetching user data:", error);
+        setError("ユーザー情報の取得に失敗しました");
+          setUser((prevUser) => ({
+          ...prevUser,
+          name: "ユーザー情報の取得に失敗しました",
+          email: "ユーザー情報の取得に失敗しました",
+        }));
       });
 
   }, []);
@@ -69,9 +76,6 @@ function MyPage() {
             >
               📚 Libro Log
             </button>
-            <p className="text-[#666666] font-crimson-text">
-              あなたの読書体験を記録・管理
-            </p>
           </div>
         </header>
         <h1 className="text-xl font-bold mb-6s">ユーザー情報照会・変更</h1><br></br>
@@ -89,7 +93,11 @@ function MyPage() {
                   変更
                 </button>
               </div>
-              <div className="text-lg">{user.name}</div>
+              <div
+                className={`${error ? "text-red-600 text-base" : "text-lg"}`}
+                >
+                {user.name}
+              </div>
             </div>
 
             <div className="flex flex-col space-y-2">
@@ -105,7 +113,11 @@ function MyPage() {
                   変更
                 </button>
               </div>
-              <div className="text-lg">{user.email}</div>
+              <div
+                className={`${error ? "text-red-600 text-base" : "text-lg"}`}
+                >
+                {user.email}
+              </div>
             </div>
 
             <div className="flex flex-col space-y-2">
@@ -120,7 +132,7 @@ function MyPage() {
                   変更
                 </button>
               </div>
-              <div className="text-lg">{user.password}</div>
+              <div className="text-base">{user.password}</div>
             </div>
 
 
@@ -136,11 +148,11 @@ function MyPage() {
 
         <div className="mt-8 text-center">
           <button
-            className="bg-[#656d78] text-white px-6 py-2 rounded flex items-center justify-center gap-2 mx-auto hover:bg-[#434a54] transition-colors"
+            className="w-full sm:w-1/2 md:w-1/3 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
             onClick={() => (window.location.href = "/menu")}
           >
             <i className="fas fa-home"></i>
-            メニューに戻る
+            メニューへ戻る
           </button>
         </div>
       </div>
