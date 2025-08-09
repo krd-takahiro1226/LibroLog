@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../assets/styles/styles.css";
 
 function SearchResult() {
 
@@ -11,49 +10,85 @@ function SearchResult() {
   }, []);
   // --- ここまで ---
 
-
   const { state: searchForm } = useLocation();
   const [items, setItems] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // 検索中の状態を管理
+  const [isLoading, setIsLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const [limit] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
+  const [limit] = useState(30);
+  const [pageInfo, setPageInfo] = useState(null);
+
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
 
   useEffect(() => {
-    const fetchBooks = async () => {
-      setIsLoading(true); // 検索中に設定
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/searchBooks/sruSearch`, {
-          params: { ...searchForm, currentPage, limit },
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+    if (searchForm) {
+      searchBooks();
+    } else {
+      // 検索条件がない場合はメニューに戻る
+      navigate("/menu");
+    }
+  }, [searchForm, currentPage]);
+
+  const searchBooks = async () => {
+    try {
+      setIsLoading(true);
+      setErrorMessage("");
+
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/searchBooks/sruSearch`, {
+        params: {
+          ...searchForm,
+          currentPage: currentPage,
+          limit: limit
+        },
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+
+      console.log("API Response:", response.data); // デバッグ用
+
+      if (response.data.items) {
         setItems(response.data.items || []);
         setCurrentPage(response.data.page || 1);
-        setTotalPages(response.data.pageCount || 1);
-      } catch (error) {
-        setErrorMessage("検索中にエラーが発生しました。");
-        console.error(error);
-      } finally {
-        setIsLoading(false); // 検索完了後に設定
-      }
-    };
 
-    fetchBooks();
-  }, [searchForm, currentPage, limit]);
+        // APIレスポンスからページ情報を取得
+        if (response.data.page) {
+          setPageInfo({
+            pageCount: response.data.pageCount || 1,
+            totalCount: response.data.count || 1,
+            hasNextPage: response.data.pageCount > response.data.page || false
+          }
+          );
+        }
+      }
+    } catch (error) {
+      console.error("Search error:", error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        navigate("/login");
+      } else {
+        setErrorMessage(error.response?.data?.message || "検索中にエラーが発生しました");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handlePreviousPage = () => {
-    if (currentPage > 1) setCurrentPage(currentPage - 1);
+    if (pageInfo && currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
   };
 
   const handleNextPage = () => {
-    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+    if (pageInfo && pageInfo.pageCount > currentPage) {
+      setCurrentPage(currentPage + 1);
+    }
   };
 
   const handleRegisterClick = (book) => {
@@ -67,201 +102,305 @@ function SearchResult() {
   };
 
   const handleRegisterOption = async (option) => {
-    if (!selectedBook) {
-      alert("本が選択されていません");
-      return;
-    }
-
-    const requestData = {
-      isbn: selectedBook.isbn,
-      title: selectedBook.title,
-      author: selectedBook.author,
-      size: selectedBook.size,
-      salesDate: selectedBook.salesDate,
-      publisherName: selectedBook.publisherName,
-      selectedOption: option, // 優先度に対応
-    };
-
     try {
-      const token = localStorage.getItem("token");
-      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/searchBooks/sruSearch/register`, requestData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      alert(`${selectedBook.title}を登録しました`);
-      setIsModalOpen(false);
-      setSelectedBook(null);
+      if (option === "new") {
+        // 新規読書記録として登録
+        const recordData = {
+          title: selectedBook.title,
+          author: selectedBook.author || selectedBook.authors?.join(", ") || "",
+          genre: selectedBook.categories?.join(", ") || "",
+          readingStartDate: "",
+          readingEndDate: "",
+          rating: "",
+          impressions: ""
+        };
+
+        navigate("/reading-record", { state: { bookData: recordData } });
+      } else if (option === "library") {
+        // 書籍ライブラリに追加
+        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/searchBooks/sruSearch/register`, {
+          title: selectedBook.title,
+          author: selectedBook.author || selectedBook.authors?.join(", ") || "",
+          genre: selectedBook.categories?.join(", ") || "",
+          isbn: selectedBook.isbn || "",
+          publisherName: selectedBook.publisherName || "",
+          salesDate: selectedBook.salesDate || "",
+          size: selectedBook.size || "",
+          description: selectedBook.description || "",
+          thumbnail: selectedBook.largeImageUrl || ""
+        }, {
+          headers: getAuthHeaders(),
+          withCredentials: true
+        });
+
+        if (response.data.success) {
+          alert("書籍をライブラリに追加しました");
+        } else {
+          alert(response.data.message || "書籍の追加に失敗しました");
+        }
+      }
     } catch (error) {
-      console.error("登録中にエラーが発生しました", error);
-      alert("登録に失敗しました。もう一度お試しください。");
+      console.error("Registration error:", error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        navigate("/login");
+      } else {
+        alert(error.response?.data?.message || "登録中にエラーが発生しました");
+      }
+    } finally {
+      handleModalClose();
     }
   };
 
+  const handleBackToSearch = () => {
+    navigate("/searchBooks");
+  };
+
+  // 画像URLの取得（優先順位: large > medium > small）
+  const getBookImageUrl = (book) => {
+    return book.largeImageUrl || book.mediumImageUrl || book.smallImageUrl || null;
+  };
   return (
-    <div className="min-h-screen w-screen bg-[#f5f5f5] p-8">
-      <div className="max-w-6xl mx-auto bg-white p-6 rounded-lg shadow-md">
-        <div className="flex justify-between items-center w-full">
-          <button
-            onClick={() => navigate("/menu")}
-            className="text-3xl font-noto-sans hover:text-gray-600 transition-colors"
-          >
-            📚 Libro Log
-          </button>
-        </div>
-
-        {/* 検索中の場合 */}
-        {isLoading && (
-          <div className="text-center mt-6">
-            <div className="windows-spinner"></div>
-            <p className="text-gray-600 mt-2">検索中...</p>
+    <div className="min-h-screen w-screen bg-[#f4f1e8] p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* 統一されたヘッダー */}
+        <header className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-noto-sans text-[#2d3436]">📚 Libro Log</h1>
+            <p className="text-[#5d6d7e] font-noto-sans mt-1">検索結果</p>
           </div>
-        )}
-
-        {/* エラー表示 */}
-        {!isLoading && errorMessage && (
-          <><p className="text-center mt-4 text-red-500">{errorMessage}</p>
-          <div className="flex justify-center mt-16 space-x-4">
-            
+          <div className="flex gap-3">
             <button
-              onClick={() => window.location.href = '/searchBooks'}
-              type="button"
-              className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
-              >
+              onClick={handleBackToSearch}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-noto-sans px-6 py-2 rounded-lg transition-colors"
+            >
               再検索
             </button>
             <button
-              onClick={() => window.location.href = '/menu'}
-              type="button"
-              className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
-              >
-              メニューへ戻る
+              onClick={() => navigate("/menu")}
+              className="bg-gray-600 hover:bg-gray-700 text-white font-noto-sans px-6 py-2 rounded-lg transition-colors"
+            >
+              メニューに戻る
             </button>
-            
-          </div></>
+          </div>
+        </header>
+
+        {/* 検索条件表示 */}
+        {searchForm && (
+          <div className="bg-[#faf8f3] rounded-xl shadow-md border border-[#e8e2d4] p-6 mb-8">
+            <h3 className="font-noto-sans text-lg font-semibold text-[#2d3436] mb-4">🔍 検索条件</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+              {searchForm.title && (
+                <div>
+                  <span className="font-medium text-[#2d3436]">タイトル: </span>
+                  <span className="text-[#5d6d7e]">{searchForm.title}</span>
+                </div>
+              )}
+              {searchForm.author && (
+                <div>
+                  <span className="font-medium text-[#2d3436]">著者: </span>
+                  <span className="text-[#5d6d7e]">{searchForm.author}</span>
+                </div>
+              )}
+              {searchForm.publisherName && (
+                <div>
+                  <span className="font-medium text-[#2d3436]">出版社: </span>
+                  <span className="text-[#5d6d7e]">{searchForm.publisherName}</span>
+                </div>
+              )}
+              {searchForm.isbn && (
+                <div>
+                  <span className="font-medium text-[#2d3436]">ISBN: </span>
+                  <span className="text-[#5d6d7e]">{searchForm.isbn}</span>
+                </div>
+              )}
+            </div>
+          </div>
         )}
 
-
-        {/* 検索結果がない場合 */}
-        {!isLoading && items.length === 0 && !errorMessage && (
-          <p className="text-center mt-4 text-gray-600">検索結果がありません。</p>
-        )}
-
-        {/* 検索結果表示 */}
-        {!isLoading && items.length > 0 && (
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white shadow-md rounded-lg table-fixed border-collapse">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left w-12">No</th>
-                  <th className="px-4 py-3 text-left w-40">書籍画像</th>
-                  <th className="px-4 py-3 text-left">タイトル</th>
-                  <th className="px-4 py-3 text-left w-32">著者</th>
-                  <th className="px-4 py-3 text-left w-24">ジャンル</th>
-                  <th className="px-4 py-3 text-left w-32">出版社</th>
-                  <th className="px-4 py-3 text-left w-32">出版年</th>
-                  <th className="px-4 py-3 text-left w-24">操作</th>
-                </tr>
-              </thead>
-              <tbody>
-                {items.map((book, index) => (
-                  <tr key={book.id} className="border-b hover:bg-gray-50">
-                    <td className="px-4 py-3">{(currentPage - 1) * limit + index + 1}</td>
-                    <td className="px-4 py-3">
-                      <img
-                        src={book.smallImageUrl}
-                        alt={`${book.title}の表紙`}
-                        className="w-16 h-24 object-cover"
-                      />
-                    </td>
-                    <td className="px-4 py-3">{book.title}</td>
-                    <td className="px-4 py-3">{book.author}</td>
-                    <td className="px-4 py-3">{book.size}</td>
-                    <td className="px-4 py-3">{book.publisherName}</td>
-                    <td className="px-4 py-3">{book.salesDate}</td>
-                    <td className="px-4 py-3">
-                      <button
-                        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-200"
-                        onClick={() => handleRegisterClick(book)}
-                      >
-                        登録
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="flex justify-center mt-4 space-x-4">
+        {/* 検索結果 */}
+        {isLoading ? (
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2d3436]"></div>
+            <p className="text-[#5d6d7e] font-noto-sans mt-4">検索中...</p>
+          </div>
+        ) : errorMessage ? (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+            <div className="text-red-600 text-4xl mb-4">❌</div>
+            <p className="text-red-600 font-noto-sans text-lg mb-4">{errorMessage}</p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
-                className={`px-4 py-2 rounded ${currentPage === 1 ? "bg-gray-300" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
-                onClick={handlePreviousPage}
-                disabled={totalPages <= 1 || currentPage === 1}
+                onClick={handleBackToSearch}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-noto-sans px-6 py-2 rounded-lg transition-colors"
               >
-                前へ
+                検索条件を変更
               </button>
-              <span className="px-4 py-2">{currentPage} / {totalPages}</span>
               <button
-                className={`px-4 py-2 rounded ${currentPage === totalPages ? "bg-gray-300" : "bg-blue-500 hover:bg-blue-600 text-white"}`}
-                onClick={handleNextPage}
-                disabled={totalPages <= 1 || currentPage === totalPages}
+                onClick={() => window.location.reload()}
+                className="bg-gray-600 hover:bg-gray-700 text-white font-noto-sans px-6 py-2 rounded-lg transition-colors"
               >
-                次へ
+                再試行
               </button>
             </div>
-
-            <div className="flex justify-center mt-16 space-x-4">
-            
-              <button
-                onClick={() => window.location.href = '/searchBooks'}
-                type="button"
-                className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
-                >
-                再検索
-              </button>
-              <button
-                onClick={() => window.location.href = '/menu'}
-                type="button"
-                className="flex-1 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
-                >
-                メニューへ戻る
-              </button>
-              
+          </div>
+        ) : items.length === 0 ? (
+          <div className="bg-[#faf8f3] rounded-xl shadow-md border border-[#e8e2d4] p-12 text-center">
+            <div className="text-[#5d6d7e] text-6xl mb-4">📚</div>
+            <p className="text-[#5d6d7e] font-noto-sans text-lg mb-2">検索結果が見つかりませんでした</p>
+            <p className="text-[#5d6d7e] font-noto-sans text-sm mb-6">
+              検索条件を変更してもう一度お試しください
+            </p>
+            <button
+              onClick={handleBackToSearch}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-noto-sans px-6 py-2 rounded-lg transition-colors"
+            >
+              🔍 新しく検索する
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="mb-6">
+              <p className="text-[#5d6d7e] font-noto-sans">
+                <span className="font-medium text-[#2d3436]">{pageInfo.totalCount}</span> 件の結果が見つかりました
+                {pageInfo && (
+                  <span className="ml-2">
+                    (ページ {currentPage}
+                    {pageInfo.pageCount && ` / ${pageInfo.pageCount}`})
+                  </span>
+                )}
+              </p>
             </div>
 
-            {/* モーダル */}
-            {isModalOpen && selectedBook && (
-              <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-                <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-                  <h2 className="text-lg font-bold mb-4">「{selectedBook.title}」を登録します</h2>
-                  <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {items.map((book, index) => (
+                <div key={index} className="bg-[#faf8f3] rounded-xl shadow-md border border-[#e8e2d4] p-6 hover:shadow-lg transition-shadow group">
+                  <div className="flex flex-col h-full">
+                    {/* 書籍画像 */}
+                    {getBookImageUrl(book) && (
+                      <div className="mb-4 overflow-hidden rounded-lg">
+                        <img
+                          src={getBookImageUrl(book)}
+                          alt={book.title}
+                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            e.target.style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    )}
+
+                    <h3 className="font-noto-sans text-lg font-semibold text-[#2d3436] mb-2 line-clamp-2">
+                      {book.title}
+                    </h3>
+
+                    <div className="space-y-1 text-sm mb-4 flex-grow">
+                      <p className="text-[#5d6d7e] font-noto-sans">
+                        <span className="font-medium">📝 著者:</span> {book.author || "不明"}
+                      </p>
+
+                      <p className="text-[#5d6d7e] font-noto-sans">
+                        <span className="font-medium">🏢 出版社:</span> {book.publisherName || "不明"}
+                      </p>
+
+                      {book.isbn && (
+                        <p className="text-[#5d6d7e] font-noto-sans">
+                          <span className="font-medium">📚 ISBN:</span> {book.isbn}
+                        </p>
+                      )}
+
+                      {book.salesDate && (
+                        <p className="text-[#5d6d7e] font-noto-sans">
+                          <span className="font-medium">📅 発売日:</span> {book.salesDate}
+                        </p>
+                      )}
+
+                      {book.size && (
+                        <p className="text-[#5d6d7e] font-noto-sans">
+                          <span className="font-medium">📏 サイズ:</span> {book.size}
+                        </p>
+                      )}
+                    </div>
+
                     <button
-                      className="bg-green-500 text-white px-4 py-2 rounded w-full hover:bg-green-600"
-                      onClick={() => handleRegisterOption(1)}
+                      onClick={() => handleRegisterClick(book)}
+                      className="bg-blue-600 hover:bg-blue-700 text-white font-noto-sans py-2 px-4 rounded-lg transition-colors mt-auto"
                     >
-                      すぐに読みたい
-                    </button>
-                    <button
-                      className="bg-blue-500 text-white px-4 py-2 rounded w-full hover:bg-blue-600"
-                      onClick={() => handleRegisterOption(2)}
-                    >
-                      今後読みたい
-                    </button>
-                    <button
-                      className="bg-yellow-500 text-white px-4 py-2 rounded w-full hover:bg-yellow-600"
-                      onClick={() => handleRegisterOption(3)}
-                    >
-                      既に読んだ
+                      📝 登録する
                     </button>
                   </div>
-                  <button
-                    className="mt-4 bg-gray-500 text-white px-4 py-2 rounded w-full hover:bg-gray-600"
-                    onClick={handleModalClose}
-                  >
-                    キャンセル
-                  </button>
                 </div>
+              ))}
+            </div>
+
+            {/* ページネーション */}
+            {pageInfo && (
+              <div className="flex justify-center items-center mt-8 space-x-4">
+                <button
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                  className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white font-noto-sans px-4 py-2 rounded-lg transition-colors disabled:cursor-not-allowed"
+                >
+                  ← 前の{limit}件
+                </button>
+
+                <span className="text-[#2d3436] font-noto-sans bg-[#faf8f3] px-4 py-2 rounded-lg border border-[#c8d1d3]">
+                  ページ {currentPage}
+                  {pageInfo.pageCount && ` / ${pageInfo.pageCount}`}
+                </span>
+
+                <button
+                  onClick={handleNextPage}
+                  disabled={!pageInfo.hasNextPage}
+                  className="bg-gray-600 hover:bg-gray-700 disabled:bg-gray-400 text-white font-noto-sans px-4 py-2 rounded-lg transition-colors disabled:cursor-not-allowed"
+                >
+                  次の{limit}件 →
+                </button>
               </div>
             )}
+          </>
+        )}
+
+        {/* 登録方法選択モーダル */}
+        {isModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-[#faf8f3] rounded-xl shadow-lg border border-[#e8e2d4] p-8 w-96 max-w-[90vw]">
+              <h3 className="font-noto-sans text-xl font-semibold text-[#2d3436] mb-6 text-center">
+                📚 登録方法を選択
+              </h3>
+              {selectedBook && (
+                <div className="mb-6 p-4 bg-white rounded-lg border border-[#c8d1d3]">
+                  <p className="font-noto-sans font-medium text-[#2d3436] text-sm">{selectedBook.title}</p>
+                  <p className="text-[#5d6d7e] font-noto-sans text-xs mt-1">
+                    {selectedBook.author || "不明"}
+                  </p>
+                  {selectedBook.isbn && (
+                    <p className="text-[#5d6d7e] font-noto-sans text-xs">
+                      ISBN: {selectedBook.isbn}
+                    </p>
+                  )}
+                </div>
+              )}
+              <div className="space-y-4">
+                <button
+                  onClick={() => handleRegisterOption("new")}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-noto-sans py-3 px-4 rounded-lg transition-colors"
+                >
+                  📖 読書記録として登録
+                </button>
+                <button
+                  onClick={() => handleRegisterOption("library")}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-noto-sans py-3 px-4 rounded-lg transition-colors"
+                >
+                  📚 書籍ライブラリに追加
+                </button>
+                <button
+                  onClick={handleModalClose}
+                  className="w-full bg-gray-600 hover:bg-gray-700 text-white font-noto-sans py-3 px-4 rounded-lg transition-colors"
+                >
+                  ❌ キャンセル
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
