@@ -9,27 +9,31 @@ function Modal({ isOpen, onClose, onSelect }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h3 className="text-lg font-semibold mb-4">本を追加する方法を選択</h3>
-        <button
-          onClick={() => navigate("/searchBooks")}
-          className="block w-full bg-blue-500 text-white px-4 py-2 rounded-md mb-2 hover:bg-blue-600"
-        >
-          書籍を検索する
-        </button>
-        <button
-          onClick={() => navigate("/showRecords")}
-          className="block w-full bg-green-500 text-white px-4 py-2 rounded-md mb-2 hover:bg-green-600"
-        >
-          登録済みの書籍から追加する
-        </button>
-        <button
-          onClick={onClose}
-          className="block w-full bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-        >
-          キャンセル
-        </button>
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-[#faf8f3] rounded-xl shadow-lg border border-[#e8e2d4] p-8 w-96 max-w-[90vw]">
+        <h3 className="font-noto-sans text-xl font-semibold text-[#2d3436] mb-6 text-center">
+          本を追加する方法を選択
+        </h3>
+        <div className="space-y-4">
+          <button
+            onClick={() => navigate("/searchBooks")}
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-noto-sans py-3 px-4 rounded-lg transition-colors"
+          >
+            書籍を検索する
+          </button>
+          <button
+            onClick={() => navigate("/showRecords")}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-noto-sans py-3 px-4 rounded-lg transition-colors"
+          >
+            登録済みの書籍から追加する
+          </button>
+          <button
+            onClick={onClose}
+            className="w-full bg-gray-600 hover:bg-gray-700 text-white font-noto-sans py-3 px-4 rounded-lg transition-colors"
+          >
+            キャンセル
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -39,11 +43,11 @@ function AchievementsSettings() {
 
   // --- タイトル ---
   useEffect(() => {
-    document.title = "目標設定 | Libro Log";
+    document.title = "読書目標設定 | Libro Log";
   }, []);
   // --- ここまで ---
 
-
+  const navigate = useNavigate();
   const [monthlyGoal, setMonthlyGoal] = useState({ bookCount: "", targetBooks: [] });
   const [yearlyGoal, setYearlyGoal] = useState({ bookCount: "", targetBooks: [] });
   const [showModal, setShowModal] = useState(false);
@@ -52,7 +56,6 @@ function AchievementsSettings() {
   const [error, setError] = useState(null);
   const [popupMessage, setPopupMessage] = useState(""); // ポップアップメッセージ
   const [showPopup, setShowPopup] = useState(false); // ポップアップの表示状態
-  const navigate = useNavigate();
 
   useEffect(() => {
     const token = localStorage.getItem("token");
