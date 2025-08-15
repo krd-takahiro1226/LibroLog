@@ -1,0 +1,63 @@
+/* 統一デザインシステム */
+:root {
+  /* LibroLogアイコンに合わせたカラーパレット */
+  --primary-bg: #f4f1e8;
+  /* アイコンのベージュ背景 */
+  --card-bg: #faf8f3;
+  /* カードの背景（少し明るめ） */
+  --primary-text: #2d3436;
+  /* メインテキスト（深いグレー） */
+  --secondary-text: #5d6d7e;
+  /* セカンダリテキスト */
+  --accent-blue: #4a6fa5;
+  /* アイコンの青に近い色 */
+  --border-light: #e8e2d4;
+  /* 薄いボーダー */
+  --border-focus: #2d3436;
+  /* フォーカス時のボーダー */
+}
+
+/* 統一されたカードスタイル */
+.unified-card {
+  @apply bg-[#faf8f3] rounded-xl shadow-md border border-[#e8e2d4];
+}
+
+/* 統一されたヘッダースタイル */
+.unified-header {
+  @apply flex items-center justify-between mb-12;
+}
+
+.unified-header-title {
+  @apply text-3xl font-noto-sans text-[#2d3436] hover:text-[#4a6fa5] transition-colors cursor-pointer;
+}
+
+.unified-header-subtitle {
+  @apply text-[#5d6d7e] font-noto-sans mt-1;
+}
+
+/* 統一されたボタンスタイル */
+.btn-primary {
+  @apply bg-blue-600 hover:bg-blue-700 text-white font-noto-sans px-4 py-2 rounded-lg transition-colors;
+}
+
+.btn-secondary {
+  @apply bg-gray-600 hover:bg-gray-700 text-white font-noto-sans px-4 py-2 rounded-lg transition-colors;
+}
+
+.btn-danger {
+  @apply bg-red-600 hover:bg-red-700 text-white font-noto-sans px-4 py-2 rounded-lg transition-colors;
+}
+
+/* 統一された入力フィールド */
+.unified-input {
+  @apply border border-[#c8d1d3] focus:border-[#2d3436] rounded-lg px-3 py-2 font-noto-sans outline-none transition-colors;
+}
+
+/* 統一されたプログレスバー */
+.unified-progress-bg {
+  @apply bg-[#e8e2d4] rounded-full;
+}
+
+.unified-progress-fill {
+  @apply bg-[#4a6fa5] rounded-full transition-all duration-300;
+}
