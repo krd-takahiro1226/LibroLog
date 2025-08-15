@@ -1,49 +1,39 @@
 "use client";
-import React, { useEffect } from 'react';
-import axios from 'axios';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import axios from "axios";
 import '../assets/styles/styles.css';
 
 function Login() {
-
   // --- タイトル ---
   useEffect(() => {
     document.title = "ログイン | Libro Log";
   }, []);
   // --- ここまで ---
 
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [showPopup, setShowPopup] = React.useState(false);
-  const [successMessage, setSuccessMessage] = React.useState("");
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const location = useLocation();
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-  // エラーがあればポップアップを表示
-  useEffect(() => {
-    const errorParam = new URLSearchParams(window.location.search).get("error");
-    if (errorParam) {
-      setShowPopup(true);
-    }
-
-    // ユーザー登録完了後のメッセージ表示
-    if (location.state?.message) {
-      setSuccessMessage(location.state.message);
-      // 5秒後にメッセージを非表示
-      setTimeout(() => {
-        setSuccessMessage("");
-      }, 5000);
-    }
-  }, [location]);
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
 
     try {
-      // サーバーへログインリクエスト
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/login`,
-        { username, password },
+        formData,
         { withCredentials: true } // 必要に応じてクッキーを有効化
       );
 
@@ -55,124 +45,95 @@ function Login() {
         localStorage.setItem("token", response.data.token);
 
         // メインページにリダイレクト
-        window.location.href = "/menu";
+        navigate("/menu");
       } else {
         // トークンがない場合はエラーを表示
-        setShowPopup(true);
+        alert("ログインに失敗しました。ユーザー名とパスワードを確認してください。");
       }
     } catch (error) {
       console.error("ログインエラー:", error.response || error);
 
       // 401エラーなど特定のステータスコードをチェック
       if (error.response?.status === 401) {
-        setShowPopup(true);
+        alert("ログインに失敗しました。ユーザー名とパスワードを確認してください。");
       } else {
         alert("サーバーエラーが発生しました。後ほどお試しください。");
       }
+    } finally {
+      setLoading(false);
     }
   };
 
-  const closePopup = () => {
-    setShowPopup(false);
-  };
-
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-[#f4f1ee]">
-      <div className="flex w-full max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="flex-1 flex flex-col items-center justify-center p-12 bg-[#e6eaeb]">
-          <img
-            src="/images/LibroLogIcon.jpg"
-            alt="LibroLogアイコン"
-            className="w-48 h-48 mb-4"
-          />
-          <h2 className="text-3xl font-crimson-text text-[#2d3436] mb-2">
-            Libro Log
-          </h2>
-          <p className="text-[#505e61] font-noto-sans">
-            あなたの読書体験を記録しよう
-          </p>
+    <div className="min-h-screen w-screen bg-[#f4f1e8] flex items-center justify-center p-8">
+      <div className="w-full max-w-md">
+        {/* ロゴ・ヘッダー */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-noto-sans text-[#2d3436] mb-2">📚 Libro Log</h1>
+          <p className="text-[#5d6d7e] font-noto-sans">あなたの読書体験を記録・管理</p>
         </div>
 
-        <div className="flex-1 p-12">
-          <h1 className="text-2xl font-noto-sans text-[#2d3436] mb-8">
-            ログイン
-          </h1>
-
-          {/* 成功メッセージ */}
-          {successMessage && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
-              {successMessage}
-            </div>
-          )}
+        {/* ログインフォーム */}
+        <div className="bg-[#faf8f3] rounded-xl shadow-md border border-[#e8e2d4] p-8">
+          <h2 className="font-noto-sans text-2xl font-semibold text-[#2d3436] mb-6 text-center">ログイン</h2>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-noto-sans text-[#505e61] mb-2">
-                ユーザ名
+              <label className="block text-[#2d3436] font-noto-sans font-medium mb-2">
+                ユーザー名
               </label>
               <input
                 type="text"
                 name="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full px-4 py-2 border border-[#c8d1d3] rounded-lg focus:outline-none focus:border-[#2d3436]"
+                value={formData.username}
+                onChange={handleInputChange}
                 required
+                className="w-full border border-[#c8d1d3] focus:border-[#2d3436] rounded-lg px-4 py-3 font-noto-sans outline-none transition-colors bg-white"
+                placeholder="ユーザー名を入力"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-noto-sans text-[#505e61] mb-2">
+              <label className="block text-[#2d3436] font-noto-sans font-medium mb-2">
                 パスワード
               </label>
               <input
                 type="password"
                 name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-[#c8d1d3] rounded-lg focus:outline-none focus:border-[#2d3436]"
+                value={formData.password}
+                onChange={handleInputChange}
                 required
+                className="w-full border border-[#c8d1d3] focus:border-[#2d3436] rounded-lg px-4 py-3 font-noto-sans outline-none transition-colors bg-white"
+                placeholder="パスワードを入力"
               />
             </div>
 
             <button
               type="submit"
-              className="w-full bg-[#2d3436] text-white font-noto-sans py-2 px-4 rounded-lg hover:bg-[#1e2527] transition-colors"
+              disabled={loading}
+              className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-noto-sans py-3 rounded-lg transition-colors"
             >
-              ログイン
+              {loading ? "ログイン中..." : "ログイン"}
             </button>
           </form>
 
-          {/* ポップアップエラー表示 */}
-          {showPopup && (
-            <div className="popup" onClick={closePopup}>
-              <div
-                className="popup-content"
-                onClick={(e) => e.stopPropagation()}
+          <div className="mt-6 text-center">
+            <p className="text-[#5d6d7e] font-noto-sans">
+              アカウントをお持ちでない方は{" "}
+              <Link
+                to="/register"
+                className="text-[#4a6fa5] hover:text-[#2d3436] font-medium transition-colors"
               >
-                <span className="close" onClick={closePopup}>
-                  &times;
-                </span>
-                <h3>ログインエラー</h3>
-                <p>ユーザー名またはパスワードが違います。</p>
-                <button
-                  type="button"
-                  className="popup-ok-button"
-                  onClick={closePopup}
-                >
-                  OK
-                </button>
-              </div>
-            </div>
-          )}
+                新規登録
+              </Link>
+            </p>
+          </div>
+        </div>
 
-          <p className="mt-6 text-center text-sm text-[#505e61] font-noto-sans">
-            アカウントをお持ちでない方は
-            <a
-              href="/userRegistration"
-              className="text-[#2d3436] hover:underline"
-            >
-              新規登録
-            </a>
+        {/* フッター */}
+        <div className="mt-8 text-center">
+          <p className="text-[#5d6d7e] font-noto-sans text-sm">
+            読書を通じて、新しい世界を発見しましょう
           </p>
         </div>
       </div>
