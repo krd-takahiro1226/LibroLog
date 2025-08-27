@@ -20,11 +20,20 @@ public class MailService {
     @Autowired
     private JavaMailSender mailSender;
 
+    @Autowired
+    private ExternalMailService externalMailService;
+
     @Value("${mail.template.otp.subject}")
     private String otpMailSubject;
 
     @Value("${mail.template.otp.body}")
     private String otpMailBodyTemplate;
+
+    @Value("${mail.external.enabled:false}")
+    private boolean externalMailEnabled;
+
+    @Value("${mail.encoding:UTF-8}")
+    private String mailEncoding;
 
     /**
      * 汎用のメール送信処理。
@@ -34,28 +43,56 @@ public class MailService {
      * @param body      メール本文
      */
     public void sendMail(String recipient, String subject, String body) {
+        if (externalMailEnabled) {
+            sendExternalMail(recipient, subject, body);
+        } else {
+            sendLocalMail(recipient, subject, body);
+        }
+    }
+
+    /**
+     * 外部メール送信サービスを使用してメール送信
+     */
+    private void sendExternalMail(String recipient, String subject, String body) {
         try {
+            externalMailService.sendMail(recipient, subject, body);
+            logger.info("外部メール送信サービスでメールを送信しました: {}", recipient);
+        } catch (Exception e) {
+            logger.error("外部メール送信に失敗しました: {}", recipient, e);
+            throw new RuntimeException("外部メール送信に失敗しました", e);
+        }
+    }
+
+    /**
+     * ローカルメール送信（mailpit使用）
+     */
+    private void sendLocalMail(String recipient, String subject, String body) {
+        try {
+            // システムプロパティでUTF-8を強制設定
+            System.setProperty("mail.mime.charset", "UTF-8");
+            System.setProperty("file.encoding", "UTF-8");
+            
             // MimeMessage の生成
             MimeMessage mimeMessage = mailSender.createMimeMessage();
-            // MimeMessageHelperでMimeMessageをラップ（multipart=false,
-            // エンコーディングはUTF-8）
-            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, false,
-                    "UTF-8");
-
-            // 差出人にメールアドレスと表示名を設定
-            helper.setFrom(new InternetAddress("system-sender@librolog.com",
-                    "Libro Log"));
-            // 送信先、件名、本文の設定
-            helper.setTo(recipient);
-            helper.setSubject(subject);
-            helper.setText(body, false);
-
+            
+            // 手動でUTF-8エンコーディングを設定
+            mimeMessage.setFrom(new InternetAddress("system-sender@librolog.com", "Libro Log", "UTF-8"));
+            mimeMessage.setRecipient(jakarta.mail.Message.RecipientType.TO, new InternetAddress(recipient));
+            mimeMessage.setSubject(subject, "UTF-8");
+            
+            // UTF-8でテキスト本文を設定
+            mimeMessage.setText(body, "UTF-8");
+            
+            // 明示的にContent-Typeヘッダーを設定
+            mimeMessage.setHeader("Content-Type", "text/plain; charset=UTF-8");
+            mimeMessage.setHeader("Content-Transfer-Encoding", "base64");
+            
             // メール送信
             mailSender.send(mimeMessage);
-            logger.info("メールを送信しました: {}", recipient);
+            logger.info("ローカルメールを送信しました: {}", recipient);
         } catch (Exception e) {
-            logger.error("メール送信に失敗しました: {}", recipient, e);
-            throw new RuntimeException("メール送信に失敗しました", e);
+            logger.error("ローカルメール送信に失敗しました: {}", recipient, e);
+            throw new RuntimeException("ローカルメール送信に失敗しました", e);
         }
     }
 
