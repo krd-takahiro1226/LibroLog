@@ -20,9 +20,9 @@ public interface FavoriteAuthorsRepository extends CrudRepository<FavoriteAuthor
      * @return お気に入り著者一覧
      */
     @Query(value = "SELECT * FROM favorite_authors " +
-            "WHERE user_id = :user_id AND is_active = true " +
+            "WHERE user_id = :userId AND is_active = true " +
             "ORDER BY created_at DESC", nativeQuery = true)
-    List<FavoriteAuthors> findActiveByUserId(@Param("user_id") String userId);
+    List<FavoriteAuthors> findActiveByUserId(@Param("userId") String userId);
     
     /**
      * 指定したユーザーIDと著者名でお気に入り登録済みかチェック
@@ -32,10 +32,10 @@ public interface FavoriteAuthorsRepository extends CrudRepository<FavoriteAuthor
      * @return お気に入り著者情報
      */
     @Query(value = "SELECT * FROM favorite_authors " +
-            "WHERE user_id = :user_id AND author_name = :author_name", nativeQuery = true)
+            "WHERE user_id = :userId AND author_name = :authorName", nativeQuery = true)
     Optional<FavoriteAuthors> findByUserIdAndAuthorName(
-            @Param("user_id") String userId, 
-            @Param("author_name") String authorName);
+            @Param("userId") String userId, 
+            @Param("authorName") String authorName);
     
     /**
      * 指定したユーザーIDと著者名のお気に入りをアクティブ状態に更新
@@ -47,9 +47,9 @@ public interface FavoriteAuthorsRepository extends CrudRepository<FavoriteAuthor
     @Modifying
     @Transactional
     @Query(value = "UPDATE favorite_authors SET is_active = true " +
-            "WHERE user_id = :user_id AND author_name = :author_name", nativeQuery = true)
-    int activateFavoriteAuthor(@Param("user_id") String userId, 
-                              @Param("author_name") String authorName);
+            "WHERE user_id = :userId AND author_name = :authorName", nativeQuery = true)
+    int activateFavoriteAuthor(@Param("userId") String userId, 
+                              @Param("authorName") String authorName);
     
     /**
      * 指定したユーザーIDと著者名のお気に入りを非アクティブ状態に更新
@@ -61,9 +61,9 @@ public interface FavoriteAuthorsRepository extends CrudRepository<FavoriteAuthor
     @Modifying
     @Transactional
     @Query(value = "UPDATE favorite_authors SET is_active = false " +
-            "WHERE user_id = :user_id AND author_name = :author_name", nativeQuery = true)
-    int deactivateFavoriteAuthor(@Param("user_id") String userId, 
-                                @Param("author_name") String authorName);
+            "WHERE user_id = :userId AND author_name = :authorName", nativeQuery = true)
+    int deactivateFavoriteAuthor(@Param("userId") String userId, 
+                                @Param("authorName") String authorName);
     
     /**
      * 指定したユーザーIDと著者名のお気に入りを完全削除
@@ -75,9 +75,9 @@ public interface FavoriteAuthorsRepository extends CrudRepository<FavoriteAuthor
     @Modifying
     @Transactional
     @Query(value = "DELETE FROM favorite_authors " +
-            "WHERE user_id = :user_id AND author_name = :author_name", nativeQuery = true)
-    int deleteFavoriteAuthor(@Param("user_id") String userId, 
-                            @Param("author_name") String authorName);
+            "WHERE user_id = :userId AND author_name = :authorName", nativeQuery = true)
+    int deleteFavoriteAuthor(@Param("userId") String userId, 
+                            @Param("authorName") String authorName);
     
     /**
      * 指定したユーザーIDのお気に入り著者一覧を取得（アクティブ・非アクティブ両方）
@@ -86,7 +86,7 @@ public interface FavoriteAuthorsRepository extends CrudRepository<FavoriteAuthor
      * @return お気に入り著者一覧
      */
     @Query(value = "SELECT * FROM favorite_authors " +
-            "WHERE user_id = :user_id " +
+            "WHERE user_id = :userId " +
             "ORDER BY is_active DESC, created_at DESC", nativeQuery = true)
-    List<FavoriteAuthors> findAllByUserId(@Param("user_id") String userId);
+    List<FavoriteAuthors> findAllByUserId(@Param("userId") String userId);
 }

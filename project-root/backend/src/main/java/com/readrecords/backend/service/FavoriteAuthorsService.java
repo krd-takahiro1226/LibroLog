@@ -211,7 +211,7 @@ public class FavoriteAuthorsService {
       Optional<FavoriteAuthors> favorite = favoriteAuthorsRepository
           .findByUserIdAndAuthorName(userId, authorName);
       
-      boolean isFollowing = favorite.isPresent() && favorite.get().getIs_active();
+      boolean isFollowing = favorite.isPresent() && favorite.get().getIsActive();
       
       result.put("isFollowing", isFollowing);
       result.put(STATUS, SUCCESS);
@@ -252,8 +252,8 @@ public class FavoriteAuthorsService {
     for (FavoriteAuthors favoriteAuthor : favoriteAuthorsList) {
       FavoriteAuthorsDto dto = new FavoriteAuthorsDto();
       dto.setId(favoriteAuthor.getId());
-      dto.setAuthorName(favoriteAuthor.getAuthor_name());
-      dto.setIsFollowing(favoriteAuthor.getIs_active());
+      dto.setAuthorName(favoriteAuthor.getAuthorName());
+      dto.setIsFollowing(favoriteAuthor.getIsActive());
       dtoList.add(dto);
     }
     
@@ -262,9 +262,9 @@ public class FavoriteAuthorsService {
 
   private FavoriteAuthors createNewFavoriteAuthor(String userId, String authorName) {
     FavoriteAuthors favoriteAuthor = new FavoriteAuthors();
-    favoriteAuthor.setUser_id(userId);
-    favoriteAuthor.setAuthor_name(authorName);
-    favoriteAuthor.setIs_active(true);
+    favoriteAuthor.setUserId(userId);
+    favoriteAuthor.setAuthorName(authorName);
+    favoriteAuthor.setIsActive(true);
     return favoriteAuthor;
   }
 }
