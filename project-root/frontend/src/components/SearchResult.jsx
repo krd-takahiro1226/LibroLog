@@ -112,30 +112,8 @@ function SearchResult() {
       if (option === "new") {
         // 優先度選択モーダルを表示
         setIsPriorityModalOpen(true);
-      } else if (option === "library") {
-        // 書籍ライブラリに追加
-        const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/searchBooks/sruSearch/register`, {
-          title: selectedBook.title,
-          author: selectedBook.author || selectedBook.authors?.join(", ") || "",
-          genre: selectedBook.categories?.join(", ") || "",
-          isbn: selectedBook.isbn || "",
-          publisherName: selectedBook.publisherName || "",
-          salesDate: selectedBook.salesDate || "",
-          size: selectedBook.size || "",
-          description: selectedBook.description || "",
-          thumbnail: selectedBook.largeImageUrl || ""
-        }, {
-          headers: getAuthHeaders(),
-          withCredentials: true
-        });
-
-        if (response.data.success) {
-          alert("書籍をライブラリに追加しました");
-        } else {
-          alert(response.data.message || "書籍の追加に失敗しました");
-        }
-        handleModalClose();
       }
+      // 📚 書籍ライブラリに追加機能は削除
     } catch (error) {
       console.error("Registration error:", error);
       if (error.response?.status === 401) {
@@ -165,8 +143,13 @@ function SearchResult() {
         withCredentials: true
       });
 
+      // デバッグ用: レスポンス内容をコンソールに出力
+      console.log("Backend response:", response);
+      console.log("Response data:", response.data);
+      console.log("Response data type:", typeof response.data);
+
       // バックエンドは文字列でレスポンスを返すため、response.dataを直接チェック
-      if (response.data === "200") {
+      if (response.data === 200) {
         let priorityText;
         switch (priority) {
           case 1: priorityText = "すぐに読みたい"; break;
@@ -175,10 +158,10 @@ function SearchResult() {
           default: priorityText = "";
         }
         alert(`書籍を「${priorityText}」として読書記録に登録しました`);
-      } else if (response.data === "400") {
+      } else if (response.data === 400) {
         alert("この書籍は既に登録されています");
       } else {
-        alert("読書記録の登録に失敗しました");
+        alert(`読書記録の登録に失敗しました (レスポンス: ${response.data})`);
       }
     } catch (error) {
       console.error("Priority registration error:", error);
@@ -428,12 +411,6 @@ function SearchResult() {
                   className="w-full bg-blue-600 hover:bg-blue-700 text-white font-noto-sans py-3 px-4 rounded-lg transition-colors"
                 >
                   📖 読書記録として登録
-                </button>
-                <button
-                  onClick={() => handleRegisterOption("library")}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white font-noto-sans py-3 px-4 rounded-lg transition-colors"
-                >
-                  📚 書籍ライブラリに追加
                 </button>
                 <button
                   onClick={handleModalClose}
