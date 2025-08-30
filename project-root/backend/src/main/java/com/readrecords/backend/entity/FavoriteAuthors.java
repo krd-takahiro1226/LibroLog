@@ -22,14 +22,14 @@ public class FavoriteAuthors implements Serializable {
   private Long id;
   
   /** ユーザーID */
-  private String user_id;
+  private String userId;
   
   /** 著者名 */
-  private String author_name;
+  private String authorName;
   
   /** アクティブフラグ */
-  private Boolean is_active;
+  private Boolean isActive;
   
   /** 作成日時 */
-  private Timestamp created_at;
+  private Timestamp createdAt;
 }
