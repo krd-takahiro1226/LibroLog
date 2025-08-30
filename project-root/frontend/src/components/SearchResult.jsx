@@ -16,6 +16,7 @@ function SearchResult() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
+  const [isPriorityModalOpen, setIsPriorityModalOpen] = useState(false);
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [limit] = useState(30);
@@ -99,23 +100,18 @@ function SearchResult() {
   const handleModalClose = () => {
     setIsModalOpen(false);
     setSelectedBook(null);
+    setIsPriorityModalOpen(false);
+  };
+
+  const handlePriorityModalClose = () => {
+    setIsPriorityModalOpen(false);
   };
 
   const handleRegisterOption = async (option) => {
     try {
       if (option === "new") {
-        // 新規読書記録として登録
-        const recordData = {
-          title: selectedBook.title,
-          author: selectedBook.author || selectedBook.authors?.join(", ") || "",
-          genre: selectedBook.categories?.join(", ") || "",
-          readingStartDate: "",
-          readingEndDate: "",
-          rating: "",
-          impressions: ""
-        };
-
-        navigate("/reading-record", { state: { bookData: recordData } });
+        // 優先度選択モーダルを表示
+        setIsPriorityModalOpen(true);
       } else if (option === "library") {
         // 書籍ライブラリに追加
         const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/searchBooks/sruSearch/register`, {
@@ -138,6 +134,7 @@ function SearchResult() {
         } else {
           alert(response.data.message || "書籍の追加に失敗しました");
         }
+        handleModalClose();
       }
     } catch (error) {
       console.error("Registration error:", error);
@@ -146,6 +143,50 @@ function SearchResult() {
         navigate("/login");
       } else {
         alert(error.response?.data?.message || "登録中にエラーが発生しました");
+      }
+      handleModalClose();
+    }
+  };
+
+  const handlePrioritySelection = async (priority) => {
+    try {
+      const requestData = {
+        isbn: selectedBook.isbn || "",
+        title: selectedBook.title,
+        author: selectedBook.author || selectedBook.authors?.join(", ") || "",
+        size: selectedBook.size || "",
+        salesDate: selectedBook.salesDate || "",
+        publisherName: selectedBook.publisherName || "",
+        selectedOption: priority
+      };
+
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/searchBooks/sruSearch/register`, requestData, {
+        headers: getAuthHeaders(),
+        withCredentials: true
+      });
+
+      // バックエンドは文字列でレスポンスを返すため、response.dataを直接チェック
+      if (response.data === "200") {
+        let priorityText;
+        switch (priority) {
+          case 1: priorityText = "すぐに読みたい"; break;
+          case 2: priorityText = "今後読みたい"; break;
+          case 3: priorityText = "既に読んだ"; break;
+          default: priorityText = "";
+        }
+        alert(`書籍を「${priorityText}」として読書記録に登録しました`);
+      } else if (response.data === "400") {
+        alert("この書籍は既に登録されています");
+      } else {
+        alert("読書記録の登録に失敗しました");
+      }
+    } catch (error) {
+      console.error("Priority registration error:", error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        navigate("/login");
+      } else {
+        alert(error.response?.data?.message || "読書記録の登録中にエラーが発生しました");
       }
     } finally {
       handleModalClose();
@@ -362,7 +403,7 @@ function SearchResult() {
         )}
 
         {/* 登録方法選択モーダル */}
-        {isModalOpen && (
+        {isModalOpen && !isPriorityModalOpen && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
             <div className="bg-[#faf8f3] rounded-xl shadow-lg border border-[#e8e2d4] p-8 w-96 max-w-[90vw]">
               <h3 className="font-noto-sans text-xl font-semibold text-[#2d3436] mb-6 text-center">
@@ -399,6 +440,51 @@ function SearchResult() {
                   className="w-full bg-gray-600 hover:bg-gray-700 text-white font-noto-sans py-3 px-4 rounded-lg transition-colors"
                 >
                   ❌ キャンセル
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 優先度選択モーダル */}
+        {isPriorityModalOpen && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-[#faf8f3] rounded-xl shadow-lg border border-[#e8e2d4] p-8 w-96 max-w-[90vw]">
+              <h3 className="font-noto-sans text-xl font-semibold text-[#2d3436] mb-6 text-center">
+                📖 読書の優先度を選択
+              </h3>
+              {selectedBook && (
+                <div className="mb-6 p-4 bg-white rounded-lg border border-[#c8d1d3]">
+                  <p className="font-noto-sans font-medium text-[#2d3436] text-sm">{selectedBook.title}</p>
+                  <p className="text-[#5d6d7e] font-noto-sans text-xs mt-1">
+                    {selectedBook.author || "不明"}
+                  </p>
+                </div>
+              )}
+              <div className="space-y-4">
+                <button
+                  onClick={() => handlePrioritySelection(1)}
+                  className="w-full bg-red-600 hover:bg-red-700 text-white font-noto-sans py-3 px-4 rounded-lg transition-colors"
+                >
+                  🔥 すぐに読みたい
+                </button>
+                <button
+                  onClick={() => handlePrioritySelection(2)}
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-noto-sans py-3 px-4 rounded-lg transition-colors"
+                >
+                  📚 今後読みたい
+                </button>
+                <button
+                  onClick={() => handlePrioritySelection(3)}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white font-noto-sans py-3 px-4 rounded-lg transition-colors"
+                >
+                  ✅ 既に読んだ
+                </button>
+                <button
+                  onClick={handlePriorityModalClose}
+                  className="w-full bg-gray-600 hover:bg-gray-700 text-white font-noto-sans py-3 px-4 rounded-lg transition-colors"
+                >
+                  ← 戻る
                 </button>
               </div>
             </div>
