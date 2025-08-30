@@ -16,6 +16,7 @@ import UsernameChange from './components/UsernameChange';
 import UserEmailChange from './components/UserEmailChange';
 import SetReadingGoals from './components/SetReadingGoals';
 import AchievementsSettings from './components/AchievementsSettings';
+import FavoriteAuthors from './components/FavoriteAuthors';
 import NotFound from './components/NotFound';
 import OtpVerification from './components/OtpVerification';
 
@@ -38,6 +39,7 @@ function App() {
                 <Route path="/userEmailChange" element={<UserEmailChange />} />
                 <Route path="/setReadingGoals" element={<SetReadingGoals />}></Route>
                 <Route path="/achievementsSettings" element={<AchievementsSettings />}></Route>
+                <Route path="/favoriteAuthors" element={<FavoriteAuthors />}></Route>
                 <Route path="*" element={<NotFound />} ></Route>
             </Routes>
         </Router>
