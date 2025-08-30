@@ -41,7 +41,7 @@ public class FavoriteAuthorsService {
     String userId = getUserId(authentication);
     logger.info("Fetching all favorite authors for userId: {}", userId);
 
-    Map<String, Object> result = new HashMap<>();
+    Map<String, Object> getFavoriteAuthorsResult = new HashMap<>();
     
     try {
       List<FavoriteAuthors> favoriteAuthorsList = favoriteAuthorsRepository
@@ -49,16 +49,16 @@ public class FavoriteAuthorsService {
       
       List<FavoriteAuthorsDto> favoriteAuthorsDtos = convertToDto(favoriteAuthorsList);
       
-      result.put(FAVORITE_AUTHORS, favoriteAuthorsDtos);
-      result.put(STATUS, SUCCESS);
+      getFavoriteAuthorsResult.put(FAVORITE_AUTHORS, favoriteAuthorsDtos);
+      getFavoriteAuthorsResult.put(STATUS, SUCCESS);
       
     } catch (Exception e) {
       logger.error("Error fetching favorite authors for userId: {}", userId, e);
-      result.put(STATUS, ERROR);
-      result.put(MESSAGE, "お気に入り著者の取得に失敗しました");
+      getFavoriteAuthorsResult.put(STATUS, ERROR);
+      getFavoriteAuthorsResult.put(MESSAGE, "お気に入り著者の取得に失敗しました");
     }
     
-    return result;
+    return getFavoriteAuthorsResult;
   }
 
   /**
@@ -72,7 +72,7 @@ public class FavoriteAuthorsService {
     String userId = getUserId(authentication);
     logger.info("Following author: {} for userId: {}", authorName, userId);
 
-    Map<String, Object> result = new HashMap<>();
+    Map<String, Object> followAuthorResult = new HashMap<>();
     
     try {
       // まずシンプルに新規レコード作成のみを試す
@@ -82,17 +82,17 @@ public class FavoriteAuthorsService {
       FavoriteAuthors saved = favoriteAuthorsRepository.save(newFavorite);
       logger.info("Saved favorite author: {}", saved);
       
-      result.put(STATUS, SUCCESS);
-      result.put(MESSAGE, "著者をフォローしました");
+      followAuthorResult.put(STATUS, SUCCESS);
+      followAuthorResult.put(MESSAGE, "著者をフォローしました");
       
     } catch (Exception e) {
       logger.error("Error following author: {} for userId: {}", authorName, userId, e);
       e.printStackTrace();
-      result.put(STATUS, ERROR);
-      result.put(MESSAGE, "フォローに失敗しました: " + e.getMessage());
+      followAuthorResult.put(STATUS, ERROR);
+      followAuthorResult.put(MESSAGE, "フォローに失敗しました: " + e.getMessage());
     }
     
-    return result;
+    return followAuthorResult;
   }
 
   /**
@@ -106,26 +106,26 @@ public class FavoriteAuthorsService {
     String userId = getUserId(authentication);
     logger.info("Unfollowing author: {} for userId: {}", authorName, userId);
 
-    Map<String, Object> result = new HashMap<>();
+    Map<String, Object> unfollowAuthorResult = new HashMap<>();
     
     try {
       int updateCount = favoriteAuthorsRepository.deactivateFavoriteAuthor(userId, authorName);
       
       if (updateCount > 0) {
-        result.put(STATUS, SUCCESS);
-        result.put(MESSAGE, "フォローを解除しました");
+        unfollowAuthorResult.put(STATUS, SUCCESS);
+        unfollowAuthorResult.put(MESSAGE, "フォローを解除しました");
       } else {
-        result.put(STATUS, ERROR);
-        result.put(MESSAGE, "フォロー解除に失敗しました");
+        unfollowAuthorResult.put(STATUS, ERROR);
+        unfollowAuthorResult.put(MESSAGE, "フォロー解除に失敗しました");
       }
       
     } catch (Exception e) {
       logger.error("Error unfollowing author: {} for userId: {}", authorName, userId, e);
-      result.put(STATUS, ERROR);
-      result.put(MESSAGE, "フォロー解除に失敗しました");
+      unfollowAuthorResult.put(STATUS, ERROR);
+      unfollowAuthorResult.put(MESSAGE, "フォロー解除に失敗しました");
     }
     
-    return result;
+    return unfollowAuthorResult;
   }
 
   /**
@@ -139,26 +139,26 @@ public class FavoriteAuthorsService {
     String userId = getUserId(authentication);
     logger.info("Refollowing author: {} for userId: {}", authorName, userId);
 
-    Map<String, Object> result = new HashMap<>();
+    Map<String, Object> refollowAuthorResult = new HashMap<>();
     
     try {
       int updateCount = favoriteAuthorsRepository.activateFavoriteAuthor(userId, authorName);
       
       if (updateCount > 0) {
-        result.put(STATUS, SUCCESS);
-        result.put(MESSAGE, "再フォローしました");
+        refollowAuthorResult.put(STATUS, SUCCESS);
+        refollowAuthorResult.put(MESSAGE, "再フォローしました");
       } else {
-        result.put(STATUS, ERROR);
-        result.put(MESSAGE, "再フォローに失敗しました");
+        refollowAuthorResult.put(STATUS, ERROR);
+        refollowAuthorResult.put(MESSAGE, "再フォローに失敗しました");
       }
       
     } catch (Exception e) {
       logger.error("Error refollowing author: {} for userId: {}", authorName, userId, e);
-      result.put(STATUS, ERROR);
-      result.put(MESSAGE, "再フォローに失敗しました");
+      refollowAuthorResult.put(STATUS, ERROR);
+      refollowAuthorResult.put(MESSAGE, "再フォローに失敗しました");
     }
     
-    return result;
+    return refollowAuthorResult;
   }
 
   /**
@@ -172,26 +172,26 @@ public class FavoriteAuthorsService {
     String userId = getUserId(authentication);
     logger.info("Deleting author: {} for userId: {}", authorName, userId);
 
-    Map<String, Object> result = new HashMap<>();
+    Map<String, Object> deleteAuthorResult = new HashMap<>();
     
     try {
       int deleteCount = favoriteAuthorsRepository.deleteFavoriteAuthor(userId, authorName);
       
       if (deleteCount > 0) {
-        result.put(STATUS, SUCCESS);
-        result.put(MESSAGE, "著者を削除しました");
+        deleteAuthorResult.put(STATUS, SUCCESS);
+        deleteAuthorResult.put(MESSAGE, "著者を削除しました");
       } else {
-        result.put(STATUS, ERROR);
-        result.put(MESSAGE, "著者の削除に失敗しました");
+        deleteAuthorResult.put(STATUS, ERROR);
+        deleteAuthorResult.put(MESSAGE, "著者の削除に失敗しました");
       }
       
     } catch (Exception e) {
       logger.error("Error deleting author: {} for userId: {}", authorName, userId, e);
-      result.put(STATUS, ERROR);
-      result.put(MESSAGE, "著者の削除に失敗しました");
+      deleteAuthorResult.put(STATUS, ERROR);
+      deleteAuthorResult.put(MESSAGE, "著者の削除に失敗しました");
     }
     
-    return result;
+    return deleteAuthorResult;
   }
 
   /**
@@ -205,7 +205,7 @@ public class FavoriteAuthorsService {
     String userId = getUserId(authentication);
     logger.info("Checking follow status for author: {} and userId: {}", authorName, userId);
 
-    Map<String, Object> result = new HashMap<>();
+    Map<String, Object> checkFollowStatusResult = new HashMap<>();
     
     try {
       Optional<FavoriteAuthors> favorite = favoriteAuthorsRepository
@@ -213,17 +213,17 @@ public class FavoriteAuthorsService {
       
       boolean isFollowing = favorite.isPresent() && favorite.get().getIsActive();
       
-      result.put("isFollowing", isFollowing);
-      result.put(STATUS, SUCCESS);
+      checkFollowStatusResult.put("isFollowing", isFollowing);
+      checkFollowStatusResult.put(STATUS, SUCCESS);
       
     } catch (Exception e) {
       logger.error("Error checking follow status for author: {} and userId: {}", 
                    authorName, userId, e);
-      result.put(STATUS, ERROR);
-      result.put(MESSAGE, "フォロー状態の確認に失敗しました");
+      checkFollowStatusResult.put(STATUS, ERROR);
+      checkFollowStatusResult.put(MESSAGE, "フォロー状態の確認に失敗しました");
     }
     
-    return result;
+    return checkFollowStatusResult;
   }
 
   private String getUserId(Authentication authentication) {
