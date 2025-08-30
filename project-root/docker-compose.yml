@@ -46,22 +46,6 @@ services:
       - db_data:/var/lib/mysql
   # - ./mysql-config/custom.cnf:/etc/mysql/conf.d/custom.cnf
 
-  batch:
-    build:
-      context: ./batch
-      dockerfile: Dockerfile_local
-    depends_on:
-      - db
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/BooksManagement
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: root
-      RAKUTEN_API_KEY: ${RAKUTEN_API_KEY:-dummy_key}
-      PUBSUB_PROJECT_ID: ${PUBSUB_PROJECT_ID:-libro-log-project}
-      PUBSUB_TOPIC_NAME: ${PUBSUB_TOPIC_NAME:-new-book-notifications}
-    networks:
-      - app-network
-
   mail:
     # Web画面: http://localhost:19980
     image: axllent/mailpit:latest
