@@ -42,6 +42,9 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                 .requestMatchers("/login", "/userRegistration").permitAll()
+                .requestMatchers("/api/otp/send-registration",
+                    "/api/otp/verify-registration", "/api/otp/resend")
+                .permitAll()
                 .anyRequest()
                 .authenticated())
         .addFilterBefore(new JwtAuthorizationFilter(),
@@ -52,9 +55,9 @@ public class SecurityConfig {
         .logout(
             logout -> logout
                 .logoutUrl("/logout") // ログアウトのURL
-                //.logoutSuccessUrl("/login") // ログアウト後のリダイレクトURL
-                .logoutSuccessHandler((req,res,auth) ->
-                  res.setStatus(HttpServletResponse.SC_NO_CONTENT)) 
+                // .logoutSuccessUrl("/login") // ログアウト後のリダイレクトURL
+                .logoutSuccessHandler((req, res, auth) -> res
+                    .setStatus(HttpServletResponse.SC_NO_CONTENT))
                 .invalidateHttpSession(true) // セッションの無効化
                 .deleteCookies("JSESSIONID") // クッキーの削除
         )
@@ -93,7 +96,8 @@ public class SecurityConfig {
     CorsConfiguration configuration = new CorsConfiguration();
     // ReactアプリのURL
     configuration.addAllowedOrigin("http://localhost:3000"); // For Local Test
-    configuration.addAllowedOrigin("https://frontend-service-968408560945.asia-northeast1.run.app");
+    configuration.addAllowedOrigin(
+        "https://frontend-service-968408560945.asia-northeast1.run.app");
     configuration.addAllowedOrigin("https://librolog.com");
     // 全てのHTTPメソッドを許可
     configuration.addAllowedMethod("*");

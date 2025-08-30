@@ -49,12 +49,12 @@ function Search() {
     <div className="max-w-5xl mx-auto bg-white p-6 rounded-lg shadow-md">
     <header className="flex items-center justify-between mb-12">
         <div>
-          <h1 className="text-2xl md:text-3xl font-crimson-text text-[#333333] mb-2">
+          <button
+            onClick={() => navigate("/menu")}
+            className="text-3xl font-noto-sans hover:text-gray-600 transition-colors"
+          >
             📚 Libro Log
-          </h1>
-          <p className="text-[#666666] font-crimson-text">
-            あなたの読書体験を記録・管理
-          </p>
+          </button>
         </div>
       </header>
         {/* <h1 className="text-2xl font-roboto text-gray-800 mb-6">書籍検索</h1> */}

@@ -3,6 +3,7 @@ package com.readrecords.backend.repository;
 import com.readrecords.backend.entity.BookRecords;
 import jakarta.transaction.Transactional;
 import java.util.List;
+import java.util.Map;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -33,4 +34,12 @@ public interface BookRecordsRepository
                         + "book_records br JOIN reading_records rr ON br.ISBN = rr.ISBN where rr.goal_id = :goal_id", nativeQuery = true)
         List<BookRecords> getBookRecordsByISBNAndGoalId(
                         @Param("goal_id") String goalId);
+
+        @Query(value = "SELECT rbr.ISBN as isbn, br.book_name as bookName, br.author as author, " +
+                       "rbr.start_date as startDate, rbr.end_date as endDate, rbr.priority as priority " +
+                       "FROM register_book_records rbr " +
+                       "JOIN book_records br ON rbr.ISBN = br.ISBN " +
+                       "WHERE rbr.user_id = :userId " +
+                       "ORDER BY rbr.start_date DESC", nativeQuery = true)
+        List<Map<String, Object>> getRecordsForCsvExport(@Param("userId") String userId);
 }

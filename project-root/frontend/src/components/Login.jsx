@@ -1,7 +1,8 @@
 "use client";
-import React, {useEffect } from 'react';
+import React, { useEffect } from 'react';
 import axios from 'axios';
-import '../assets/styles/styles.css'; 
+import { useLocation } from 'react-router-dom';
+import '../assets/styles/styles.css';
 
 function Login() {
 
@@ -10,10 +11,13 @@ function Login() {
     document.title = "ログイン | Libro Log";
   }, []);
   // --- ここまで ---
-  
+
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [showPopup, setShowPopup] = React.useState(false);
+  const [successMessage, setSuccessMessage] = React.useState("");
+
+  const location = useLocation();
 
   // エラーがあればポップアップを表示
   useEffect(() => {
@@ -21,7 +25,16 @@ function Login() {
     if (errorParam) {
       setShowPopup(true);
     }
-  }, []);
+
+    // ユーザー登録完了後のメッセージ表示
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+      // 5秒後にメッセージを非表示
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 5000);
+    }
+  }, [location]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -84,6 +97,13 @@ function Login() {
           <h1 className="text-2xl font-noto-sans text-[#2d3436] mb-8">
             ログイン
           </h1>
+
+          {/* 成功メッセージ */}
+          {successMessage && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+              {successMessage}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>

@@ -1,6 +1,7 @@
 // App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Top from './components/Top';
 import Login from './components/Login';
 import Menu from './components/Menu';
 import Search from './components/Search';
@@ -16,17 +17,21 @@ import UserEmailChange from './components/UserEmailChange';
 import SetReadingGoals from './components/SetReadingGoals';
 import AchievementsSettings from './components/AchievementsSettings';
 import FavoriteAuthors from './components/FavoriteAuthors';
+import NotFound from './components/NotFound';
+import OtpVerification from './components/OtpVerification';
 
 function App() {
     return (
         <Router>
             <Routes>
+                <Route path="/" element={<Top />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/menu" element={<Menu />} />
                 <Route path="/searchBooks" element={<Search />} />
                 <Route path="/searchBooksResult" element={<SearchResult />}></Route>
                 <Route path="/showRecords" element={<ShowRecords />} />
                 <Route path="/userRegistration" element={<NewUserRegister />} />
+                <Route path="/otpVerification" element={<OtpVerification />} />
                 <Route path="/achievements" element={<ReadingAchievements />} />
                 <Route path="/myPage" element={<MyPage />} />
                 <Route path="/userPassChange" element={<UserPassChange />} />
@@ -35,6 +40,7 @@ function App() {
                 <Route path="/setReadingGoals" element={<SetReadingGoals />}></Route>
                 <Route path="/achievementsSettings" element={<AchievementsSettings />}></Route>
                 <Route path="/favoriteAuthors" element={<FavoriteAuthors />}></Route>
+                <Route path="*" element={<NotFound />} ></Route>
             </Routes>
         </Router>
     );

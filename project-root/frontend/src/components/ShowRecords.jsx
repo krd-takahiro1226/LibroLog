@@ -140,6 +140,45 @@ function ShowRecords() {
     }
   };
 
+  // CSVダウンロード処理
+  const handleCSVDownload = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_URL}/exportRecords/csv`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+          responseType: 'blob', // CSVファイルをblobとして受信
+        }
+      );
+      
+      // CSVファイルのダウンロード処理
+      const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement("a");
+      const url = URL.createObjectURL(blob);
+      link.setAttribute("href", url);
+      
+      // ファイル名を現在の日時で設定
+      const now = new Date();
+      const timestamp = now.toISOString().slice(0, 19).replace(/[:-]/g, '');
+      link.setAttribute("download", `登録書籍一覧_${timestamp}.csv`);
+      
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+    } catch (error) {
+      if (error.response) {
+        alert(`CSV出力エラーが発生しました: ${error.response.status} - ${error.response.data.message || "詳細は不明です"}`);
+      } else if (error.request) {
+        alert("サーバーに接続できませんでした。ネットワークを確認してください。");
+      } else {
+        alert(`エラーが発生しました: ${error.message}`);
+      }
+    }
+  };
+
   return (
     <div className="min-h-screen w-screen bg-[#f5f5f5] p-8">
       <div className="mx-auto bg-white p-6 rounded-lg shadow-md w-full">
@@ -170,6 +209,12 @@ function ShowRecords() {
               onClick={() => setShowDeletePopup(true)}
             >
               登録解除
+            </button>
+            <button
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+              onClick={handleCSVDownload}
+            >
+              CSV出力
             </button>
           </div>
         </div>
@@ -364,6 +409,16 @@ function ShowRecords() {
           </div>
         </div>
       )}
+      <div className="flex justify-center mt-8">
+        <button
+          onClick={() => window.location.href = '/menu'}
+          type="button"
+          className="w-full sm:w-1/2 md:w-1/3 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
+          >
+          メニューへ戻る
+        </button>
+      </div>
+
     </div>
   );
 }
