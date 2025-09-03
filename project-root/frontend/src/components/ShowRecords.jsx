@@ -1,153 +1,175 @@
 "use client";
-import { React, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 function ShowRecords() {
-
 
   // --- タイトル ---
   useEffect(() => {
     document.title = "登録書籍一覧 | Libro Log";
   }, []);
   // --- ここまで ---
-  
-
 
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [selectedBooks, setSelectedBooks] = useState([]);
-  const [showPopup, setShowPopup] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [editableBooks, setEditableBooks] = useState([]);
-  const [showDeletePopup, setShowDeletePopup] = useState(false); // 登録解除ポップアップ
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  // JWT token取得関数
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  };
+
+  // トークン有効性チェック
+  const checkTokenValidity = () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      alert("トークンが存在しません。再ログインしてください。");
+      navigate("/login");
+      return false;
+    }
+
+    try {
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      if (Date.now() >= decodedToken.exp * 1000) {
+        alert("トークンの有効期限が切れています。再ログインしてください。");
+        localStorage.removeItem("token");
+        navigate("/login");
+        return false;
+      }
+    } catch (error) {
+      console.error("トークンの解析に失敗しました:", error);
+      alert("無効なトークンです。再ログインしてください。");
+      localStorage.removeItem("token");
+      navigate("/login");
+      return false;
+    }
+    return true;
+  };
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('トークンが存在しません。再ログインしてください。');
-      window.location.href = '/login';
-      return;
+    if (checkTokenValidity()) {
+      fetchBooks();
     }
-
-    const decodedToken = JSON.parse(atob(token.split('.')[1]));
-    if (Date.now() >= decodedToken.exp * 1000) {
-      alert('トークンの有効期限が切れています。再ログインしてください。');
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-      return;
-    }
-
-    // レコード取得
-    axios
-      .get(`${process.env.REACT_APP_BACKEND_URL}/showRecords`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        }
-      })
-      .then((response) => {
-        console.log('Records:', response.data);
-        setBooks(response.data);
-      })
-      .catch((error) => {
-        console.error('Error fetching data:', error);
-        setError('データの取得に失敗しました');
-      })
-      .finally(() => {
-        setLoading(false);
-      });
   }, []);
 
+  const fetchBooks = async () => {
+    try {
+      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/showRecords`, {
+        headers: getAuthHeaders()
+      });
 
-  if (loading) return <div>読み込み中...</div>;
-  if (error) return <div>{error}</div>;
+      console.log('Records:', response.data);
+      setBooks(response.data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        navigate("/login");
+      } else {
+        setError('データの取得に失敗しました');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // チェックボックスの有効化
+  // チェックボックスの制御
   const handleCheckboxChange = (isbn) => {
     setSelectedBooks((prev) =>
       prev.includes(isbn) ? prev.filter((id) => id !== isbn) : [...prev, isbn]
     );
   };
 
+  // 全選択/全解除
+  const handleSelectAll = () => {
+    if (selectedBooks.length === books.length) {
+      setSelectedBooks([]);
+    } else {
+      setSelectedBooks(books.map(book => book.isbn));
+    }
+  };
+
+  // 編集モーダルを開く
+  const handleOpenEditModal = () => {
+    const selected = books.filter((book) =>
+      selectedBooks.includes(book.isbn)
+    );
+    setEditableBooks(selected);
+    setShowEditModal(true);
+  };
+
   // レコードの編集・保存
   const handleEdit = async () => {
+    if (!checkTokenValidity()) return;
+
     try {
-      const token = localStorage.getItem("token");
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/updateRecords`,
         editableBooks,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+        { headers: getAuthHeaders() }
       );
+
       if (response.status === 200) {
-        const updatedBooks = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/showRecords`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-        );
-        setBooks(updatedBooks.data);
-        alert("保存しました");
-        setShowPopup(false);
+        alert("書籍情報を更新しました");
+        setShowEditModal(false);
+        setSelectedBooks([]);
+        await fetchBooks(); // データを再取得
       }
-      else {
-        throw new Error(`Unexpected response status: ${response.status}`);
-      }
-    }
-    catch (error) {
-      if (error.response) {
-        alert(`エラーが発生しました: ${error.response.status} - ${error.response.data.message || "詳細は不明です"}`);
-      } else if (error.request) {
-        alert("サーバーに接続できませんでした。ネットワークを確認してください。");
+    } catch (error) {
+      console.error("更新エラー:", error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        navigate("/login");
       } else {
-        alert(`エラーが発生しました: ${error.message}`);
+        alert(error.response?.data?.message || "更新に失敗しました");
       }
     }
   };
 
   // レコードの物理削除
   const handleDelete = async () => {
+    if (!checkTokenValidity()) return;
+
     try {
-      const token = localStorage.getItem("token");
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_URL}/deleteRecords`,
         { isbns: selectedBooks },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        { headers: getAuthHeaders() }
       );
+
       if (response.status === 200) {
-        alert("登録解除しました");
-        setShowDeletePopup(false);
-        const updatedBooks = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/showRecords`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setBooks(updatedBooks.data);
-        setSelectedBooks([]); // 選択をリセット
+        alert("書籍を登録解除しました");
+        setShowDeleteModal(false);
+        setSelectedBooks([]);
+        await fetchBooks(); // データを再取得
       }
     } catch (error) {
-      if (error.response) {
-        alert(`登録解除エラーが発生しました: ${error.response.status} - ${error.response.data.message || "詳細は不明です"}`);
-      } else if (error.request) {
-        alert("サーバーに接続できませんでした。ネットワークを確認してください。");
+      console.error("削除エラー:", error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        navigate("/login");
       } else {
-        alert(`エラーが発生しました: ${error.message}`);
+        alert(error.response?.data?.message || "登録解除に失敗しました");
       }
     }
   };
 
   // CSVダウンロード処理
   const handleCSVDownload = async () => {
+    if (!checkTokenValidity()) return;
+
     try {
-      const token = localStorage.getItem("token");
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_URL}/exportRecords/csv`,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: getAuthHeaders(),
           responseType: 'blob', // CSVファイルをblobとして受信
         }
       );
@@ -169,256 +191,361 @@ function ShowRecords() {
       document.body.removeChild(link);
       
     } catch (error) {
-      if (error.response) {
-        alert(`CSV出力エラーが発生しました: ${error.response.status} - ${error.response.data.message || "詳細は不明です"}`);
-      } else if (error.request) {
-        alert("サーバーに接続できませんでした。ネットワークを確認してください。");
+      console.error("CSV出力エラー:", error);
+      if (error.response?.status === 401) {
+        localStorage.removeItem('token');
+        navigate("/login");
       } else {
-        alert(`エラーが発生しました: ${error.message}`);
+        alert(error.response?.data?.message || "CSV出力に失敗しました");
       }
     }
   };
 
+  // 優先度の表示名を取得
+  const getPriorityLabel = (priority) => {
+    switch (priority) {
+      case 1:
+        return "🔥 すぐ読みたい本";
+      case 2:
+        return "📚 今後読みたい本";
+      case 3:
+        return "✅ 読んだことのある本";
+      default:
+        return "❓ 未分類";
+    }
+  };
+
+  // 優先度の色を取得
+  const getPriorityColor = (priority) => {
+    switch (priority) {
+      case 1:
+        return "bg-red-100 text-red-800 border border-red-200";
+      case 2:
+        return "bg-blue-100 text-blue-800 border border-blue-200";
+      case 3:
+        return "bg-green-100 text-green-800 border border-green-200";
+      default:
+        return "bg-gray-100 text-gray-800 border border-gray-200";
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen w-screen bg-[#f4f1e8] p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center py-12">
+            <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#2d3436]"></div>
+            <p className="text-[#5d6d7e] font-noto-sans mt-4">読み込み中...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen w-screen bg-[#f4f1e8] p-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+            <div className="text-red-600 text-4xl mb-4">❌</div>
+            <p className="text-red-600 font-noto-sans text-lg">{error}</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-red-600 hover:bg-red-700 text-white font-noto-sans px-6 py-2 rounded-lg transition-colors mt-4"
+            >
+              再試行
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen w-screen bg-[#f5f5f5] p-8">
-      <div className="mx-auto bg-white p-6 rounded-lg shadow-md w-full">
-        <div className="flex justify-between items-center w-full space-x-4">
+    <div className="min-h-screen w-screen bg-[#f4f1e8] p-8">
+      <div className="max-w-6xl mx-auto">
+        {/* 統一されたヘッダー */}
+        <header className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-noto-sans text-[#2d3436]">📚 Libro Log</h1>
+            <p className="text-[#5d6d7e] font-noto-sans mt-1">登録書籍一覧</p>
+          </div>
           <button
             onClick={() => navigate("/menu")}
-            className="text-3xl font-noto-sans hover:text-gray-600 transition-colors"
+            className="bg-gray-600 hover:bg-gray-700 text-white font-noto-sans px-6 py-2 rounded-lg transition-colors"
           >
-            📚 Libro Log
+            メニューに戻る
           </button>
-          <div className="flex space-x-4">
-            <button
-              className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:bg-gray-300"
-              disabled={selectedBooks.length === 0}
-              onClick={() => {
-                const selected = books.filter((book) =>
-                  selectedBooks.includes(book.isbn)
-                );
-                setEditableBooks(selected);
-                setShowPopup(true);
-              }}
-            >
-              編集
-            </button>
-            <button
-              className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 disabled:bg-gray-300"
-              disabled={selectedBooks.length === 0}
-              onClick={() => setShowDeletePopup(true)}
-            >
-              登録解除
-            </button>
-            <button
-              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-              onClick={handleCSVDownload}
-            >
-              CSV出力
-            </button>
-          </div>
-        </div>
-      </div>
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse bg-white shadow-lg rounded-lg">
-          <thead className="bg-gray-100">
-            <tr>
-              <th className="border p-3 text-left">選択</th>
-              <th className="border p-3 text-left">ISBN</th>
-              <th className="border p-3 text-left">書籍名</th>
-              <th className="border p-3 text-left">著者</th>
-              <th className="border p-3 text-left">読み始めた日</th>
-              <th className="border p-3 text-left">読了日</th>
-              <th className="border p-3 text-left">優先度</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Array.isArray(books) && books.length > 0 ? (
-              books.map((book, index) => (
-                <tr key={index} className="hover:bg-gray-50">
-                  <td className="border p-3">
-                    <input
-                      type="checkbox"
-                      checked={selectedBooks.includes(book.isbn)}
-                      onChange={() => handleCheckboxChange(book.isbn)}
-                      className="w-4 h-4"
-                    />
-                  </td>
-                  <td className="border p-3">{book.isbn}</td>
-                  <td className="border p-3">{book.bookName}</td>
-                  <td className="border p-3">{book.author}</td>
-                  <td className="border p-3">{book.startDate}</td>
-                  <td className="border p-3">{book.endDate}</td>
-                  {/* <td className="border p-3">{book.priority}</td> */}
-                  <td className="border p-3">
-                    {(() => {
-                      switch (book.priority) {
-                        case 1:
-                          return "すぐ読みたい本";
-                        case 2:
-                          return "今後読みたい本";
-                        case 3:
-                          return "読んだことのある本";
-                        default:
-                          return "未分類";
-                      }
-                    })()}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan="7" className="text-center p-3">
-                  No records found.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
-      {showPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-4xl">
-            <h2 className="text-xl font-bold mb-4">編集</h2>
-            <table className="w-full border-collapse">
-              <thead>
-                <tr>
-                  <th className="border p-2 text-left">ISBN</th>
-                  <th className="border p-2 text-left">書籍名</th>
-                  <th className="border p-2 text-left">著者</th>
-                  <th className="border p-2 text-left">読み始めた日</th>
-                  <th className="border p-2 text-left">読了日</th>
-                  <th className="border p-2 text-left">優先度</th>
-                </tr>
-              </thead>
-              <tbody>
-                {editableBooks.map((book, index) => (
-                  <tr key={index}>
-                    <td className="border p-2">{book.isbn}</td>
-                    <td className="border p-2">{book.bookName}</td>
-                    <td className="border p-2">{book.author}</td>
-                    <td className="border p-2">
-                      <input
-                        type="date"
-                        value={book.startDate}
-                        onChange={(e) =>
-                          setEditableBooks((prev) =>
-                            prev.map((b, i) =>
-                              i === index ? { ...b, startDate: e.target.value } : b
-                            )
-                          )
-                        }
-                        className="w-full border rounded p-1"
-                      />
-                    </td>
-                    <td className="border p-2">
-                      <input
-                        type="date"
-                        value={book.endDate}
-                        onChange={(e) =>
-                          setEditableBooks((prev) =>
-                            prev.map((b, i) =>
-                              i === index ? { ...b, endDate: e.target.value } : b
-                            )
-                          )
-                        }
-                        className="w-full border rounded p-1"
-                      />
-                    </td>
-                    <td className="border p-2">
-                      <select
-                        value={book.priority}
-                        onChange={(e) =>
-                          setEditableBooks((prev) =>
-                            prev.map((b, i) =>
-                              i === index ? { ...b, priority: parseInt(e.target.value) } : b
-                            )
-                          )
-                        }
-                        className="w-full border rounded p-1"
-                      >
-                        <option value={1}>すぐ読みたい本</option>
-                        <option value={2}>今後読みたい本</option>
-                        <option value={3}>読んだことのある本</option>
-                        <option value={0}>未分類</option>
-                      </select>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            <div className="flex justify-end gap-4 mt-4">
-              <button
-                onClick={() => {
-                  setShowPopup(false);
-                }}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              >
-                戻る
-              </button>
-              <button
-                onClick={() => handleEdit()}
-                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                保存
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      {showDeletePopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-3/4 max-w-4xl">
-            <h2 className="text-xl font-bold mb-4">登録解除確認</h2>
-            <table className="w-full border-collapse mb-4">
-              <thead>
-                <tr>
-                  <th className="border p-2 text-left">ISBN</th>
-                  <th className="border p-2 text-left">書籍名</th>
-                  <th className="border p-2 text-left">著者</th>
-                </tr>
-              </thead>
-              <tbody>
-                {selectedBooks.map((isbn) => {
-                  const book = books.find((b) => b.isbn === isbn);
-                  return (
-                    <tr key={isbn}>
-                      <td className="border p-2">{book?.isbn}</td>
-                      <td className="border p-2">{book?.bookName}</td>
-                      <td className="border p-2">{book?.author}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-            <p>本当に以上の{selectedBooks.length}件の書籍を登録解除してよろしいですか？</p>
-            <div className="flex justify-end gap-4 mt-4">
-              <button
-                onClick={() => setShowDeletePopup(false)}
-                className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400"
-              >
-                戻る
-              </button>
-              <button
-                onClick={handleDelete}
-                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                登録解除
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-      <div className="flex justify-center mt-8">
-        <button
-          onClick={() => window.location.href = '/menu'}
-          type="button"
-          className="w-full sm:w-1/2 md:w-1/3 bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors"
-          >
-          メニューへ戻る
-        </button>
-      </div>
+        </header>
 
+        {/* アクションバー */}
+        <div className="bg-[#faf8f3] rounded-xl shadow-md border border-[#e8e2d4] p-6 mb-6">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <p className="text-[#2d3436] font-noto-sans">
+                <span className="font-medium">{books.length}</span> 冊の書籍が登録されています
+              </p>
+              {selectedBooks.length > 0 && (
+                <p className="text-blue-600 font-noto-sans text-sm">
+                  {selectedBooks.length} 冊選択中
+                </p>
+              )}
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <button
+                onClick={handleSelectAll}
+                className="bg-gray-600 hover:bg-gray-700 text-white font-noto-sans px-4 py-2 rounded-lg transition-colors text-sm"
+              >
+                {selectedBooks.length === books.length ? "全解除" : "全選択"}
+              </button>
+              <button
+                onClick={handleOpenEditModal}
+                disabled={selectedBooks.length === 0}
+                className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-noto-sans px-4 py-2 rounded-lg transition-colors text-sm disabled:cursor-not-allowed"
+              >
+                ✏️ 編集 ({selectedBooks.length})
+              </button>
+              <button
+                onClick={() => setShowDeleteModal(true)}
+                disabled={selectedBooks.length === 0}
+                className="bg-red-600 hover:bg-red-700 disabled:bg-red-400 text-white font-noto-sans px-4 py-2 rounded-lg transition-colors text-sm disabled:cursor-not-allowed"
+              >
+                🗑️ 登録解除 ({selectedBooks.length})
+              </button>
+              <button
+                onClick={handleCSVDownload}
+                className="bg-green-600 hover:bg-green-700 text-white font-noto-sans px-4 py-2 rounded-lg transition-colors text-sm"
+              >
+                📊 CSV出力
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* 書籍一覧 */}
+        <div className="bg-[#faf8f3] rounded-xl shadow-md border border-[#e8e2d4] overflow-hidden">
+          {Array.isArray(books) && books.length > 0 ? (
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-white border-b border-[#e8e2d4]">
+                  <tr>
+                    <th className="text-left p-4 font-noto-sans font-medium text-[#2d3436]">
+                      <input
+                        type="checkbox"
+                        checked={books.length > 0 && selectedBooks.length === books.length}
+                        onChange={handleSelectAll}
+                        className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                      />
+                    </th>
+                    <th className="text-left p-4 font-noto-sans font-medium text-[#2d3436]">ISBN</th>
+                    <th className="text-left p-4 font-noto-sans font-medium text-[#2d3436]">書籍名</th>
+                    <th className="text-left p-4 font-noto-sans font-medium text-[#2d3436]">著者</th>
+                    <th className="text-left p-4 font-noto-sans font-medium text-[#2d3436]">読み始めた日</th>
+                    <th className="text-left p-4 font-noto-sans font-medium text-[#2d3436]">読了日</th>
+                    <th className="text-left p-4 font-noto-sans font-medium text-[#2d3436]">優先度</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {books.map((book, index) => (
+                    <tr 
+                      key={index} 
+                      className={`border-b border-[#e8d1d3] hover:bg-white transition-colors ${
+                        selectedBooks.includes(book.isbn) ? 'bg-blue-50' : ''
+                      }`}
+                    >
+                      <td className="p-4">
+                        <input
+                          type="checkbox"
+                          checked={selectedBooks.includes(book.isbn)}
+                          onChange={() => handleCheckboxChange(book.isbn)}
+                          className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
+                        />
+                      </td>
+                      <td className="p-4 font-noto-sans text-[#5d6d7e] text-sm">{book.isbn}</td>
+                      <td className="p-4 font-noto-sans text-[#2d3436] font-medium">{book.bookName}</td>
+                      <td className="p-4 font-noto-sans text-[#5d6d7e]">{book.author}</td>
+                      <td className="p-4 font-noto-sans text-[#5d6d7e]">{book.startDate || "未設定"}</td>
+                      <td className="p-4 font-noto-sans text-[#5d6d7e]">{book.endDate || "未設定"}</td>
+                      <td className="p-4">
+                        <span className={`inline-block px-3 py-1 rounded-full text-xs font-noto-sans ${getPriorityColor(book.priority)}`}>
+                          {getPriorityLabel(book.priority)}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : (
+            <div className="p-12 text-center">
+              <div className="text-[#5d6d7e] text-6xl mb-4">📚</div>
+              <p className="text-[#5d6d7e] font-noto-sans text-lg mb-2">登録された書籍がありません</p>
+              <p className="text-[#5d6d7e] font-noto-sans text-sm mb-6">
+                書籍検索から新しい書籍を登録してみましょう
+              </p>
+              <button
+                onClick={() => navigate("/searchBooks")}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-noto-sans px-6 py-2 rounded-lg transition-colors"
+              >
+                📖 書籍を検索
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* 編集モーダル */}
+        {showEditModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-[#faf8f3] rounded-xl shadow-lg border border-[#e8e2d4] p-8 w-[90vw] max-w-5xl max-h-[80vh] overflow-hidden">
+              <h3 className="font-noto-sans text-xl font-semibold text-[#2d3436] mb-6">
+                ✏️ 書籍情報編集
+              </h3>
+              
+              <div className="overflow-auto max-h-[50vh] mb-6">
+                <table className="w-full border-collapse">
+                  <thead className="bg-white sticky top-0">
+                    <tr>
+                      <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">ISBN</th>
+                      <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">書籍名</th>
+                      <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">著者</th>
+                      <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">読み始めた日</th>
+                      <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">読了日</th>
+                      <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">優先度</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {editableBooks.map((book, index) => (
+                      <tr key={index} className="bg-white">
+                        <td className="border border-[#c8d1d3] p-3 font-noto-sans text-[#5d6d7e] text-sm">{book.isbn}</td>
+                        <td className="border border-[#c8d1d3] p-3 font-noto-sans text-[#2d3436]">{book.bookName}</td>
+                        <td className="border border-[#c8d1d3] p-3 font-noto-sans text-[#5d6d7e]">{book.author}</td>
+                        <td className="border border-[#c8d1d3] p-3">
+                          <input
+                            type="date"
+                            value={book.startDate || ""}
+                            onChange={(e) =>
+                              setEditableBooks((prev) =>
+                                prev.map((b, i) =>
+                                  i === index ? { ...b, startDate: e.target.value } : b
+                                )
+                              )
+                            }
+                            className="w-full border border-[#c8d1d3] focus:border-[#2d3436] rounded-lg px-3 py-2 font-noto-sans outline-none transition-colors bg-white"
+                          />
+                        </td>
+                        <td className="border border-[#c8d1d3] p-3">
+                          <input
+                            type="date"
+                            value={book.endDate || ""}
+                            onChange={(e) =>
+                              setEditableBooks((prev) =>
+                                prev.map((b, i) =>
+                                  i === index ? { ...b, endDate: e.target.value } : b
+                                )
+                              )
+                            }
+                            className="w-full border border-[#c8d1d3] focus:border-[#2d3436] rounded-lg px-3 py-2 font-noto-sans outline-none transition-colors bg-white"
+                          />
+                        </td>
+                        <td className="border border-[#c8d1d3] p-3">
+                          <select
+                            value={book.priority}
+                            onChange={(e) =>
+                              setEditableBooks((prev) =>
+                                prev.map((b, i) =>
+                                  i === index ? { ...b, priority: parseInt(e.target.value) } : b
+                                )
+                              )
+                            }
+                            className="w-full border border-[#c8d1d3] focus:border-[#2d3436] rounded-lg px-3 py-2 font-noto-sans outline-none transition-colors bg-white"
+                          >
+                            <option value={1}>🔥 すぐ読みたい本</option>
+                            <option value={2}>📚 今後読みたい本</option>
+                            <option value={3}>✅ 読んだことのある本</option>
+                            <option value={0}>❓ 未分類</option>
+                          </select>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-end">
+                <button
+                  onClick={() => setShowEditModal(false)}
+                  className="bg-gray-600 hover:bg-gray-700 text-white font-noto-sans px-6 py-3 rounded-lg transition-colors"
+                >
+                  ❌ キャンセル
+                </button>
+                <button
+                  onClick={handleEdit}
+                  className="bg-blue-600 hover:bg-blue-700 text-white font-noto-sans px-6 py-3 rounded-lg transition-colors"
+                >
+                  💾 保存する
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 削除確認モーダル */}
+        {showDeleteModal && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="bg-[#faf8f3] rounded-xl shadow-lg border border-[#e8e2d4] p-8 w-[90vw] max-w-4xl max-h-[80vh] overflow-hidden">
+              <h3 className="font-noto-sans text-xl font-semibold text-[#2d3436] mb-6">
+                🗑️ 登録解除確認
+              </h3>
+              
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+                <p className="text-red-800 font-noto-sans">
+                  ⚠️ 以下の {selectedBooks.length} 冊の書籍を登録解除します。この操作は取り消せません。
+                </p>
+              </div>
+
+              <div className="overflow-auto max-h-[40vh] mb-6">
+                <table className="w-full border-collapse">
+                  <thead className="bg-white sticky top-0">
+                    <tr>
+                      <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">ISBN</th>
+                      <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">書籍名</th>
+                      <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">著者</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedBooks.map((isbn) => {
+                      const book = books.find((b) => b.isbn === isbn);
+                      return (
+                        <tr key={isbn} className="bg-white">
+                          <td className="border border-[#c8d1d3] p-3 font-noto-sans text-[#5d6d7e] text-sm">{book?.isbn}</td>
+                          <td className="border border-[#c8d1d3] p-3 font-noto-sans text-[#2d3436]">{book?.bookName}</td>
+                          <td className="border border-[#c8d1d3] p-3 font-noto-sans text-[#5d6d7e]">{book?.author}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              
+              <div className="flex flex-col sm:flex-row gap-4 justify-end">
+                <button
+                  onClick={() => setShowDeleteModal(false)}
+                  className="bg-gray-600 hover:bg-gray-700 text-white font-noto-sans px-6 py-3 rounded-lg transition-colors"
+                >
+                  ❌ キャンセル
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="bg-red-600 hover:bg-red-700 text-white font-noto-sans px-6 py-3 rounded-lg transition-colors"
+                >
+                  🗑️ 登録解除する
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

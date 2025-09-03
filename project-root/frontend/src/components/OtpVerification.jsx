@@ -27,7 +27,7 @@ function OtpVerification() {
   // メールアドレスがない場合は登録画面にリダイレクト
   useEffect(() => {
     if (!email) {
-      navigate('/userRegistration');
+      navigate('/register');
     }
   }, [email, navigate]);
 
@@ -128,7 +128,7 @@ function OtpVerification() {
 
   // 戻る処理
   const handleBack = () => {
-    navigate('/userRegistration');
+    navigate('/register');
   };
 
   // OTP入力フィールドの数字のみ制限
