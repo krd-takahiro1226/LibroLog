@@ -140,31 +140,33 @@ function OtpVerification() {
   };
 
   return (
-    <div className="h-screen w-screen flex items-center justify-center bg-[#f4f1ee]">
-      <div className="flex w-full max-w-4xl bg-white rounded-lg shadow-lg overflow-hidden">
-        {/* 左側のロゴ部分 */}
-        <div className="flex-1 flex flex-col items-center justify-center p-12 bg-[#e6eaeb]">
-          <img
-            src="/images/LibroLogIcon.jpg"
-            alt="LibroLogアイコン"
-            className="w-48 h-48 mb-4"
-          />
-          <h2 className="text-3xl font-crimson-text text-[#2d3436] mb-2">
-            Libro Log
-          </h2>
-          <p className="text-[#505e61] font-noto-sans text-center">
-            認証コードを確認してください
-          </p>
-        </div>
+    <div className="min-h-screen w-screen bg-[#f4f1e8] p-8">
+      <div className="max-w-4xl mx-auto">
+        {/* 統一ヘッダー */}
+        <header className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-noto-sans text-[#2d3436]">📚 Libro Log</h1>
+            <p className="text-[#5d6d7e] font-noto-sans mt-1">認証コードを確認してください</p>
+          </div>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={handleBack}
+              className="bg-gray-600 hover:bg-gray-700 text-white font-noto-sans py-2 px-4 rounded-lg transition-colors"
+            >
+              登録画面に戻る
+            </button>
+          </div>
+        </header>
 
-        {/* 右側のフォーム部分 */}
-        <div className="flex-1 p-12">
-          <h1 className="text-2xl font-noto-sans text-[#2d3436] mb-8">
+        {/* メインコンテンツ */}
+        <div className="bg-[#faf8f3] rounded-xl shadow-md border border-[#e8e2d4] p-8 max-w-md mx-auto">
+          <h2 className="text-xl font-noto-sans text-[#2d3436] mb-6 text-center">
             認証コード入力
-          </h1>
+          </h2>
 
           <div className="mb-6">
-            <p className="text-sm text-[#505e61] font-noto-sans mb-2">
+            <p className="text-sm text-[#5d6d7e] font-noto-sans mb-2">
               以下のメールアドレスに認証コードを送信しました：
             </p>
             <p className="text-[#2d3436] font-noto-sans font-semibold break-all">
@@ -174,7 +176,7 @@ function OtpVerification() {
 
           <form onSubmit={handleVerify} className="space-y-6">
             <div>
-              <label className="block text-sm font-noto-sans text-[#505e61] mb-2">
+              <label className="block text-[#2d3436] font-noto-sans font-medium mb-2">
                 認証コード（6桁）
               </label>
               <input
@@ -182,42 +184,45 @@ function OtpVerification() {
                 value={otp}
                 onChange={handleOtpChange}
                 placeholder="000000"
-                className="w-full px-4 py-3 border border-[#c8d1d3] rounded-lg focus:outline-none focus:border-[#2d3436] text-center text-2xl font-mono tracking-widest"
+                className="w-full border border-[#c8d1d3] focus:border-[#2d3436] rounded-lg px-4 py-3 font-noto-sans outline-none transition-colors bg-white text-center text-2xl font-mono tracking-widest"
                 maxLength={6}
                 required
               />
+              <p className="text-[#5d6d7e] font-noto-sans text-sm mt-1">
+                6桁の数字を入力してください
+              </p>
             </div>
 
             {/* エラーメッセージ */}
             {errorMessage && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-                {errorMessage}
+              <div className="bg-red-50 border border-red-200 rounded-xl p-6">
+                <p className="text-red-600 font-noto-sans">{errorMessage}</p>
               </div>
             )}
 
             {/* 成功メッセージ */}
             {successMessage && (
-              <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
-                {successMessage}
+              <div className="bg-green-50 border border-green-200 rounded-xl p-6">
+                <p className="text-green-600 font-noto-sans">{successMessage}</p>
               </div>
             )}
 
             <button
               type="submit"
               disabled={loading || otp.length !== 6}
-              className="w-full bg-[#2d3436] text-white font-noto-sans py-3 px-4 rounded-lg hover:bg-[#1e2527] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-noto-sans py-3 px-6 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               {loading ? '認証中...' : '認証する'}
             </button>
           </form>
 
-          {/* 再送・戻るボタン */}
-          <div className="mt-6 space-y-3">
+          {/* 再送ボタン */}
+          <div className="mt-6">
             <button
               type="button"
               onClick={handleResend}
               disabled={resendLoading || resendCooldown > 0}
-              className="w-full bg-[#4a90e2] text-white font-noto-sans py-2 px-4 rounded-lg hover:bg-[#357abd] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white font-noto-sans py-2 px-4 rounded-lg transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               {resendLoading
                 ? '再送中...'
@@ -225,18 +230,10 @@ function OtpVerification() {
                   ? `再送可能まで ${resendCooldown}秒`
                   : '認証コードを再送'}
             </button>
-
-            <button
-              type="button"
-              onClick={handleBack}
-              className="w-full bg-gray-200 text-gray-700 font-noto-sans py-2 px-4 rounded-lg hover:bg-gray-300 transition-colors"
-            >
-              登録画面に戻る
-            </button>
           </div>
 
           <div className="mt-6 text-center">
-            <p className="text-xs text-[#505e61] font-noto-sans">
+            <p className="text-xs text-[#5d6d7e] font-noto-sans">
               認証コードの有効期限は10分間です。<br />
               受信されない場合は、迷惑メールフォルダをご確認ください。
             </p>
