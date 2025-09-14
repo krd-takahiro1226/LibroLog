@@ -31,16 +31,19 @@ public interface BookRecordsRepository
                         + "book_records where ISBN = :ISBN", nativeQuery = true)
         List<BookRecords> getBookRecordsByISBN(@Param("ISBN") String ISBN);
 
-        @Query(value = "select br.ISBN, br.book_name, br.author, br.genre, br.publication_year, br.publisher from "
+        @Query(value = "select br.ISBN, br.book_name, br.author, br.genre, br.publication_year, br.publisher, br.image_url from "
                         + "book_records br JOIN reading_records rr ON br.ISBN = rr.ISBN where rr.goal_id = :goal_id", nativeQuery = true)
         List<BookRecords> getBookRecordsByISBNAndGoalId(
                         @Param("goal_id") String goalId);
 
-        @Query(value = "SELECT rbr.ISBN as isbn, br.book_name as bookName, br.author as author, " +
-                       "rbr.start_date as startDate, rbr.end_date as endDate, rbr.priority as priority " +
-                       "FROM register_book_records rbr " +
-                       "JOIN book_records br ON rbr.ISBN = br.ISBN " +
-                       "WHERE rbr.user_id = :userId " +
-                       "ORDER BY rbr.start_date DESC", nativeQuery = true)
-        List<Map<String, Object>> getRecordsForCsvExport(@Param("userId") String userId);
+        @Query(value = "SELECT rbr.ISBN as isbn, br.book_name as bookName, br.author as author, "
+                        +
+                        "rbr.start_date as startDate, rbr.end_date as endDate, rbr.priority as priority "
+                        +
+                        "FROM register_book_records rbr " +
+                        "JOIN book_records br ON rbr.ISBN = br.ISBN " +
+                        "WHERE rbr.user_id = :userId " +
+                        "ORDER BY rbr.start_date DESC", nativeQuery = true)
+        List<Map<String, Object>> getRecordsForCsvExport(
+                        @Param("userId") String userId);
 }
