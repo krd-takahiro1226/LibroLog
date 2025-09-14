@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS book_records (
     author VARCHAR(100) NOT NULL,
     genre VARCHAR(20),
     publication_year DATE,
-    publisher VARCHAR(100)
+    publisher VARCHAR(100),
+    image_url VARCHAR(500)
 );
 CREATE TABLE IF NOT EXISTS register_book_records (
     record_id INT AUTO_INCREMENT PRIMARY KEY,
