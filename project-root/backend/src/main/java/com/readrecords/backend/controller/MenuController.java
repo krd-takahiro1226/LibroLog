@@ -52,23 +52,6 @@ public class MenuController {
     return ResponseEntity.ok("searchBooks endpoint");
   }
 
-  @GetMapping("/showAchievements")
-  public ResponseEntity<?> showReadingAchievementsWindow(
-      Authentication authentication) {
-    String userId = getUserId(authentication);
-    try {
-      ReadingAchievementsDto userReadingAchievements = readingAchievementsService
-          .getReadAchievementsByUserId(userId);
-      logger.info("実績情報: {}", userReadingAchievements);
-      return ResponseEntity.ok(userReadingAchievements);
-
-    } catch (Exception e) {
-      logger.error("Error fetching records", e);
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("Error fetching records");
-    }
-  }
-
   @GetMapping("/showSettingAchievements")
   public ResponseEntity<?> showSettingReadingAchievementsWindow(
       Authentication authentication) {

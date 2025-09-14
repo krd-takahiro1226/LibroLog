@@ -307,7 +307,7 @@ function AchievementsSettings() {
     const monthlyGoal = currentGoals.monthlyGoal || 0;
     const readBooks = monthlyAchievement.targetBooks.length; // 実際に読んだ冊数はTargetBooksの長さ
     const progress = calculateProgress(readBooks, monthlyGoal);
-    
+
     return {
       read: readBooks, // TargetBooksの配列の長さ
       goal: monthlyGoal, // BookCount（目標冊数）
@@ -321,7 +321,7 @@ function AchievementsSettings() {
     const yearlyGoal = currentGoals.yearlyGoal || 0;
     const readBooks = yearlyAchievement.targetBooks.length; // 実際に読んだ冊数はTargetBooksの長さ
     const progress = calculateProgress(readBooks, yearlyGoal);
-    
+
     return {
       read: readBooks, // TargetBooksの配列の長さ
       goal: yearlyGoal, // BookCount（目標冊数）
