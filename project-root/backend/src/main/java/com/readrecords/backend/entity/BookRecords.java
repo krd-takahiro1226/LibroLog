@@ -16,4 +16,5 @@ public class BookRecords {
   private String genre;
   private String publicationYear;
   private String publisher;
+  private String imageUrl;
 }

@@ -173,23 +173,23 @@ function ShowRecords() {
           responseType: 'blob', // CSVファイルをblobとして受信
         }
       );
-      
+
       // CSVファイルのダウンロード処理
       const blob = new Blob([response.data], { type: 'text/csv;charset=utf-8;' });
       const link = document.createElement("a");
       const url = URL.createObjectURL(blob);
       link.setAttribute("href", url);
-      
+
       // ファイル名を現在の日時で設定
       const now = new Date();
       const timestamp = now.toISOString().slice(0, 19).replace(/[:-]/g, '');
       link.setAttribute("download", `登録書籍一覧_${timestamp}.csv`);
-      
+
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
-      
+
     } catch (error) {
       console.error("CSV出力エラー:", error);
       if (error.response?.status === 401) {
@@ -227,6 +227,23 @@ function ShowRecords() {
       default:
         return "bg-gray-100 text-gray-800 border border-gray-200";
     }
+  };
+
+  // 書籍画像の表示
+  const renderBookImage = (book) => {
+    const imageUrl = book.imageUrl || "/images/default-book.svg";
+    return (
+      <div className="cursor-pointer hover:opacity-80 transition-opacity" title="将来的にアフィリエイトリンクになる予定">
+        <img
+          src={imageUrl}
+          alt={book.bookName}
+          className="w-30 h-30 object-cover rounded-lg border border-[#e8e2d4] shadow-sm"
+          onError={(e) => {
+            e.target.src = "/images/default-book.svg";
+          }}
+        />
+      </div>
+    );
   };
 
   if (loading) {
@@ -338,6 +355,7 @@ function ShowRecords() {
                         className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                       />
                     </th>
+                    <th className="text-left p-4 font-noto-sans font-medium text-[#2d3436]">画像</th>
                     <th className="text-left p-4 font-noto-sans font-medium text-[#2d3436]">ISBN</th>
                     <th className="text-left p-4 font-noto-sans font-medium text-[#2d3436]">書籍名</th>
                     <th className="text-left p-4 font-noto-sans font-medium text-[#2d3436]">著者</th>
@@ -348,11 +366,10 @@ function ShowRecords() {
                 </thead>
                 <tbody>
                   {books.map((book, index) => (
-                    <tr 
-                      key={index} 
-                      className={`border-b border-[#e8d1d3] hover:bg-white transition-colors ${
-                        selectedBooks.includes(book.isbn) ? 'bg-blue-50' : ''
-                      }`}
+                    <tr
+                      key={index}
+                      className={`border-b border-[#e8d1d3] hover:bg-white transition-colors ${selectedBooks.includes(book.isbn) ? 'bg-blue-50' : ''
+                        }`}
                     >
                       <td className="p-4">
                         <input
@@ -361,6 +378,9 @@ function ShowRecords() {
                           onChange={() => handleCheckboxChange(book.isbn)}
                           className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
                         />
+                      </td>
+                      <td className="p-4">
+                        {renderBookImage(book)}
                       </td>
                       <td className="p-4 font-noto-sans text-[#5d6d7e] text-sm">{book.isbn}</td>
                       <td className="p-4 font-noto-sans text-[#2d3436] font-medium">{book.bookName}</td>
@@ -401,11 +421,12 @@ function ShowRecords() {
               <h3 className="font-noto-sans text-xl font-semibold text-[#2d3436] mb-6">
                 ✏️ 書籍情報編集
               </h3>
-              
+
               <div className="overflow-auto max-h-[50vh] mb-6">
                 <table className="w-full border-collapse">
                   <thead className="bg-white sticky top-0">
                     <tr>
+                      <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">画像</th>
                       <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">ISBN</th>
                       <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">書籍名</th>
                       <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">著者</th>
@@ -417,6 +438,18 @@ function ShowRecords() {
                   <tbody>
                     {editableBooks.map((book, index) => (
                       <tr key={index} className="bg-white">
+                        <td className="border border-[#c8d1d3] p-3">
+                          <div className="w-20 h-20">
+                            <img
+                              src={book.imageUrl || "/images/default-book.svg"}
+                              alt={book.bookName}
+                              className="w-full h-full object-cover rounded border"
+                              onError={(e) => {
+                                e.target.src = "/images/default-book.svg";
+                              }}
+                            />
+                          </div>
+                        </td>
                         <td className="border border-[#c8d1d3] p-3 font-noto-sans text-[#5d6d7e] text-sm">{book.isbn}</td>
                         <td className="border border-[#c8d1d3] p-3 font-noto-sans text-[#2d3436]">{book.bookName}</td>
                         <td className="border border-[#c8d1d3] p-3 font-noto-sans text-[#5d6d7e]">{book.author}</td>
@@ -471,7 +504,7 @@ function ShowRecords() {
                   </tbody>
                 </table>
               </div>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-end">
                 <button
                   onClick={() => setShowEditModal(false)}
@@ -497,7 +530,7 @@ function ShowRecords() {
               <h3 className="font-noto-sans text-xl font-semibold text-[#2d3436] mb-6">
                 🗑️ 登録解除確認
               </h3>
-              
+
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
                 <p className="text-red-800 font-noto-sans">
                   ⚠️ 以下の {selectedBooks.length} 冊の書籍を登録解除します。この操作は取り消せません。
@@ -508,6 +541,7 @@ function ShowRecords() {
                 <table className="w-full border-collapse">
                   <thead className="bg-white sticky top-0">
                     <tr>
+                      <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">画像</th>
                       <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">ISBN</th>
                       <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">書籍名</th>
                       <th className="border border-[#c8d1d3] p-3 text-left font-noto-sans text-[#2d3436]">著者</th>
@@ -518,6 +552,18 @@ function ShowRecords() {
                       const book = books.find((b) => b.isbn === isbn);
                       return (
                         <tr key={isbn} className="bg-white">
+                          <td className="border border-[#c8d1d3] p-3">
+                            <div className="w-20 h-20">
+                              <img
+                                src={book?.imageUrl || "/images/default-book.svg"}
+                                alt={book?.bookName}
+                                className="w-full h-full object-cover rounded border"
+                                onError={(e) => {
+                                  e.target.src = "/images/default-book.svg";
+                                }}
+                              />
+                            </div>
+                          </td>
                           <td className="border border-[#c8d1d3] p-3 font-noto-sans text-[#5d6d7e] text-sm">{book?.isbn}</td>
                           <td className="border border-[#c8d1d3] p-3 font-noto-sans text-[#2d3436]">{book?.bookName}</td>
                           <td className="border border-[#c8d1d3] p-3 font-noto-sans text-[#5d6d7e]">{book?.author}</td>
@@ -527,7 +573,7 @@ function ShowRecords() {
                   </tbody>
                 </table>
               </div>
-              
+
               <div className="flex flex-col sm:flex-row gap-4 justify-end">
                 <button
                   onClick={() => setShowDeleteModal(false)}
