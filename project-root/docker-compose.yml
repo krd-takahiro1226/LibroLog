@@ -16,6 +16,15 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/BooksManagement
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
+      # メール送信方式
+      MAIL_EXTERNAL_ENABLED: "true"
+      MAILJET_API_KEY: "002898db257259df4509faf9b7752cb0"
+      MAILJET_API_SECRET: "005cab1a33784797d74efb15ba89d3f4"
+      MAIL_FROM_EMAIL: "system-sender@librolog.com"
+      MAIL_FROM_NAME: "Libro Log"
+      # Java エンコーディング設定
+      JAVA_TOOL_OPTIONS: "-Dfile.encoding=UTF-8 -Dmail.mime.charset=UTF-8 -Dspring.messages.encoding=UTF-8"
+      LANG: ja_JP.UTF-8
 
     networks:
       - app-network
@@ -60,6 +69,8 @@ services:
       MP_DATABASE: /data/mailpit.db
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
+      LANG: ja_JP.UTF-8
+      LC_ALL: ja_JP.UTF-8
     networks:
       - app-network
 
