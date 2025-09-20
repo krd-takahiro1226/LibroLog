@@ -28,13 +28,6 @@ function Menu() {
       color: "bg-blue-600 hover:bg-blue-700"
     },
     {
-      title: "読書履歴",
-      description: "過去の読書記録を確認",
-      icon: "🕒",
-      path: "/achievements",
-      color: "bg-blue-600 hover:bg-blue-700"
-    },
-    {
       title: "読書目標設定",
       description: "読書目標の確認と設定",
       icon: "📖",

@@ -22,13 +22,14 @@ public class BookRecordsService {
       String author,
       String genre,
       String publication_year,
-      String publisher) {
+      String publisher,
+      String image_url) {
     List<BookRecords> bookRecords = bookRecordsRepository
         .getBookRecordsByISBN(ISBN);
     if (bookRecords.isEmpty()) {
       // 登録されていなければ、書籍情報を登録、登録されていれば何もしない
       bookRecordsRepository.insertBookRecords(
-          ISBN, book_name, author, genre, publication_year, publisher);
+          ISBN, book_name, author, genre, publication_year, publisher, image_url);
     }
   }
 }

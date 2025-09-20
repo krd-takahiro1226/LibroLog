@@ -64,6 +64,7 @@ public class BookSearchApiController {
     String genre = (String) requestData.get("size");
     String publicationYear = (String) requestData.get("salesDate");
     String publisher = (String) requestData.get("publisherName");
+    String imageUrl = (String) requestData.get("mediumImageUrl");
     int priority = (int) requestData.get("selectedOption");
     // 登録成功可否
     String registerStatus;
@@ -85,7 +86,7 @@ public class BookSearchApiController {
         publisher);
     // 書籍情報の登録
     registerBoookRecords(ISBN, bookName, author, genre, convertPublicationYear,
-        publisher);
+        publisher, imageUrl);
     // 読書情報の登録
     registerStatus = registerReadRecords(userId, ISBN, date, date, 1, priority,
         null);
@@ -105,7 +106,8 @@ public class BookSearchApiController {
       String author,
       String genre,
       String publicationYear,
-      String publisher) {
+      String publisher,
+      String imageUrl) {
     BookRecords bookRecords = new BookRecords();
     bookRecords.setISBN(ISBN);
     bookRecords.setBookName(bookName);
@@ -113,6 +115,7 @@ public class BookSearchApiController {
     bookRecords.setGenre(genre);
     bookRecords.setPublicationYear(publicationYear);
     bookRecords.setPublisher(publisher);
+    bookRecords.setImageUrl(imageUrl);
 
     bookRecordsService.registerBookRecords(
         bookRecords.getISBN(),
@@ -120,7 +123,8 @@ public class BookSearchApiController {
         bookRecords.getAuthor(),
         bookRecords.getGenre(),
         bookRecords.getPublicationYear().toString(),
-        bookRecords.getPublisher());
+        bookRecords.getPublisher(),
+        bookRecords.getImageUrl());
   }
 
   private String registerReadRecords(

@@ -27,9 +27,10 @@ import lombok.Data;
     @ColumnResult(name = "end_date", type = Date.class),
     @ColumnResult(name = "read_count", type = Integer.class),
     @ColumnResult(name = "priority", type = Integer.class),
-    @ColumnResult(name = "memo", type = String.class)
+    @ColumnResult(name = "memo", type = String.class),
+    @ColumnResult(name = "image_url", type = String.class)
 }))
-@NamedNativeQuery(name = "UserReadRecordsDto.getReadRecordsByUserId", query = "select br.ISBN, br.book_name, br.author, rr.start_date, rr.end_date, rr.read_count, rr.priority, rr.memo "
+@NamedNativeQuery(name = "UserReadRecordsDto.getReadRecordsByUserId", query = "select br.ISBN, br.book_name, br.author, rr.start_date, rr.end_date, rr.read_count, rr.priority, rr.memo, br.image_url "
     + "from book_records br "
     + "inner join register_book_records rr on br.ISBN = rr.ISBN "
     + "where rr.user_id = :user_id", resultSetMapping = "UserReadRecordsDtoMapping")

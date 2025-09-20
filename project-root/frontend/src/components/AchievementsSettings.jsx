@@ -58,15 +58,13 @@ function AchievementsSettings() {
     yearlyGoal: ""
   });
   const [achievements, setAchievements] = useState({
-    currentMonth: {
-      read: 0,
-      goal: 0,
-      percentage: 0
+    monthlyGoal: {
+      bookCount: 0,
+      targetBooks: []
     },
-    currentYear: {
-      read: 0,
-      goal: 0,
-      percentage: 0
+    yearlyGoal: {
+      bookCount: 0,
+      targetBooks: []
     }
   });
   const [showModal, setShowModal] = useState(false);
@@ -125,8 +123,9 @@ function AchievementsSettings() {
       });
 
       if (response.data) {
-        const monthlyGoal = response.data.monthlyGoal || 0;
-        const yearlyGoal = response.data.yearlyGoal || 0;
+        // バックエンドのレスポンス構造に合わせて修正
+        const monthlyGoal = response.data.MonthlyGoal?.BookCount || 0;
+        const yearlyGoal = response.data.YearlyGoal?.BookCount || 0;
 
         setCurrentGoals({
           monthlyGoal: monthlyGoal,
@@ -135,6 +134,18 @@ function AchievementsSettings() {
         setNewGoals({
           monthlyGoal: monthlyGoal.toString(),
           yearlyGoal: yearlyGoal.toString()
+        });
+
+        // 達成状況データも同時に設定
+        setAchievements({
+          monthlyGoal: {
+            bookCount: response.data.MonthlyGoal?.BookCount || 0, // 目標冊数
+            targetBooks: response.data.MonthlyGoal?.TargetBooks || []
+          },
+          yearlyGoal: {
+            bookCount: response.data.YearlyGoal?.BookCount || 0, // 目標冊数
+            targetBooks: response.data.YearlyGoal?.TargetBooks || []
+          }
         });
       }
     } catch (error) {
@@ -150,35 +161,9 @@ function AchievementsSettings() {
 
   // 達成状況を取得
   const fetchAchievements = async () => {
-    try {
-      const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/showSettingAchievements`, {
-        headers: getAuthHeaders()
-      });
-
-      if (response.data) {
-        // APIレスポンスの構造を確認し、安全にデータを設定
-        setAchievements({
-          currentMonth: {
-            read: response.data.currentMonth?.read || 0,
-            goal: response.data.currentMonth?.goal || 0,
-            percentage: response.data.currentMonth?.percentage || 0
-          },
-          currentYear: {
-            read: response.data.currentYear?.read || 0,
-            goal: response.data.currentYear?.goal || 0,
-            percentage: response.data.currentYear?.percentage || 0
-          }
-        });
-      }
-    } catch (error) {
-      console.error("達成状況取得エラー:", error);
-      if (error.response?.status === 401) {
-        localStorage.removeItem('token');
-        navigate("/login");
-      } else {
-        setError("達成状況データの取得に失敗しました");
-      }
-    }
+    // fetchCurrentGoalsで同時に処理するため、この関数は不要になりました
+    // しかし、他の部分で呼び出されているため、空の関数として残します
+    return Promise.resolve();
   };
 
   // 目標を保存
@@ -201,12 +186,17 @@ function AchievementsSettings() {
 
     setLoading(true);
     try {
+      // バックエンドが期待するパラメータ形式に修正
+      const params = new URLSearchParams({
+        monthlyGoalReadNumber: monthlyGoal.toString(),
+        yearlyGoalReadNumber: yearlyGoal.toString(),
+        isMonthlySet: (currentGoals.monthlyGoal > 0).toString(),
+        isYearlySet: (currentGoals.yearlyGoal > 0).toString()
+      });
+
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/setReadingGoals`,
-        {
-          monthlyGoal: monthlyGoal,
-          yearlyGoal: yearlyGoal
-        },
+        `${process.env.REACT_APP_BACKEND_URL}/setReadingGoals?${params.toString()}`,
+        null, // bodyは空
         { headers: getAuthHeaders() }
       );
 
@@ -216,7 +206,7 @@ function AchievementsSettings() {
           monthlyGoal: monthlyGoal,
           yearlyGoal: yearlyGoal
         });
-        await fetchAchievements(); // 達成状況を再取得
+        await fetchCurrentGoals(); // データを再取得
       }
     } catch (error) {
       console.error("目標保存エラー:", error);
@@ -237,6 +227,12 @@ function AchievementsSettings() {
       monthlyGoal: currentGoals.monthlyGoal.toString() || "",
       yearlyGoal: currentGoals.yearlyGoal.toString() || ""
     });
+  };
+
+  // 進捗率を計算する関数
+  const calculateProgress = (current, target) => {
+    if (target === 0) return 0;
+    return Math.min((current / target) * 100, 100);
   };
 
   // 進捗率の表示色を取得
@@ -306,12 +302,36 @@ function AchievementsSettings() {
   }
 
   // 安全なデータアクセスのためのヘルパー関数
-  const safeGetAchievement = (period) => {
-    return achievements?.[period] || { read: 0, goal: 0, percentage: 0 };
+  const getMonthlyData = () => {
+    const monthlyAchievement = achievements?.monthlyGoal || { bookCount: 0, targetBooks: [] };
+    const monthlyGoal = currentGoals.monthlyGoal || 0;
+    const readBooks = monthlyAchievement.targetBooks.length; // 実際に読んだ冊数はTargetBooksの長さ
+    const progress = calculateProgress(readBooks, monthlyGoal);
+
+    return {
+      read: readBooks, // TargetBooksの配列の長さ
+      goal: monthlyGoal, // BookCount（目標冊数）
+      percentage: progress,
+      targetBooks: monthlyAchievement.targetBooks
+    };
   };
 
-  const monthlyAchievement = safeGetAchievement('currentMonth');
-  const yearlyAchievement = safeGetAchievement('currentYear');
+  const getYearlyData = () => {
+    const yearlyAchievement = achievements?.yearlyGoal || { bookCount: 0, targetBooks: [] };
+    const yearlyGoal = currentGoals.yearlyGoal || 0;
+    const readBooks = yearlyAchievement.targetBooks.length; // 実際に読んだ冊数はTargetBooksの長さ
+    const progress = calculateProgress(readBooks, yearlyGoal);
+
+    return {
+      read: readBooks, // TargetBooksの配列の長さ
+      goal: yearlyGoal, // BookCount（目標冊数）
+      percentage: progress,
+      targetBooks: yearlyAchievement.targetBooks
+    };
+  };
+
+  const monthlyData = getMonthlyData();
+  const yearlyData = getYearlyData();
 
   return (
     <div className="min-h-screen w-screen bg-[#f4f1e8] p-8">
@@ -342,25 +362,49 @@ function AchievementsSettings() {
                   📅 {getCurrentMonthName()}の目標
                 </h3>
                 <span className="text-[#5d6d7e] font-noto-sans text-sm">
-                  {monthlyAchievement.read} / {monthlyAchievement.goal} 冊
+                  {monthlyData.read} / {monthlyData.goal} 冊
                 </span>
               </div>
 
               <div className="bg-gray-200 rounded-full h-4 mb-2 overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 ${getProgressColor(monthlyAchievement.percentage)}`}
-                  style={{ width: `${Math.min(monthlyAchievement.percentage, 100)}%` }}
+                  className={`h-full rounded-full transition-all duration-500 ${getProgressColor(monthlyData.percentage)}`}
+                  style={{ width: `${Math.min(monthlyData.percentage, 100)}%` }}
                 ></div>
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-3">
                 <span className="text-[#5d6d7e] font-noto-sans text-sm">
-                  {monthlyAchievement.percentage.toFixed(1)}% 達成
+                  {monthlyData.percentage.toFixed(1)}% 達成
                 </span>
                 <span className="text-[#5d6d7e] font-noto-sans text-xs">
-                  {getProgressMessage(monthlyAchievement.percentage)}
+                  {getProgressMessage(monthlyData.percentage)}
                 </span>
               </div>
+
+              {/* 月間目標の書籍一覧 */}
+              {monthlyData.targetBooks && monthlyData.targetBooks.length > 0 && (
+                <div className="mt-3">
+                  <h4 className="font-noto-sans text-sm font-medium text-[#2d3436] mb-2">登録済み書籍:</h4>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {monthlyData.targetBooks.map((book, index) => (
+                      <div key={index} className="bg-white border border-[#c8d1d3] rounded-lg p-2">
+                        <div className="text-[#2d3436] font-noto-sans text-sm font-medium truncate">
+                          📖 {book.bookName}
+                        </div>
+                        <div className="text-[#5d6d7e] font-noto-sans text-xs">
+                          著者: {book.author}
+                        </div>
+                        {book.isbn && (
+                          <div className="text-[#5d6d7e] font-noto-sans text-xs">
+                            ISBN: {book.isbn}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* 年間目標 */}
@@ -370,25 +414,49 @@ function AchievementsSettings() {
                   📆 {new Date().getFullYear()}年の目標
                 </h3>
                 <span className="text-[#5d6d7e] font-noto-sans text-sm">
-                  {yearlyAchievement.read} / {yearlyAchievement.goal} 冊
+                  {yearlyData.read} / {yearlyData.goal} 冊
                 </span>
               </div>
 
               <div className="bg-gray-200 rounded-full h-4 mb-2 overflow-hidden">
                 <div
-                  className={`h-full rounded-full transition-all duration-500 ${getProgressColor(yearlyAchievement.percentage)}`}
-                  style={{ width: `${Math.min(yearlyAchievement.percentage, 100)}%` }}
+                  className={`h-full rounded-full transition-all duration-500 ${getProgressColor(yearlyData.percentage)}`}
+                  style={{ width: `${Math.min(yearlyData.percentage, 100)}%` }}
                 ></div>
               </div>
 
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-3">
                 <span className="text-[#5d6d7e] font-noto-sans text-sm">
-                  {yearlyAchievement.percentage.toFixed(1)}% 達成
+                  {yearlyData.percentage.toFixed(1)}% 達成
                 </span>
                 <span className="text-[#5d6d7e] font-noto-sans text-xs">
-                  {getProgressMessage(yearlyAchievement.percentage)}
+                  {getProgressMessage(yearlyData.percentage)}
                 </span>
               </div>
+
+              {/* 年間目標の書籍一覧 */}
+              {yearlyData.targetBooks && yearlyData.targetBooks.length > 0 && (
+                <div className="mt-3">
+                  <h4 className="font-noto-sans text-sm font-medium text-[#2d3436] mb-2">登録済み書籍:</h4>
+                  <div className="space-y-2 max-h-40 overflow-y-auto">
+                    {yearlyData.targetBooks.map((book, index) => (
+                      <div key={index} className="bg-white border border-[#c8d1d3] rounded-lg p-2">
+                        <div className="text-[#2d3436] font-noto-sans text-sm font-medium truncate">
+                          📖 {book.bookName}
+                        </div>
+                        <div className="text-[#5d6d7e] font-noto-sans text-xs">
+                          著者: {book.author}
+                        </div>
+                        {book.isbn && (
+                          <div className="text-[#5d6d7e] font-noto-sans text-xs">
+                            ISBN: {book.isbn}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -475,12 +543,6 @@ function AchievementsSettings() {
             </h3>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => navigate("/reading-record")}
-                className="bg-green-600 hover:bg-green-700 text-white font-noto-sans px-6 py-3 rounded-lg transition-colors"
-              >
-                📝 新しい読書記録を作成
-              </button>
-              <button
                 onClick={() => navigate("/searchBooks")}
                 className="bg-blue-600 hover:bg-blue-700 text-white font-noto-sans px-6 py-3 rounded-lg transition-colors"
               >
@@ -494,26 +556,89 @@ function AchievementsSettings() {
         <div className="bg-[#faf8f3] rounded-xl shadow-md border border-[#e8e2d4] p-6 mt-6">
           <h3 className="font-noto-sans text-lg font-medium text-[#2d3436] mb-4">📈 統計情報</h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             <div className="bg-white border border-[#c8d1d3] rounded-lg p-4 text-center">
               <div className="text-2xl text-[#2d3436] font-noto-sans font-bold">
-                {monthlyAchievement.read}
+                {monthlyData.read}
               </div>
               <div className="text-[#5d6d7e] font-noto-sans text-sm">今月読了</div>
             </div>
 
             <div className="bg-white border border-[#c8d1d3] rounded-lg p-4 text-center">
               <div className="text-2xl text-[#2d3436] font-noto-sans font-bold">
-                {yearlyAchievement.read}
+                {yearlyData.read}
               </div>
               <div className="text-[#5d6d7e] font-noto-sans text-sm">今年読了</div>
             </div>
 
             <div className="bg-white border border-[#c8d1d3] rounded-lg p-4 text-center">
               <div className="text-2xl text-[#2d3436] font-noto-sans font-bold">
-                {Math.round((monthlyAchievement.percentage + yearlyAchievement.percentage) / 2)}%
+                {Math.round((monthlyData.percentage + yearlyData.percentage) / 2)}%
               </div>
               <div className="text-[#5d6d7e] font-noto-sans text-sm">平均達成率</div>
+            </div>
+          </div>
+
+          {/* 登録書籍の詳細統計 */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* 月間目標書籍の詳細 */}
+            <div className="bg-white border border-[#c8d1d3] rounded-lg p-4">
+              <h4 className="font-noto-sans text-md font-medium text-[#2d3436] mb-3">
+                📅 今月の目標書籍 ({monthlyData.targetBooks.length}冊)
+              </h4>
+              {monthlyData.targetBooks.length > 0 ? (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {monthlyData.targetBooks.map((book, index) => (
+                    <div key={index} className="bg-[#f8f9fa] border border-[#e8e2d4] rounded-lg p-3">
+                      <div className="text-[#2d3436] font-noto-sans text-sm font-medium">
+                        {index + 1}. {book.bookName}
+                      </div>
+                      <div className="text-[#5d6d7e] font-noto-sans text-xs mt-1">
+                        著者: {book.author}
+                      </div>
+                      {book.isbn && (
+                        <div className="text-[#5d6d7e] font-noto-sans text-xs">
+                          ISBN: {book.isbn}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-[#5d6d7e] font-noto-sans text-sm text-center py-4">
+                  まだ書籍が登録されていません
+                </p>
+              )}
+            </div>
+
+            {/* 年間目標書籍の詳細 */}
+            <div className="bg-white border border-[#c8d1d3] rounded-lg p-4">
+              <h4 className="font-noto-sans text-md font-medium text-[#2d3436] mb-3">
+                📆 今年の目標書籍 ({yearlyData.targetBooks.length}冊)
+              </h4>
+              {yearlyData.targetBooks.length > 0 ? (
+                <div className="space-y-2 max-h-48 overflow-y-auto">
+                  {yearlyData.targetBooks.map((book, index) => (
+                    <div key={index} className="bg-[#f8f9fa] border border-[#e8e2d4] rounded-lg p-3">
+                      <div className="text-[#2d3436] font-noto-sans text-sm font-medium">
+                        {index + 1}. {book.bookName}
+                      </div>
+                      <div className="text-[#5d6d7e] font-noto-sans text-xs mt-1">
+                        著者: {book.author}
+                      </div>
+                      {book.isbn && (
+                        <div className="text-[#5d6d7e] font-noto-sans text-xs">
+                          ISBN: {book.isbn}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-[#5d6d7e] font-noto-sans text-sm text-center py-4">
+                  まだ書籍が登録されていません
+                </p>
+              )}
             </div>
           </div>
         </div>

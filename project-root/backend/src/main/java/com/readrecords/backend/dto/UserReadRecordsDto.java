@@ -13,6 +13,7 @@ public class UserReadRecordsDto {
   private Integer readCount;
   private Integer priority;
   private String memo;
+  private String imageUrl;
 
   public UserReadRecordsDto(
       String ISBN,
@@ -22,7 +23,8 @@ public class UserReadRecordsDto {
       Date endDate,
       Integer readCount,
       Integer priority,
-      String memo) {
+      String memo,
+      String imageUrl) {
     this.ISBN = ISBN;
     this.bookName = bookName;
     this.author = author;
@@ -31,5 +33,6 @@ public class UserReadRecordsDto {
     this.readCount = readCount;
     this.priority = priority;
     this.memo = memo;
+    this.imageUrl = imageUrl;
   }
 }

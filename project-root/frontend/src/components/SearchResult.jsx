@@ -135,6 +135,7 @@ function SearchResult() {
         size: selectedBook.size || "",
         salesDate: selectedBook.salesDate || "",
         publisherName: selectedBook.publisherName || "",
+        mediumImageUrl: selectedBook.mediumImageUrl || "",
         selectedOption: priority
       };
 
