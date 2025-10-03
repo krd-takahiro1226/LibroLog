@@ -1,12 +1,12 @@
 package com.readrecords.backend.controller;
 
-import com.readrecords.backend.service.ReadingRecordsService;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.readrecords.backend.service.ReadingRecordsService;
+
 @RestController
 @RequestMapping("/exportRecords")
 public class CsvExportController {
@@ -27,6 +29,7 @@ public class CsvExportController {
   @Autowired
   private ReadingRecordsService readingRecordsService;
 
+  // CSVデータのエクスポート
   @GetMapping("/csv")
   public ResponseEntity<byte[]> exportCsv(Authentication authentication) {
     try {
