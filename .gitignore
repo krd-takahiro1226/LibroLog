@@ -2,3 +2,4 @@ Password.md
 .DS_Store
 project-root/backend/src/main/resources/application.yaml
 .vscode/settings.json
+project-root/mailpit/mailpit.db
