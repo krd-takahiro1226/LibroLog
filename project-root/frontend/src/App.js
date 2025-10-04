@@ -16,6 +16,7 @@ import Search from './components/Search';
 import ShowRecords from './components/ShowRecords';
 import UserSettings from './components/UserSettings';
 import SearchResult from './components/SearchResult';
+import FavoriteAuthors from './components/FavoriteAuthors';
 
 function App() {
     return (
@@ -34,6 +35,7 @@ function App() {
                 <Route path="/setReadingGoals" element={<SetReadingGoals />}></Route>
                 <Route path="/achievementsSettings" element={<AchievementsSettings />}></Route>
                 <Route path="*" element={<NotFound />} ></Route>
+                <Route path="/favoriteAuthors" element={<FavoriteAuthors />}></Route>
             </Routes>
         </Router>
     );

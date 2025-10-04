@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import AuthorFollowButton from "./AuthorFollowButton";
+import "../assets/styles/styles.css";
 
 function SearchResult() {
 
@@ -320,9 +322,14 @@ function SearchResult() {
                     </h3>
 
                     <div className="space-y-1 text-sm mb-4 flex-grow">
-                      <p className="text-[#5d6d7e] font-noto-sans">
+                      <div className="text-[#5d6d7e] font-noto-sans">
                         <span className="font-medium">📝 著者:</span> {book.author || "不明"}
-                      </p>
+                        {book.author && (
+                          <div className="mt-2">
+                            <AuthorFollowButton authorName={book.author} size="small" />
+                          </div>
+                        )}
+                      </div>
 
                       <p className="text-[#5d6d7e] font-noto-sans">
                         <span className="font-medium">🏢 出版社:</span> {book.publisherName || "不明"}
