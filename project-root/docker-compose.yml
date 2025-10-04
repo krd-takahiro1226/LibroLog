@@ -17,9 +17,7 @@ services:
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
       # メール送信方式
-      MAIL_EXTERNAL_ENABLED: "true"
-      MAILJET_API_KEY: "002898db257259df4509faf9b7752cb0"
-      MAILJET_API_SECRET: "005cab1a33784797d74efb15ba89d3f4"
+      MAIL_EXTERNAL_ENABLED: "false"
       MAIL_FROM_EMAIL: "system-sender@librolog.com"
       MAIL_FROM_NAME: "Libro Log"
       # Java エンコーディング設定
