@@ -1,6 +1,8 @@
 "use client";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons";
 import '../assets/styles/styles.css';
 
 function Menu() {
@@ -69,6 +71,7 @@ function Menu() {
             onClick={handleLogout}
             className="bg-red-600 hover:bg-red-700 text-white font-noto-sans px-6 py-2 rounded-lg transition-colors"
           >
+            <FontAwesomeIcon icon={faSignOutAlt} className="mr-2" />
             ログアウト
           </button>
         </header>
