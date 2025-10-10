@@ -16,6 +16,7 @@ function Login() {
     password: "",
   });
   const [loading, setLoading] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -55,7 +56,7 @@ function Login() {
 
       // 401エラーなど特定のステータスコードをチェック
       if (error.response?.status === 401) {
-        alert("ログインに失敗しました。ユーザー名とパスワードを確認してください。");
+        setShowErrorModal(true);
       } else {
         alert("サーバーエラーが発生しました。後ほどお試しください。");
       }
@@ -137,6 +138,33 @@ function Login() {
           </p>
         </div>
       </div>
+
+      {/* エラーモーダル */}
+      {showErrorModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-[#faf8f3] rounded-xl shadow-lg border border-[#e8e2d4] p-8 w-[90vw] max-w-lg">
+            <h3 className="font-noto-sans text-xl font-semibold text-[#2d3436] mb-4">
+              ❌ ログイン失敗
+            </h3>
+
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+              <p className="text-red-800 font-noto-sans">
+                ユーザー名またはパスワードが正しくありません。<br />
+                もう一度お試しください。
+              </p>
+            </div>
+
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowErrorModal(false)}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-noto-sans px-6 py-3 rounded-lg transition-colors"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
