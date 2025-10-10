@@ -1,7 +1,9 @@
 package com.readrecords.backend.service;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.readrecords.backend.dto.MailjetContactDto;
+import com.readrecords.backend.dto.MailjetMessageDto;
+import com.readrecords.backend.dto.MailjetRequestDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,7 +57,7 @@ public class ExternalMailService {
 
     public void sendMail(String recipient, String subject, String textBody) {
         try {
-            MailjetRequest request = createMailjetRequest(recipient, subject, textBody);
+            MailjetRequestDto request = createMailjetRequest(recipient, subject, textBody);
             String requestBody = objectMapper.writeValueAsString(request);
             
             // デバッグログでリクエストボディを確認
@@ -87,10 +89,10 @@ public class ExternalMailService {
         }
     }
 
-    private MailjetRequest createMailjetRequest(String recipient, String subject, String textBody) {
-        MailjetMessage message = new MailjetMessage();
-        message.from = new MailjetContact(fromEmail, fromName);
-        message.to = List.of(new MailjetContact(recipient, ""));
+    private MailjetRequestDto createMailjetRequest(String recipient, String subject, String textBody) {
+        MailjetMessageDto message = new MailjetMessageDto();
+        message.from = new MailjetContactDto(fromEmail, fromName);
+        message.to = List.of(new MailjetContactDto(recipient, ""));
         message.subject = subject;
         
         // HTMLPartとしてUTF-8エンコーディングで確実に送信
@@ -98,7 +100,7 @@ public class ExternalMailService {
         // TextPartも同時に設定（フォールバック用）
         message.textPart = textBody;
 
-        MailjetRequest request = new MailjetRequest();
+        MailjetRequestDto request = new MailjetRequestDto();
         request.messages = List.of(message);
         return request;
     }
@@ -108,40 +110,4 @@ public class ExternalMailService {
         return Base64.getEncoder().encodeToString(credentials.getBytes(StandardCharsets.UTF_8));
     }
 
-    public static class MailjetRequest {
-        @JsonProperty("Messages")
-        public List<MailjetMessage> messages;
-    }
-
-    public static class MailjetMessage {
-        @JsonProperty("From")
-        public MailjetContact from;
-
-        @JsonProperty("To")
-        public List<MailjetContact> to;
-
-        @JsonProperty("Subject")
-        public String subject;
-
-        @JsonProperty("TextPart")
-        public String textPart;
-
-        @JsonProperty("HTMLPart")
-        public String htmlPart;
-    }
-
-    public static class MailjetContact {
-        @JsonProperty("Email")
-        public String email;
-
-        @JsonProperty("Name")
-        public String name;
-
-        public MailjetContact() {}
-
-        public MailjetContact(String email, String name) {
-            this.email = email;
-            this.name = name;
-        }
-    }
 }
