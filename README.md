@@ -54,3 +54,7 @@
 # デモ動画
 https://github.com/user-attachments/assets/cddb4efd-1875-4a3f-aa36-76c147832b13
 
+https://github.com/user-attachments/assets/975fd028-6f68-4658-8154-7a1425da84b7
+
+
+
