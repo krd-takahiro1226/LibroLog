@@ -31,7 +31,9 @@ steps:
           --set-secrets \
             KEY_API=KEY_API:latest \
           --set-secrets \
-            SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest
+            SPRING_DATASOURCE_USERNAME=DB_USERNAME:latest,SPRING_DATASOURCE_PASSWORD=DB_PASSWORD:latest \
+          --set-secrets \
+            MAILJET_API_KEY=MAILJET_API_KEY:latest,MAILJET_API_SECRET=MAILJET_API_SECRET:latest
 
 # 最後にイメージのリストを通知
 images:
